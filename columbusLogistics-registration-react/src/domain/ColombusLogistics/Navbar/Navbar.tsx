@@ -19,10 +19,9 @@ import { useToggle } from '@react-shanties/core';
 const navItems = [
   { label: 'Home', subItems: [] },
   { label: 'Services', subItems: ['Regular Service', 'Express Delivery'] },
-  { label: 'Operations', subItems: ['Domestic', 'International'] },
-  { label: 'Branches', subItems: ['Chennai', 'Mumbai', 'Delhi', 'Kolkata'] },
-  { label: 'Contact', subItems: ['Email', 'Phone', 'Live Chat'] },
-  { label: 'About', subItems: ['Company', 'Team', 'Careers'] },
+  { label: 'Tracking', subItems: ['Online Tracking'] },
+  { label: 'About Us', subItems: ['Company', 'Team', 'Careers'] },
+  { label: 'Contact', subItems: ['Email', 'Phone'] },
 ];
 
 const Navbar = () => {
@@ -31,10 +30,8 @@ const Navbar = () => {
   const openTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Fix navRefs type: mutable ref holding array of HTMLElement | null
   const navRefs = useRef<Array<HTMLElement | null>>([]);
 
-  // Callback to assign refs without returning assignment (fix eslint no-return-assign)
   const setNavRef = useCallback(
     (index: number) => (el: HTMLElement | null) => {
       navRefs.current[index] = el;

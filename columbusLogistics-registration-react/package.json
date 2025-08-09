@@ -42,6 +42,7 @@
     "react-hook-form": "^7.62.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.7.1",
+    "swiper": "^11.2.10",
     "vite-tsconfig-paths": "^5.1.4",
     "wireit": "^0.14.12"
   },
