@@ -1,0 +1,319 @@
+import React, { useState, useRef, useCallback } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Stack,
+  Box,
+  Grow,
+  Popper,
+  Paper,
+  MenuList,
+  MenuItem,
+  Dialog,
+} from '@mui/material';
+import AuthForm from '#pages/Layout/Login/AuthForm';
+import { useToggle } from '@react-shanties/core';
+
+const navItems = [
+  { label: 'Home', subItems: [] },
+  { label: 'Services', subItems: ['Regular Service', 'Express Delivery'] },
+  { label: 'Operations', subItems: ['Domestic', 'International'] },
+  { label: 'Branches', subItems: ['Chennai', 'Mumbai', 'Delhi', 'Kolkata'] },
+  { label: 'Contact', subItems: ['Email', 'Phone', 'Live Chat'] },
+  { label: 'About', subItems: ['Company', 'Team', 'Careers'] },
+];
+
+const Navbar = () => {
+  const [currentMenu, setCurrentMenu] = useState<number | null>(null);
+  const [isAuthFormOpen, , AuthFormActions] = useToggle(false);
+  const openTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Fix navRefs type: mutable ref holding array of HTMLElement | null
+  const navRefs = useRef<Array<HTMLElement | null>>([]);
+
+  // Callback to assign refs without returning assignment (fix eslint no-return-assign)
+  const setNavRef = useCallback(
+    (index: number) => (el: HTMLElement | null) => {
+      navRefs.current[index] = el;
+    },
+    [],
+  );
+
+  const handleMouseEnter = useCallback((index: number) => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+    }
+
+    openTimeoutRef.current = setTimeout(() => {
+      setCurrentMenu(index);
+    }, 350);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+    }
+
+    closeTimeoutRef.current = setTimeout(() => {
+      setCurrentMenu(null);
+    }, 200);
+  }, []);
+
+  return (
+    <>
+      <AppBar
+        position="sticky"
+        sx={{
+          p: 1,
+          top: 0,
+          backgroundColor: '#ffffff',
+          color: '#000',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          zIndex: 1100,
+          borderBottom: '2px solid #bbb',
+        }}
+      >
+        <Toolbar
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            minHeight: '80px',
+            px: { xs: 2, sm: 4, md: 6 },
+          }}
+        >
+          <Stack
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              cursor: 'pointer',
+              transition: 'transform 0.2s ease',
+              '&:hover': {
+                transform: 'scale(1.02)',
+              },
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 700,
+                color: '#1a472a',
+                fontSize: { xs: '1.1rem', sm: '1.5rem' },
+                letterSpacing: '-0.5px',
+                fontFamily: '"Inter", "Roboto", sans-serif',
+                lineHeight: 1,
+              }}
+            >
+              Columbus Logistics
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                color: '#4CAF50',
+                fontWeight: 500,
+                fontSize: '0.875rem',
+                letterSpacing: '0.5px',
+                marginTop: '-2px',
+              }}
+            >
+              Connecting Indian Commerce
+            </Typography>
+          </Stack>
+
+          <Stack
+            direction="row"
+            spacing={4}
+            alignItems="center"
+            sx={{ display: { xs: 'none', md: 'flex' } }}
+          >
+            {navItems.map((item, index) => (
+              <Box
+                key={item.label}
+                ref={setNavRef(index)}
+                sx={{
+                  position: 'relative',
+                  cursor: 'pointer',
+                  py: 2,
+                  px: 1,
+                }}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    color: '#2d3748',
+                    position: 'relative',
+                    transition: 'all 0.3s ease',
+                    fontFamily: '"Inter", "Roboto", sans-serif',
+                    userSelect: 'none',
+                    whiteSpace: 'nowrap',
+                    '&:hover': {
+                      color: '#166534',
+                    },
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      width: '0%',
+                      height: '2px',
+                      bottom: '-8px',
+                      left: '50%',
+                      backgroundColor: '#166534',
+                      transition: 'all 0.3s ease',
+                      transform: 'translateX(-50%)',
+                    },
+                    '&:hover::after': {
+                      width: '100%',
+                    },
+                  }}
+                >
+                  {item.label}
+                </Typography>
+
+                {item.subItems.length > 0 && (
+                  <Popper
+                    open={currentMenu === index}
+                    anchorEl={navRefs.current[index]}
+                    placement="bottom"
+                    transition
+                    disablePortal={false}
+                    modifiers={[
+                      {
+                        name: 'offset',
+                        options: {
+                          offset: [0, 12],
+                        },
+                      },
+                    ]}
+                    sx={{ zIndex: 1300 }}
+                  >
+                    {({ TransitionProps }) => (
+                      <Grow {...TransitionProps} timeout={250}>
+                        <Paper
+                          onMouseEnter={() => {
+                            if (closeTimeoutRef.current) {
+                              clearTimeout(closeTimeoutRef.current);
+                              closeTimeoutRef.current = null;
+                            }
+                          }}
+                          onMouseLeave={handleMouseLeave}
+                          sx={{
+                            minWidth: '200px',
+                            boxShadow: '0px 8px 25px rgba(0,0,0,0.12)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(0,0,0,0.08)',
+                            position: 'relative',
+                            '&::before': {
+                              content: '""',
+                              position: 'absolute',
+                              top: '-8px',
+                              left: '50%',
+                              transform: 'translateX(-50%) rotate(45deg)',
+                              width: '16px',
+                              height: '16px',
+                              backgroundColor: '#fff',
+                              border: '1px solid rgba(0,0,0,0.08)',
+                              borderBottom: 'none',
+                              borderRight: 'none',
+                            },
+                          }}
+                        >
+                          <MenuList sx={{ py: 1 }}>
+                            {item.subItems.map((sub) => (
+                              <MenuItem
+                                key={sub}
+                                sx={{
+                                  color: '#2d3748',
+                                  fontSize: '0.95rem',
+                                  fontWeight: 500,
+                                  minHeight: '40px',
+                                  px: 3,
+                                  py: 1.5,
+                                  transition: 'all 0.2s ease',
+                                  '&:hover': {
+                                    backgroundColor: 'rgba(22, 101, 52, 0.08)',
+                                    color: '#166534',
+                                    paddingLeft: '20px',
+                                  },
+                                  '&:not(:last-child)': {
+                                    borderBottom: '1px solid rgba(0,0,0,0.06)',
+                                  },
+                                }}
+                              >
+                                {sub}
+                              </MenuItem>
+                            ))}
+                          </MenuList>
+                        </Paper>
+                      </Grow>
+                    )}
+                  </Popper>
+                )}
+              </Box>
+            ))}
+          </Stack>
+
+          <Button
+            variant="contained"
+            onClick={AuthFormActions.setOn}
+            sx={{
+              backgroundColor: '#166534',
+              color: '#ffffff',
+              textTransform: 'none',
+              fontWeight: 600,
+              fontSize: '0.95rem',
+              px: 4,
+              py: 1.5,
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(22, 101, 52, 0.3)',
+              transition: 'all 0.3s ease',
+              fontFamily: '"Inter", "Roboto", sans-serif',
+              whiteSpace: 'nowrap',
+              '&:hover': {
+                backgroundColor: '#14532d',
+                boxShadow: '0 6px 16px rgba(22, 101, 52, 0.4)',
+                transform: 'translateY(-1px)',
+              },
+              '&:active': {
+                transform: 'translateY(0px)',
+              },
+            }}
+          >
+            Login
+          </Button>
+        </Toolbar>
+      </AppBar>
+
+      <Dialog
+        open={isAuthFormOpen}
+        onClose={AuthFormActions.setOff}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '12px',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+          },
+        }}
+      >
+        <AuthForm />
+      </Dialog>
+    </>
+  );
+};
+
+export default Navbar;
