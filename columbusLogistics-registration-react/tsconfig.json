@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": false,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "incremental": true,
+    "lib": ["DOM", "ES2015"],
+    "jsx": "react",
+    "outDir": "./dist",
+    "paths": {
+      "#api/*": [
+        "./src/api/*"
+      ],
+      "#assets/*": [
+        "./src/assets/*"
+      ],
+      "#components/*": [
+        "./src/components/*"
+      ],
+      "#constants/*": [
+        "./src/constants/*"
+      ],
+      "#domain/*": [
+        "./src/domain/*"
+      ],
+      "#pages/*": [
+        "./src/pages/*"
+      ],
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "vite.config.mjs",
+    "vite.config.js"  ],
+  "exclude": [
+    "**/node_modules",
+    "cdk.out",
+    "dist"
+  ]
+}  

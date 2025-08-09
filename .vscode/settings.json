@@ -1,0 +1,18 @@
+{
+  "editor.formatOnSave": true,
+  "eslint.format.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "eslint.workingDirectories": [
+    "packages/openlivestock-admin-react",
+    "packages/openlivestock-registration-react",
+  ],
+  "[javascript][typescript][javascriptreact][typescriptreact][json]": {
+    "editor.tabSize": 2,
+  },
+  "prettier.enable": false,
+  "liveshare.languages.allowGuestCommandControl": true,
+  "liveshare.autoShareServers": true,
+  "liveshare.autoShareTerminals": true
+}
