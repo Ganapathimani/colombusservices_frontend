@@ -69,8 +69,8 @@ const TruckCarousel = () => {
       sx={{
         position: 'relative',
         width: '100%',
-        height: { xs: 400, md: 650 },
-        background: 'linear-gradient(135deg, #1f2937, #374151, #1f2937)', // gray-900 to gray-800 to gray-900
+        height: { xs: 650, md: 650 },
+        background: 'linear-gradient(135deg, #1f2937, #374151, #1f2937)',
         overflow: 'hidden',
         userSelect: 'none',
       }}
@@ -106,7 +106,11 @@ const TruckCarousel = () => {
         {map((truck) => (
           <SwiperSlide key={truck.title}>
             <Box sx={{
-              position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center',
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
             }}
             >
               <Box sx={{ position: 'absolute', inset: 0 }}>
@@ -311,6 +315,7 @@ const TruckCarousel = () => {
         sx={{
           position: 'absolute',
           left: 24,
+          display: { xs: 'none', md: 'block' },
           top: '50%',
           transform: 'translateY(-50%)',
           zIndex: 20,
@@ -350,6 +355,7 @@ const TruckCarousel = () => {
         sx={{
           position: 'absolute',
           right: 24,
+          display: { xs: 'none', md: 'block' },
           top: '50%',
           transform: 'translateY(-50%)',
           zIndex: 20,

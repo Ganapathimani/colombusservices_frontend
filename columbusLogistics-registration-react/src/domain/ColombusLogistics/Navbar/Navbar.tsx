@@ -13,15 +13,39 @@ import {
   MenuItem,
   Dialog,
 } from '@mui/material';
-import AuthForm from '#pages/Layout/Login/AuthForm';
+import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@react-shanties/core';
+import AuthForm from '#pages/Layout/Login/AuthForm';
 
 const navItems = [
-  { label: 'Home', subItems: [] },
-  { label: 'Services', subItems: ['Regular Service', 'Express Delivery'] },
-  { label: 'Tracking', subItems: ['Online Tracking'] },
-  { label: 'About Us', subItems: ['Company', 'Team', 'Careers'] },
-  { label: 'Contact', subItems: ['Email', 'Phone'] },
+  { label: 'Home', subItems: [], path: '/' },
+  {
+    label: 'Services',
+    subItems: [
+      { label: 'Regular Service', path: '/services' },
+      { label: 'Express Delivery', path: '/services' },
+    ],
+  },
+  {
+    label: 'Tracking',
+    subItems: [
+      { label: 'Online Tracking', path: '/tracking' },
+    ],
+  },
+  {
+    label: 'About Us',
+    subItems: [
+      { label: 'About Us', path: '/about' },
+      { label: 'Branches', path: '/branches' },
+    ],
+  },
+  {
+    label: 'Contact',
+    subItems: [
+      { label: 'Email', path: '/contact/email' },
+      { label: 'Phone', path: '/contact/phone' },
+    ],
+  },
 ];
 
 const Navbar = () => {
@@ -29,6 +53,7 @@ const Navbar = () => {
   const [isAuthFormOpen, , AuthFormActions] = useToggle(false);
   const openTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navigate = useNavigate();
 
   const navRefs = useRef<Array<HTMLElement | null>>([]);
 
@@ -38,6 +63,11 @@ const Navbar = () => {
     },
     [],
   );
+
+  const goToPath = useCallback((path?: string) => {
+    navigate(path ?? '/');
+    setCurrentMenu(null);
+  }, [navigate]);
 
   const handleMouseEnter = useCallback((index: number) => {
     if (closeTimeoutRef.current) {
@@ -90,6 +120,7 @@ const Navbar = () => {
             px: { xs: 2, sm: 4, md: 6 },
           }}
         >
+          {/* Logo */}
           <Stack
             sx={{
               display: 'flex',
@@ -101,6 +132,7 @@ const Navbar = () => {
                 transform: 'scale(1.02)',
               },
             }}
+            onClick={() => goToPath('/')}
           >
             <Typography
               variant="h4"
@@ -147,6 +179,11 @@ const Navbar = () => {
                 }}
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
+                onClick={() => {
+                  if (!item.subItems.length) {
+                    goToPath(item.path);
+                  }
+                }}
               >
                 <Typography
                   variant="body1"
@@ -181,6 +218,7 @@ const Navbar = () => {
                   {item.label}
                 </Typography>
 
+                {/* Submenu */}
                 {item.subItems.length > 0 && (
                   <Popper
                     open={currentMenu === index}
@@ -209,7 +247,7 @@ const Navbar = () => {
                           }}
                           onMouseLeave={handleMouseLeave}
                           sx={{
-                            minWidth: '200px',
+                            minWidth: '170px',
                             boxShadow: '0px 8px 25px rgba(0,0,0,0.12)',
                             borderRadius: '8px',
                             border: '1px solid rgba(0,0,0,0.08)',
@@ -232,14 +270,15 @@ const Navbar = () => {
                           <MenuList sx={{ py: 1 }}>
                             {item.subItems.map((sub) => (
                               <MenuItem
-                                key={sub}
+                                key={sub.label}
+                                onClick={() => goToPath(sub.path)}
                                 sx={{
                                   color: '#2d3748',
                                   fontSize: '0.95rem',
                                   fontWeight: 500,
-                                  minHeight: '40px',
-                                  px: 3,
-                                  py: 1.5,
+                                  minHeight: '35px',
+                                  px: 2,
+                                  py: 1.2,
                                   transition: 'all 0.2s ease',
                                   '&:hover': {
                                     backgroundColor: 'rgba(22, 101, 52, 0.08)',
@@ -251,7 +290,7 @@ const Navbar = () => {
                                   },
                                 }}
                               >
-                                {sub}
+                                {sub.label}
                               </MenuItem>
                             ))}
                           </MenuList>
