@@ -34,10 +34,8 @@ const navItems = [
   },
   {
     label: 'About Us',
-    subItems: [
-      { label: 'About Us', path: '/about' },
-      { label: 'Branches', path: '/branches' },
-    ],
+    subItems: [],
+    path: '/about',
   },
   {
     label: 'Contact',

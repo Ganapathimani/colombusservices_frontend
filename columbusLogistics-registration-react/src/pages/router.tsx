@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import ErrorBoundary from '#components/ErrorBoundary/ErrorBoundary';
+import LogisticsRegistrationForm from '#domain/ColombusLogistics/RegistrationForm/LogisticsRegistrationForm';
 import Layout from './Layout/Layout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: 'tracking',
         element: <TrackingPage />,
+      },
+      {
+        path: 'registration',
+        element: <LogisticsRegistrationForm />,
       },
     ],
   },

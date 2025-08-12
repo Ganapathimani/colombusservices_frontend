@@ -276,7 +276,7 @@ const AuthForm = () => {
           </form>
         )}
 
-        <Stack direction="row" justifyContent="center" alignItems='center' mt={2} spacing={1}>
+        <Stack direction="row" justifyContent="center" alignItems="center" mt={2} spacing={1}>
           <Typography variant="body2">
             {isLogin ? "Don't have an account?" : 'Already have an account?'}
           </Typography>

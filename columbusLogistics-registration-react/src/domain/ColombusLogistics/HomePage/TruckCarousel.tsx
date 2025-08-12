@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {
   Autoplay, Navigation, Pagination, EffectFade,
@@ -12,6 +12,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
 import { map } from 'lodash/fp';
 
+import { useNavigate } from 'react-router-dom';
 import vehicle1 from '../../../assets/vehicle1.jpg';
 import vehicle2 from '../../../assets/vehicle2.jpg';
 import vehicle3 from '../../../assets/vehicle3.jpg';
@@ -63,6 +64,11 @@ const infoCards = [
 
 const TruckCarousel = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
+
+  const handleBookRoute = useCallback(() => {
+    navigate('/registration');
+  }, [navigate]);
 
   return (
     <Box
@@ -252,6 +258,7 @@ const TruckCarousel = () => {
                       <Button
                         variant="contained"
                         color="success"
+                        onClick={handleBookRoute}
                         sx={{
                           px: 5,
                           py: 1.5,
