@@ -26,12 +26,12 @@ const navItems = [
       { label: 'Express Delivery', path: '/express-services' },
     ],
   },
-  {
-    label: 'Tracking',
-    subItems: [
-      { label: 'Online Tracking', path: '/tracking' },
-    ],
-  },
+  // We will add once the package were added
+  // {
+  //   label: 'Tracking',
+  //   subItems: [],
+  //   path: '/tracking',
+  // },
   {
     label: 'About Us',
     subItems: [],
@@ -39,9 +39,8 @@ const navItems = [
   },
   {
     label: 'Contact',
-    subItems: [
-      { label: 'Contact US', path: '/contact' },
-    ],
+    subItems: [],
+    path: '/contact',
   },
   {
     label: 'Book Now',
