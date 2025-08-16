@@ -22,8 +22,8 @@ const navItems = [
   {
     label: 'Services',
     subItems: [
-      { label: 'Regular Service', path: '/services' },
-      { label: 'Express Delivery', path: '/services' },
+      { label: 'Regular Service', path: '/regular-services' },
+      { label: 'Express Delivery', path: '/express-services' },
     ],
   },
   {
@@ -40,9 +40,13 @@ const navItems = [
   {
     label: 'Contact',
     subItems: [
-      { label: 'Email', path: '/contact/email' },
-      { label: 'Phone', path: '/contact/phone' },
+      { label: 'Contact US', path: '/contact' },
     ],
+  },
+  {
+    label: 'Book Now',
+    subItems: [],
+    path: '/registration',
   },
 ];
 

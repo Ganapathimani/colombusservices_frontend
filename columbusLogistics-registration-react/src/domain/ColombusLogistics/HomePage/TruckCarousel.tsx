@@ -20,39 +20,93 @@ import vehicle3 from '../../../assets/vehicle3.jpg';
 const truckData = [
   {
     image: vehicle1,
-    title: 'Heavy-Duty Freight Transport',
-    subtitle: 'Reliable Long-Distance Logistics Across South India',
+    title: 'Fast Delivery',
+    subtitle: 'Speed You Can Trust, Every Mile of the Way.',
     description:
-      'Our fleet of heavy-duty trucks offers secure and timely delivery of a wide range of cargo including garments, machinery, and industrial goods across Tamil Nadu and the southern region. Equipped with GPS tracking and managed by experienced drivers, we ensure your goods reach their destination safely and efficiently.',
+      'At Colombus Logistics, we know time is critical. Our Fast Delivery service is designed for urgent shipments that can’t wait. With priority scheduling, dedicated vehicles, and express routes, we make sure your goods arrive on time, every time.',
     features: [
-      'Up to 25 Ton Load Capacity',
-      'Real-Time GPS Tracking for Transparency',
-      'Climate-Controlled Transport for Sensitive Goods',
+      'Priority shipment handling',
+      'Express transport lanes',
+      'Real-time GPS tracking',
+      'Guaranteed delivery timelines',
     ],
+    bestFor: 'Urgent consignments, retail stock replenishment, event supplies, spare parts delivery',
+    cta: 'Need it delivered fast? Get a Quote Now',
   },
   {
     image: vehicle2,
-    title: 'Express Delivery Service',
-    subtitle: 'Fast, Dependable Solutions for Time-Critical Shipments',
+    title: '24×7 Delivery',
+    subtitle: 'Around the Clock, Around the Country.',
     description:
-      'Designed for urgent and time-sensitive cargo, our express delivery service guarantees quick turnaround times and reliable handling. Whether same-day delivery or real-time status updates, our team ensures your shipments are prioritized and handled with utmost care.',
+      'We understand that your business doesn’t stop — and neither do we. Our 24×7 Delivery service operates round-the-clock, including weekends and public holidays. Whether day or night, we ensure your shipments move without delay.',
     features: [
-      'Guaranteed Same-Day Delivery',
-      'Live Shipment Updates',
-      'Secure and Safe Transit Protocols',
+      'Available 24/7 including weekends & holidays',
+      'Flexible pickup scheduling',
+      'Dedicated support team at all hours',
+      'Reliable nationwide coverage',
     ],
+    bestFor: 'E-commerce deliveries, medical supplies, urgent industrial shipments',
+    cta: 'Ship anytime, anywhere. Book a 24×7 Delivery',
   },
   {
     image: vehicle3,
-    title: 'Local Distribution Network',
-    subtitle: 'Comprehensive Citywide Coverage with Last-Mile Expertise',
+    title: 'Full Truckload (FTL) Services',
+    subtitle: 'Dedicated Space for Your Cargo.',
     description:
-      'Our local distribution services offer efficient last-mile delivery solutions within major cities. We specialize in door-to-door shipments with flexible scheduling and 24/7 support, ensuring that your customers receive their orders promptly and in perfect condition.',
+      'Our FTL services offer exclusive truck capacity for your goods, ensuring faster transit and higher cargo safety. Perfect for large shipments that require the full attention of our logistics team.',
     features: [
-      'Door-to-Door Delivery Across Urban Areas',
-      'Round-the-Clock Customer Support',
-      'Flexible and Customized Scheduling',
+      'Dedicated trucks from start to finish',
+      'Direct route with no stops',
+      'Secure and sealed cargo space',
+      'Predictable delivery timelines',
     ],
+    bestFor: 'Bulk goods, manufacturing materials, large retail consignments',
+    cta: 'Move more, move safer. Request an FTL Quote',
+  },
+  {
+    image: vehicle1,
+    title: 'Part Truckload (PTL) / Consolidated Shipping',
+    subtitle: 'Smart Sharing, Big Savings.',
+    description:
+      'Why pay for a full truck when you don’t need it? Our PTL services allow you to share cargo space with other shippers, reducing costs while maintaining reliable delivery schedules.',
+    features: [
+      'Pay only for the space you use',
+      'Flexible shipment sizes',
+      'Optimized shared routes',
+      'Professional cargo handling',
+    ],
+    bestFor: 'Small-to-medium shipments, startups, cost-conscious businesses',
+    cta: 'Save more on shipping. Book a PTL Service',
+  },
+  {
+    image: vehicle2,
+    title: 'Express Cargo Service',
+    subtitle: 'When Every Second Counts.',
+    description:
+      'Our Express Cargo Service guarantees the shortest possible transit time for high-priority shipments. We allocate special resources and vehicles to ensure speed without compromising safety.',
+    features: [
+      'Guaranteed express delivery',
+      'Priority dispatching',
+      'Minimal handling points',
+      'Dedicated express routes',
+    ],
+    bestFor: 'Event goods, medical equipment, emergency industrial supplies',
+    cta: 'Need it there today? Send an Express Cargo',
+  },
+  {
+    image: vehicle3,
+    title: 'Last-Mile Delivery',
+    subtitle: 'The Final Step to Your Customer.',
+    description:
+      'Our Last-Mile Delivery ensures your products reach your customers’ doorsteps quickly and safely, enhancing customer satisfaction and retention.',
+    features: [
+      'Doorstep delivery',
+      'Optimized urban routes',
+      'Flexible scheduling',
+      'Instant POD (Proof of Delivery) updates',
+    ],
+    bestFor: 'E-commerce sellers, retail chains, food distributors',
+    cta: 'Deliver smiles at the last mile. Schedule a Delivery',
   },
 ];
 

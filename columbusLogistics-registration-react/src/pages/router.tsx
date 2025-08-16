@@ -6,6 +6,9 @@ import Layout from './Layout/Layout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
 import TrackingPage from './Layout/HomePage/TrackingPage';
+import ContactPage from './Layout/Contact/ContactPage';
+import RegularServices from './Layout/Services/RegularService';
+import ExpressServices from './Layout/Services/ExpressService';
 
 const router = createBrowserRouter([
   {
@@ -22,8 +25,12 @@ const router = createBrowserRouter([
         element: <AboutPage />,
       },
       {
-        path: 'services',
-        // element: <ServicesSection />,
+        path: 'regular-services',
+        element: <RegularServices />,
+      },
+      {
+        path: 'express-services',
+        element: <ExpressServices />,
       },
       {
         path: 'tracking',
@@ -32,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: 'registration',
         element: <LogisticsRegistrationForm />,
+      },
+      {
+        path: 'contact',
+        element: <ContactPage />,
       },
     ],
   },
