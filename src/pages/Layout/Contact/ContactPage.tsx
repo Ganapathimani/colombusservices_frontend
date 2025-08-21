@@ -53,7 +53,7 @@ const ContactPage = () => (
   <Stack
     spacing={4}
     sx={{
-      maxWidth: 1200, margin: '0 auto', px: { xs: 3, md: 6 }, py: { xs: 4, md: 4 },
+      maxWidth: 1500, margin: '0 auto', px: { xs: 3, md: 6 }, py: { xs: 4, md: 4 },
     }}
   >
     <Stack spacing={3}>

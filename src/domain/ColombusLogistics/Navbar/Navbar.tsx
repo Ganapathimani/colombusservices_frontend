@@ -22,8 +22,7 @@ const navItems = [
   {
     label: 'Services',
     subItems: [
-      { label: 'Regular Service', path: '/regular-services' },
-      { label: 'Express Delivery', path: '/express-services' },
+      { label: 'Services', path: '/services' },
     ],
   },
   // We will add once the package were added

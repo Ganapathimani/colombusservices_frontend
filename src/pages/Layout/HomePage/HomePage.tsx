@@ -5,6 +5,7 @@ import { Grid } from '@mui/material';
 import ServicesSection from '#domain/ColombusLogistics/HomePage/Services';
 import FAQSection from '#domain/ColombusLogistics/HomePage/FAQSection';
 import HowItWorks from '#domain/ColombusLogistics/HomePage/HowItWorks';
+import ClientLogoCarousel from '#domain/ColombusLogistics/HomePage/ClientLogoCarousel';
 
 const HomePage = () => (
   <Grid>
@@ -12,6 +13,7 @@ const HomePage = () => (
     <ServicesSection />
     <HowItWorks />
     <AboutUs />
+    <ClientLogoCarousel />
     <FAQSection />
   </Grid>
 );

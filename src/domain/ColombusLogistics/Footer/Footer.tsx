@@ -31,7 +31,7 @@ const Footer = () => {
     <Grid
       component="footer"
       sx={{
-        backgroundImage: 'linear-gradient(to right, #63ba59, #2a805f)',
+        backgroundColor: '#1e3a1e',
         color: 'white',
         textAlign: 'center',
         fontWeight: 600,

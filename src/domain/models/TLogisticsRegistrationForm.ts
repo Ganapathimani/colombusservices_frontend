@@ -28,5 +28,8 @@ export type TCargoDetail = {
   package: string;
   cbm: string;
   weight: string;
-  dimensions: string;
+  materialType: string,
+  photo: any,
+  hasDimensions: boolean,
+  dimensions: string | [];
 };
