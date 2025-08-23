@@ -1,3 +1,21 @@
+export type TDimension = {
+  handlingUnit: string;
+  length: number;
+  width: number;
+  height: number;
+  cubicFeet: number;
+};
+
+export type TCargoDetail = {
+  package: string;
+  cbm: string;
+  weight: string;
+  materialType: string;
+  photo: File | null;
+  hasDimensions: boolean;
+  dimensions: TDimension[];
+};
+
 export type TLogisticsRegistrationForm = {
   companyName: string;
   emailId: string;
@@ -14,7 +32,7 @@ export type TLogisticsRegistrationForm = {
   originPincode: string;
   originEmailId?: string;
   originContactNumber: string;
-  pickupDate: null;
+  pickupDate: Date | null;
 
   destinationCustomerName: string;
   destinationAddress: string;
@@ -22,14 +40,4 @@ export type TLogisticsRegistrationForm = {
   destinationLocation: string;
   destinationPincode: string;
   destinationContactNumber: string;
-};
-
-export type TCargoDetail = {
-  package: string;
-  cbm: string;
-  weight: string;
-  materialType: string,
-  photo: any,
-  hasDimensions: boolean,
-  dimensions: string | [];
 };

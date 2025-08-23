@@ -36,7 +36,20 @@ const LogisticsRegistrationWizard = () => {
   return (
     <FormProvider {...methods}>
       <Stack spacing={4} maxWidth={900} margin="auto" p={4}>
-        <Stepper activeStep={activeStep} alternativeLabel>
+        {/* Stepper */}
+        <Stepper
+          activeStep={activeStep}
+          alternativeLabel
+          sx={{
+            '& .MuiStepIcon-root': {
+              color: '#A5D6A7', // default
+              '&.Mui-active': { color: '#43A047' },
+              '&.Mui-completed': { color: '#2E7D32' },
+            },
+            '& .MuiStepLabel-label.Mui-active': { color: '#2E7D32', fontWeight: 'bold' },
+            '& .MuiStepLabel-label.Mui-completed': { color: '#1B5E20' },
+          }}
+        >
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -44,6 +57,7 @@ const LogisticsRegistrationWizard = () => {
           ))}
         </Stepper>
 
+        {/* Form */}
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           {activeStep === 0 && <OriginForm />}
           {activeStep === 1 && <DestinationForm />}
@@ -51,22 +65,61 @@ const LogisticsRegistrationWizard = () => {
           {activeStep === 3 && <VehicleForm />}
           {activeStep === 4 && <ReviewForm />}
 
+          {/* Buttons */}
           <Stack direction="row" justifyContent="space-between" mt={4}>
-            {activeStep > 0 && (
-              <Button onClick={handleBack} variant="outlined">
+            {/* Back Button */}
+            {activeStep > 0 ? (
+              <Button
+                onClick={handleBack}
+                variant="outlined"
+                sx={{
+                  borderColor: '#43A047',
+                  color: '#43A047',
+                  '&:hover': {
+                    backgroundColor: '#A5D6A7',
+                    borderColor: '#43A047',
+                  },
+                  borderRadius: 2,
+                  px: 3,
+                }}
+              >
                 Back
               </Button>
+            ) : (
+              <div />
             )}
+
             {activeStep < steps.length - 1 ? (
-              <Button onClick={handleNext} variant="contained">
+              <Button
+                onClick={handleNext}
+                variant="contained"
+                sx={{
+                  backgroundColor: '#43A047',
+                  color: '#fff',
+                  '&:hover': { backgroundColor: '#2E7D32' },
+                  borderRadius: 2,
+                  px: 3,
+                }}
+              >
                 Next
               </Button>
             ) : (
-              <Button type="submit" variant="contained" color="primary">
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  backgroundColor: '#43A047',
+                  color: '#fff',
+                  '&:hover': { backgroundColor: '#2E7D32' },
+                  borderRadius: 2,
+                  px: 3,
+                }}
+              >
                 Submit
               </Button>
             )}
           </Stack>
+
         </form>
       </Stack>
     </FormProvider>

@@ -1,84 +1,74 @@
 import React from 'react';
-import type { FieldErrorsImpl } from 'react-hook-form';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import {
   Stack,
   Typography,
   Button,
-  IconButton,
   TextField,
   Checkbox,
   FormControlLabel,
   Paper,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAdd, faTrashAlt, faImage } from '@fortawesome/free-solid-svg-icons';
+import { faAdd, faImage } from '@fortawesome/free-solid-svg-icons';
 import Dropzone from 'react-dropzone';
-import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
+import type { FieldErrorsImpl, FieldError, Merge } from 'react-hook-form';
+import type { TLogisticsRegistrationForm, TCargoDetail, TDimension } from '#domain/models/TLogisticsRegistrationForm';
+import CargoDimensionRow from './cargoDimensionRow';
 
 const CargoForm = () => {
   const {
-    control,
-    register,
-    formState: { errors },
-    setValue,
-    watch,
+    control, register, formState: { errors }, setValue, watch,
   } = useFormContext<TLogisticsRegistrationForm>();
 
-  // Errors narrowed for array access
-  const cargoErrors = errors.cargoDetails as
-    | FieldErrorsImpl<TLogisticsRegistrationForm['cargoDetails']>
-    | undefined;
+  const cargoDetailsErrors = errors.cargoDetails as
+  | FieldErrorsImpl<TCargoDetail>[]
+  | undefined;
+
+  const dimensionErrors = cargoDetailsErrors?.[0]?.dimensions as
+  | (Merge<FieldError, Partial<TDimension>> | undefined)[]
+  | undefined;
+  const hasDimensions = watch('cargoDetails.0.hasDimensions', false);
+  const photo = watch('cargoDetails.0.photo');
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'cargoDetails.0.dimensions',
   });
 
-  const hasDimensions = watch('cargoDetails.0.hasDimensions', false);
-  const photo = watch('cargoDetails.0.photo');
-
   return (
     <Stack spacing={3}>
-      <Typography variant="h5" fontWeight="bold" color="green">
-        Cargo Details
-      </Typography>
+      <Typography variant="h6">Cargo Details</Typography>
 
-      {/* Row 1: Package, Weight, CBM */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
           label="Package"
           {...register('cargoDetails.0.package', { required: 'Package is required' })}
-          error={!!cargoErrors?.[0]?.package}
-          helperText={cargoErrors?.[0]?.package?.message}
+          error={!!cargoDetailsErrors?.[0]?.package}
+          helperText={cargoDetailsErrors?.[0]?.package?.message}
           fullWidth
         />
-
         <TextField
           label="Weight (kg)"
           type="number"
           {...register('cargoDetails.0.weight', { required: 'Weight is required' })}
-          error={!!cargoErrors?.[0]?.weight}
-          helperText={cargoErrors?.[0]?.weight?.message}
+          error={!!cargoDetailsErrors?.[0]?.weight}
+          helperText={cargoDetailsErrors?.[0]?.weight?.message}
           fullWidth
         />
-
         <TextField
           label="CBM"
           type="number"
           {...register('cargoDetails.0.cbm', { required: 'CBM is required' })}
-          error={!!cargoErrors?.[0]?.cbm}
-          helperText={cargoErrors?.[0]?.cbm?.message}
+          error={!!cargoDetailsErrors?.[0]?.cbm}
+          helperText={cargoDetailsErrors?.[0]?.cbm?.message}
           fullWidth
         />
       </Stack>
 
-      {/* Dropzone */}
       <Dropzone
         accept={{ 'image/*': [] }}
-        onDrop={(acceptedFiles) => {
-          setValue('cargoDetails.0.photo', acceptedFiles[0]);
-        }}
+        onDrop={(acceptedFiles) => setValue('cargoDetails.0.photo', acceptedFiles[0])}
       >
         {({ getRootProps, getInputProps, isDragActive }) => (
           <Paper
@@ -96,9 +86,7 @@ const CargoForm = () => {
           >
             <input {...getInputProps()} />
             <FontAwesomeIcon icon={faImage} size="2x" color="gray" />
-            <Typography variant="body2" mt={1}>
-              Drag & drop a photo, or click to select
-            </Typography>
+            <Typography mt={1}>Drag & drop a photo, or click to select</Typography>
             {photo && (
               <Typography variant="caption" display="block" color="green" mt={1}>
                 {photo.name}
@@ -108,16 +96,14 @@ const CargoForm = () => {
         )}
       </Dropzone>
 
-      {/* Row 2: Material Type + Checkbox */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
           label="Material Type"
           {...register('cargoDetails.0.materialType', { required: 'Material type is required' })}
-          error={!!cargoErrors?.[0]?.materialType}
-          helperText={cargoErrors?.[0]?.materialType?.message}
+          error={!!cargoDetailsErrors?.[0]?.materialType}
+          helperText={cargoDetailsErrors?.[0]?.materialType?.message}
           fullWidth
         />
-
         <Controller
           name="cargoDetails.0.hasDimensions"
           control={control}
@@ -130,53 +116,23 @@ const CargoForm = () => {
         />
       </Stack>
 
-      {/* Dynamic Dimensions Section */}
       {hasDimensions && (
         <Stack spacing={2}>
           {fields.map((field, index) => (
-            <Stack
+            <CargoDimensionRow
               key={field.id}
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={2}
-              alignItems="center"
-              sx={{
-                p: 2,
-                border: '1px solid #c8e6c9',
-                borderRadius: 2,
-                backgroundColor: '#f1f8f1',
-              }}
-            >
-              {['handlingUnit', 'length', 'width', 'height', 'cubicFeet'].map((fieldName) => (
-                <TextField
-                  key={fieldName}
-                  label={fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}
-                  type={fieldName === 'handlingUnit' ? 'text' : 'number'}
-                  {...register(`cargoDetails.0.dimensions.${index}.${fieldName}` as const, {
-                    required: `${fieldName} required`,
-                  })}
-                  error={!!cargoErrors?.[0]?.dimensions?.[index]?.[fieldName]}
-                  helperText={cargoErrors?.[0]?.dimensions?.[index]?.[fieldName]?.message}
-                  fullWidth
-                />
-              ))}
-
-              {fields.length > 1 && (
-                <IconButton color="error" onClick={() => remove(index)}>
-                  <FontAwesomeIcon icon={faTrashAlt} />
-                </IconButton>
-              )}
-            </Stack>
+              index={index}
+              remove={remove}
+              dimensionErrors={dimensionErrors}
+              register={register}
+            />
           ))}
 
           <Button
             variant="contained"
             startIcon={<FontAwesomeIcon icon={faAdd} />}
             onClick={() => append({
-              handlingUnit: '',
-              length: '',
-              width: '',
-              height: '',
-              cubicFeet: '',
+              handlingUnit: '', length: 0, width: 0, height: 0, cubicFeet: 0,
             })}
             sx={{
               alignSelf: 'flex-start',

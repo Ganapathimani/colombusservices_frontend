@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useRef, useCallback } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -6,11 +6,6 @@ import {
   Button,
   Stack,
   Box,
-  Grow,
-  Popper,
-  Paper,
-  MenuList,
-  MenuItem,
   Dialog,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -21,9 +16,8 @@ const navItems = [
   { label: 'Home', subItems: [], path: '/' },
   {
     label: 'Services',
-    subItems: [
-      { label: 'Services', path: '/services' },
-    ],
+    subItems: [],
+    path: '/services',
   },
   // We will add once the package were added
   // {
@@ -49,7 +43,6 @@ const navItems = [
 ];
 
 const Navbar = () => {
-  const [currentMenu, setCurrentMenu] = useState<number | null>(null);
   const [isAuthFormOpen, , AuthFormActions] = useToggle(false);
   const openTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -66,10 +59,9 @@ const Navbar = () => {
 
   const goToPath = useCallback((path?: string) => {
     navigate(path ?? '/');
-    setCurrentMenu(null);
   }, [navigate]);
 
-  const handleMouseEnter = useCallback((index: number) => {
+  const handleMouseEnter = useCallback(() => {
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
@@ -77,10 +69,6 @@ const Navbar = () => {
     if (openTimeoutRef.current) {
       clearTimeout(openTimeoutRef.current);
     }
-
-    openTimeoutRef.current = setTimeout(() => {
-      setCurrentMenu(index);
-    }, 350);
   }, []);
 
   const handleMouseLeave = useCallback(() => {
@@ -91,10 +79,6 @@ const Navbar = () => {
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
     }
-
-    closeTimeoutRef.current = setTimeout(() => {
-      setCurrentMenu(null);
-    }, 200);
   }, []);
 
   return (
@@ -120,7 +104,6 @@ const Navbar = () => {
             px: { xs: 2, sm: 4, md: 6 },
           }}
         >
-          {/* Logo */}
           <Stack
             sx={{
               display: 'flex',
@@ -177,7 +160,7 @@ const Navbar = () => {
                   py: 2,
                   px: 1,
                 }}
-                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onClick={() => {
                   if (!item.subItems.length) {
@@ -217,88 +200,6 @@ const Navbar = () => {
                 >
                   {item.label}
                 </Typography>
-
-                {/* Submenu */}
-                {item.subItems.length > 0 && (
-                  <Popper
-                    open={currentMenu === index}
-                    anchorEl={navRefs.current[index]}
-                    placement="bottom"
-                    transition
-                    disablePortal={false}
-                    modifiers={[
-                      {
-                        name: 'offset',
-                        options: {
-                          offset: [0, 12],
-                        },
-                      },
-                    ]}
-                    sx={{ zIndex: 1300 }}
-                  >
-                    {({ TransitionProps }) => (
-                      <Grow {...TransitionProps} timeout={250}>
-                        <Paper
-                          onMouseEnter={() => {
-                            if (closeTimeoutRef.current) {
-                              clearTimeout(closeTimeoutRef.current);
-                              closeTimeoutRef.current = null;
-                            }
-                          }}
-                          onMouseLeave={handleMouseLeave}
-                          sx={{
-                            minWidth: '170px',
-                            boxShadow: '0px 8px 25px rgba(0,0,0,0.12)',
-                            borderRadius: '8px',
-                            border: '1px solid rgba(0,0,0,0.08)',
-                            position: 'relative',
-                            '&::before': {
-                              content: '""',
-                              position: 'absolute',
-                              top: '-8px',
-                              left: '50%',
-                              transform: 'translateX(-50%) rotate(45deg)',
-                              width: '16px',
-                              height: '16px',
-                              backgroundColor: '#fff',
-                              border: '1px solid rgba(0,0,0,0.08)',
-                              borderBottom: 'none',
-                              borderRight: 'none',
-                            },
-                          }}
-                        >
-                          <MenuList sx={{ py: 1 }}>
-                            {item.subItems.map((sub) => (
-                              <MenuItem
-                                key={sub.label}
-                                onClick={() => goToPath(sub.path)}
-                                sx={{
-                                  color: '#2d3748',
-                                  fontSize: '0.95rem',
-                                  fontWeight: 500,
-                                  minHeight: '35px',
-                                  px: 2,
-                                  py: 1.2,
-                                  transition: 'all 0.2s ease',
-                                  '&:hover': {
-                                    backgroundColor: 'rgba(22, 101, 52, 0.08)',
-                                    color: '#166534',
-                                    paddingLeft: '20px',
-                                  },
-                                  '&:not(:last-child)': {
-                                    borderBottom: '1px solid rgba(0,0,0,0.06)',
-                                  },
-                                }}
-                              >
-                                {sub.label}
-                              </MenuItem>
-                            ))}
-                          </MenuList>
-                        </Paper>
-                      </Grow>
-                    )}
-                  </Popper>
-                )}
               </Box>
             ))}
           </Stack>

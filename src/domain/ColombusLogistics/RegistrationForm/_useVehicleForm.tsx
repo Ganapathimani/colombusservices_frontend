@@ -10,42 +10,99 @@ import {
   FormControlLabel,
   Radio,
   FormHelperText,
+  MenuItem,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTruck, faCarSide } from '@fortawesome/free-solid-svg-icons';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
 
 const useVehicleForm = () => {
-  const { register, control, formState: { errors } } = useFormContext<TLogisticsRegistrationForm>();
+  const { control, formState: { errors } } = useFormContext<TLogisticsRegistrationForm>();
+
+  const vehicleTypes = [
+    'Open Truck',
+    'Closed Body Truck / Container Truck',
+    'Flatbed Truck',
+    'Trailer Trucks (Multi-Axle)',
+    'Tanker Truck',
+    'Refrigerated Truck',
+    'Pick-up Van / Tempo',
+    'Car Carrier Truck',
+    'Special Purpose Vehicles',
+  ];
+
+  const vehicleModels = [
+    'Bolero pickup',
+    'Bada dost',
+    '14 feet',
+    '17 feet',
+    '20 feet',
+    '24 feet',
+    '26 feet',
+    '28 feet',
+    '32 feet (single axle)',
+    '32 feet (multi axle)',
+  ];
 
   return (
     <Stack spacing={3}>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-        <TextField
-          label="Vehicle Type"
-          {...register('vehicleType', { required: 'Vehicle Type is required' })}
-          error={!!errors.vehicleType}
-          helperText={errors.vehicleType?.message}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <FontAwesomeIcon icon={faTruck} />
-              </InputAdornment>
-            ),
-          }}
+        <Controller
+          name="vehicleType"
+          control={control}
+          rules={{ required: 'Vehicle Type is required' }}
+          render={({ field }) => (
+            <TextField
+              select
+              label="Vehicle Type"
+              {...field}
+              error={!!errors.vehicleType}
+              helperText={errors.vehicleType?.message}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FontAwesomeIcon icon={faTruck} />
+                  </InputAdornment>
+                ),
+              }}
+              fullWidth
+            >
+              {vehicleTypes.map((type) => (
+                <MenuItem key={type} value={type}>
+                  {type}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
         />
-        <TextField
-          label="Vehicle Model"
-          {...register('vehicleModel', { required: 'Vehicle Model is required' })}
-          error={!!errors.vehicleModel}
-          helperText={errors.vehicleModel?.message}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <FontAwesomeIcon icon={faCarSide} />
-              </InputAdornment>
-            ),
-          }}
+
+        <Controller
+          name="vehicleModel"
+          control={control}
+          rules={{ required: 'Vehicle Model is required' }}
+          render={({ field }) => (
+            <TextField
+              select
+              label="Vehicle Model"
+              {...field}
+              error={!!errors.vehicleModel}
+              helperText={errors.vehicleModel?.message}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FontAwesomeIcon icon={faCarSide} />
+                  </InputAdornment>
+                ),
+              }}
+              fullWidth
+            >
+              {vehicleModels.map((model) => (
+                <MenuItem key={model} value={model}>
+                  {model}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
         />
       </Stack>
 
