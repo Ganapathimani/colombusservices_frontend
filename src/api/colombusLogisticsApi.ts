@@ -18,9 +18,13 @@ import {
 } from 'lodash/fp';
 import with401Redirect from './with401Redirect';
 import withLoading from './withLoading';
+import loginUpsert from './_loginUpsert';
+import signupUpsert from './_signupUpsert';
+import userGet from './_userGet';
 
 const tagTypes = [
-
+  'Signup',
+  'Login',
 ] as const;
 
 const baseQuery = createApi({
@@ -42,6 +46,9 @@ const baseQuery = createApi({
   }),
   tagTypes,
   endpoints: (builder) => ({
+    signupUpsert: signupUpsert(builder),
+    loginUpsert: loginUpsert(builder),
+    userGet: userGet(builder),
   }),
 
 });
@@ -62,15 +69,16 @@ const colombusLogisticsApi = baseQuery.enhanceEndpoints({
 
 export const getApi = () => colombusLogisticsApi;
 
-export type ColomLogisticsTagType = typeof tagTypes[number];
-export type ColomLogisticsBuilder = EndpointBuilder<
+export type ColombusLogisticsTagType = typeof tagTypes[number];
+export type ColombusLogisticsBuilder = EndpointBuilder<
 BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError, {}, FetchBaseQueryMeta>,
-ColomLogisticsTagType,
-'horseshow-entry'>;
+ColombusLogisticsTagType,
+'logictics'>;
 
 export default colombusLogisticsApi;
 
-// eslint-disable-next-line no-empty-pattern
 export const {
-  // extract your query here
+  useLoginUpsertMutation,
+  useSignupUpsertMutation,
+  useUserGetQuery,
 } = colombusLogisticsApi;

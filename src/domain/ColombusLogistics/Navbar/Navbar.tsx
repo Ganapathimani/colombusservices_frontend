@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -7,79 +7,42 @@ import {
   Stack,
   Box,
   Dialog,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@react-shanties/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faBars, faHome, faInfoCircle, faEnvelope, faTruck, faCalendarCheck,
+} from '@fortawesome/free-solid-svg-icons';
 import AuthForm from '#pages/Layout/Login/AuthForm';
 
 const navItems = [
-  { label: 'Home', subItems: [], path: '/' },
-  {
-    label: 'Services',
-    subItems: [],
-    path: '/services',
-  },
-  // We will add once the package were added
-  // {
-  //   label: 'Tracking',
-  //   subItems: [],
-  //   path: '/tracking',
-  // },
-  {
-    label: 'About Us',
-    subItems: [],
-    path: '/about',
-  },
-  {
-    label: 'Contact',
-    subItems: [],
-    path: '/contact',
-  },
-  {
-    label: 'Book Now',
-    subItems: [],
-    path: '/registration',
-  },
+  { label: 'Home', path: '/', icon: faHome },
+  { label: 'Services', path: '/services', icon: faTruck },
+  { label: 'About Us', path: '/about', icon: faInfoCircle },
+  { label: 'Contact', path: '/contact', icon: faEnvelope },
+  { label: 'Book Now', path: '/registration', icon: faCalendarCheck },
 ];
 
 const Navbar = () => {
   const [isAuthFormOpen, , AuthFormActions] = useToggle(false);
-  const openTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [sidebarOpen, ,sideBarActions] = useToggle(false);
   const navigate = useNavigate();
 
-  const navRefs = useRef<Array<HTMLElement | null>>([]);
-
-  const setNavRef = useCallback(
-    (index: number) => (el: HTMLElement | null) => {
-      navRefs.current[index] = el;
+  const goToPath = useCallback(
+    (path?: string) => {
+      navigate(path ?? '/');
+      sideBarActions.setOff();
     },
-    [],
+    [navigate, sideBarActions],
   );
-
-  const goToPath = useCallback((path?: string) => {
-    navigate(path ?? '/');
-  }, [navigate]);
-
-  const handleMouseEnter = useCallback(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-    if (openTimeoutRef.current) {
-      clearTimeout(openTimeoutRef.current);
-    }
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    if (openTimeoutRef.current) {
-      clearTimeout(openTimeoutRef.current);
-      openTimeoutRef.current = null;
-    }
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-    }
-  }, []);
 
   return (
     <>
@@ -105,16 +68,7 @@ const Navbar = () => {
           }}
         >
           <Stack
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              cursor: 'pointer',
-              transition: 'transform 0.2s ease',
-              '&:hover': {
-                transform: 'scale(1.02)',
-              },
-            }}
+            sx={{ cursor: 'pointer', flexDirection: 'column' }}
             onClick={() => goToPath('/')}
           >
             <Typography
@@ -123,9 +77,6 @@ const Navbar = () => {
                 fontWeight: 700,
                 color: '#1a472a',
                 fontSize: { xs: '1.1rem', sm: '1.5rem' },
-                letterSpacing: '-0.5px',
-                fontFamily: '"Inter", "Roboto", sans-serif',
-                lineHeight: 1,
               }}
             >
               Columbus Logistics
@@ -133,11 +84,7 @@ const Navbar = () => {
             <Typography
               variant="subtitle2"
               sx={{
-                color: '#4CAF50',
-                fontWeight: 500,
-                fontSize: '0.875rem',
-                letterSpacing: '0.5px',
-                marginTop: '-2px',
+                color: '#4CAF50', fontWeight: 500, fontSize: '0.875rem', marginTop: '-2px',
               }}
             >
               Connecting Indian Commerce
@@ -150,23 +97,11 @@ const Navbar = () => {
             alignItems="center"
             sx={{ display: { xs: 'none', md: 'flex' } }}
           >
-            {navItems.map((item, index) => (
+            {navItems.map((item) => (
               <Box
                 key={item.label}
-                ref={setNavRef(index)}
-                sx={{
-                  position: 'relative',
-                  cursor: 'pointer',
-                  py: 2,
-                  px: 1,
-                }}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                onClick={() => {
-                  if (!item.subItems.length) {
-                    goToPath(item.path);
-                  }
-                }}
+                sx={{ cursor: 'pointer', py: 2, px: 1 }}
+                onClick={() => goToPath(item.path)}
               >
                 <Typography
                   variant="body1"
@@ -175,13 +110,7 @@ const Navbar = () => {
                     fontWeight: 600,
                     color: '#2d3748',
                     position: 'relative',
-                    transition: 'all 0.3s ease',
-                    fontFamily: '"Inter", "Roboto", sans-serif',
-                    userSelect: 'none',
-                    whiteSpace: 'nowrap',
-                    '&:hover': {
-                      color: '#166534',
-                    },
+                    '&:hover': { color: '#166534' },
                     '&::after': {
                       content: '""',
                       position: 'absolute',
@@ -193,9 +122,7 @@ const Navbar = () => {
                       transition: 'all 0.3s ease',
                       transform: 'translateX(-50%)',
                     },
-                    '&:hover::after': {
-                      width: '100%',
-                    },
+                    '&:hover::after': { width: '100%' },
                   }}
                 >
                   {item.label}
@@ -204,48 +131,70 @@ const Navbar = () => {
             ))}
           </Stack>
 
-          <Button
-            variant="contained"
-            onClick={AuthFormActions.setOn}
-            sx={{
-              backgroundColor: '#166534',
-              color: '#ffffff',
-              textTransform: 'none',
-              fontWeight: 600,
-              fontSize: '0.95rem',
-              px: 4,
-              py: 1.5,
-              borderRadius: '8px',
-              boxShadow: '0 4px 12px rgba(22, 101, 52, 0.3)',
-              transition: 'all 0.3s ease',
-              fontFamily: '"Inter", "Roboto", sans-serif',
-              whiteSpace: 'nowrap',
-              '&:hover': {
-                backgroundColor: '#14532d',
-                boxShadow: '0 6px 16px rgba(22, 101, 52, 0.4)',
-                transform: 'translateY(-1px)',
-              },
-              '&:active': {
-                transform: 'translateY(0px)',
-              },
-            }}
-          >
-            Login
-          </Button>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Button
+              variant="contained"
+              onClick={AuthFormActions.setOn}
+              sx={{
+                backgroundColor: '#166534',
+                color: '#ffffff',
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                px: 4,
+                py: 1.5,
+                borderRadius: '8px',
+                '&:hover': { backgroundColor: '#14532d' },
+              }}
+            >
+              Login
+            </Button>
+            <IconButton sx={{ display: { md: 'none' } }} onClick={sideBarActions.setOn}>
+              <FontAwesomeIcon icon={faBars} />
+            </IconButton>
+          </Stack>
         </Toolbar>
       </AppBar>
+
+      <Drawer
+        anchor="right"
+        open={sidebarOpen}
+        onClose={sideBarActions.setOff}
+        PaperProps={{ sx: { width: 280, backgroundColor: '#f9f9f9' } }}
+      >
+        <Box sx={{ p: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: '#1a472a', mb: 1 }}>
+            Columbus Logistics
+          </Typography>
+          <Divider sx={{ mb: 1 }} />
+
+          <List>
+            {navItems.map((item) => (
+              <ListItemButton
+                key={item.label}
+                onClick={() => goToPath(item.path)}
+                sx={{
+                  borderRadius: 1,
+                  mb: 1,
+                  '&:hover': { backgroundColor: '#e6f4ea' },
+                }}
+              >
+                <ListItemIcon>
+                  <FontAwesomeIcon icon={item.icon} style={{ width: 20, height: 20, color: '#166534' }} />
+                </ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
 
       <Dialog
         open={isAuthFormOpen}
         onClose={AuthFormActions.setOff}
         maxWidth="xs"
         fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: '12px',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
-          },
-        }}
+        PaperProps={{ sx: { borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' } }}
       >
         <AuthForm />
       </Dialog>

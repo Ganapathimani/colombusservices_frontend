@@ -35,8 +35,8 @@ const ClientLogoCarousel = () => (
       className="swiper-button-prev-custom"
       sx={{
         position: 'absolute',
-        top: '50%',
-        left: 40,
+        top: '45%',
+        left: -70,
         transform: 'translateY(-50%)',
         backgroundColor: '#2e7d32',
         color: '#fff',
@@ -106,8 +106,8 @@ const ClientLogoCarousel = () => (
       className="swiper-button-next-custom"
       sx={{
         position: 'absolute',
-        top: '50%',
-        right: 40,
+        top: '35%',
+        right: -70,
         transform: 'translateY(-50%)',
         backgroundColor: '#2e7d32',
         color: '#fff',

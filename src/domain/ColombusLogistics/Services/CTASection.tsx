@@ -6,7 +6,7 @@ import React from 'react';
 const CTASection = () => (
   <Box
     sx={{
-      py: { xs: 10, md: 14 },
+      py: { xs: 10 },
       textAlign: 'center',
       background: '#fff',
       boxShadow: '0 10px 30px rgba(0,0,0,0.06)',

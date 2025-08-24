@@ -91,18 +91,41 @@ const Footer = () => {
       <Zoom in={isVisible}>
         <Fab
           color="success"
-          size="small"
+          size="medium"
           onClick={scrollToTop}
           sx={{
             position: 'fixed',
-            bottom: 16,
-            right: 16,
-            zIndex: 1000,
+            bottom: 24,
+            right: 24,
+            zIndex: 1200,
+            bgcolor: '#2E7D32',
+            color: 'white',
+            boxShadow: '0px 6px 12px rgba(0,0,0,0.25)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              bgcolor: '#1B5E20',
+              boxShadow: '0px 12px 24px rgba(0,0,0,0.35)',
+            },
           }}
         >
-          <FontAwesomeIcon icon={faArrowUpLong} size="lg" />
+          <FontAwesomeIcon
+            icon={faArrowUpLong}
+            size="lg"
+            style={{
+              transition: 'transform 0.4s ease',
+            }}
+            className="scroll-icon"
+          />
         </Fab>
       </Zoom>
+
+      <style>
+        {`
+          .scroll-icon:hover {
+            transform: rotate(-360deg);
+          }
+        `}
+      </style>
     </Grid>
   );
 };

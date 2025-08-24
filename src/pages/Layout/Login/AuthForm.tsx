@@ -17,6 +17,7 @@ import {
   faUser,
   faKey,
 } from '@fortawesome/free-solid-svg-icons';
+import { useLoginUpsertMutation, useSignupUpsertMutation } from '#api/colombusLogisticsApi';
 
 type SignUpInputs = {
   name: string;
@@ -34,6 +35,9 @@ const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [signupUpsert] = useSignupUpsertMutation();
+  const [loginUpsert] = useLoginUpsertMutation();
 
   const {
     register: registerLogin,
@@ -54,13 +58,32 @@ const AuthForm = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
-    alert(`Logging in with email: ${data.email}`);
-    resetLogin();
+    try {
+      await loginUpsert({
+        email: data.email,
+        password: data.password,
+      }).unwrap();
+
+      resetLogin();
+      setIsLogin(true);
+    } catch (error: any) {
+      console.error('SignUp error:', error);
+    }
   };
 
   const onSignUpSubmit: SubmitHandler<SignUpInputs> = async (data) => {
-    alert(`Signing up with name: ${data.name}, email: ${data.email}`);
-    resetSignUp();
+    try {
+      await signupUpsert({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      }).unwrap();
+
+      resetSignUp();
+      setIsLogin(true);
+    } catch (error: any) {
+      console.error('SignUp error:', error);
+    }
   };
 
   const toggleForm = useCallback(() => {
