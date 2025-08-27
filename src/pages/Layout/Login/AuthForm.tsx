@@ -6,6 +6,7 @@ import {
   Stack,
   InputAdornment,
   IconButton,
+  Alert,
 } from '@mui/material';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
@@ -16,6 +17,7 @@ import {
   faEyeSlash,
   faUser,
   faKey,
+  faPhone,
 } from '@fortawesome/free-solid-svg-icons';
 import { useLoginUpsertMutation, useSignupUpsertMutation } from '#api/colombusLogisticsApi';
 
@@ -23,7 +25,7 @@ type SignUpInputs = {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  mobile: string;
 };
 
 type LoginInputs = {
@@ -31,10 +33,15 @@ type LoginInputs = {
   password: string;
 };
 
-const AuthForm = () => {
+type AuthFormProps = {
+  onSuccess: (userEmail: string) => void;
+  onClose: () => void;
+};
+
+const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [signupUpsert] = useSignupUpsertMutation();
   const [loginUpsert] = useLoginUpsertMutation();
@@ -51,38 +58,47 @@ const AuthForm = () => {
     handleSubmit: handleSubmitSignUp,
     formState: { errors: errorsSignUp, isSubmitting: isSubmittingSignUp },
     reset: resetSignUp,
-    watch,
   } = useForm<SignUpInputs>({ mode: 'onTouched' });
 
-  const passwordValue = watch('password', '');
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const mobileRegex = /^[0-9]{10}$/;
 
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
     try {
-      await loginUpsert({
-        email: data.email,
-        password: data.password,
-      }).unwrap();
+      setErrorMessage(null);
+      const response = await loginUpsert({ email: data.email, password: data.password }).unwrap();
+      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('email', response.user.email);
+      localStorage.setItem('role', response.user.role);
+      localStorage.setItem('token', response.token);
 
       resetLogin();
-      setIsLogin(true);
+      onSuccess(response.user.email);
+      onClose();
     } catch (error: any) {
-      console.error('SignUp error:', error);
+      setErrorMessage(error?.data?.message || 'Login failed. Please try again.');
     }
   };
 
   const onSignUpSubmit: SubmitHandler<SignUpInputs> = async (data) => {
     try {
-      await signupUpsert({
+      setErrorMessage(null);
+      const response = await signupUpsert({
         name: data.name,
         email: data.email,
         password: data.password,
+        mobile: data.mobile,
       }).unwrap();
+      localStorage.setItem('user', JSON.stringify(response.user.name));
+      localStorage.setItem('email', JSON.stringify(response.user.email));
+      localStorage.setItem('role', JSON.stringify(response.user.role));
+      localStorage.setItem('token', response.token);
 
       resetSignUp();
-      setIsLogin(true);
+      onSuccess(response.user.email);
+      onClose();
     } catch (error: any) {
-      console.error('SignUp error:', error);
+      setErrorMessage(error?.data?.message || 'Signup failed. Please try again.');
     }
   };
 
@@ -90,22 +106,14 @@ const AuthForm = () => {
     setIsLogin((prev) => !prev);
     resetLogin();
     resetSignUp();
+    setErrorMessage(null);
   }, [resetLogin, resetSignUp]);
 
   return (
-    <Stack
-      justifyContent="center"
-      alignItems="center"
-      sx={{ backgroundColor: '#f0fdf4' }}
-    >
-      <Stack
-        sx={{
-          p: 4,
-          borderRadius: 3,
-          textAlign: 'center',
-          backgroundColor: 'white',
-          boxShadow: 6,
-        }}
+    <Stack justifyContent="center" alignItems="center" sx={{ backgroundColor: '#f0fdf4' }}>
+      <Stack sx={{
+        p: 4, borderRadius: 3, textAlign: 'center', backgroundColor: 'white', boxShadow: 6,
+      }}
       >
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           {isLogin ? 'Welcome Back' : 'Create Account'}
@@ -113,6 +121,12 @@ const AuthForm = () => {
         <Typography variant="body2" color="text.secondary" mb={3}>
           {isLogin ? 'Sign in to your account' : 'Sign up to get started'}
         </Typography>
+
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
 
         {isLogin ? (
           <form noValidate onSubmit={handleSubmitLogin(onLoginSubmit)}>
@@ -151,11 +165,7 @@ const AuthForm = () => {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
+                    <IconButton aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword(!showPassword)} edge="end">
                       <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size="sm" />
                     </IconButton>
                   </InputAdornment>
@@ -168,11 +178,7 @@ const AuthForm = () => {
               fullWidth
               variant="contained"
               sx={{
-                mt: 3,
-                mb: 1,
-                textTransform: 'none',
-                bgcolor: '#22c55e',
-                '&:hover': { bgcolor: '#16a34a' },
+                mt: 3, mb: 1, textTransform: 'none', bgcolor: '#22c55e', '&:hover': { bgcolor: '#16a34a' },
               }}
               disabled={isSubmittingLogin}
             >
@@ -220,6 +226,25 @@ const AuthForm = () => {
             />
 
             <TextField
+              placeholder="Enter your mobile number"
+              fullWidth
+              margin="normal"
+              {...registerSignUp('mobile', {
+                required: 'Mobile number is required',
+                pattern: { value: mobileRegex, message: 'Enter valid 10-digit number' },
+              })}
+              error={!!errorsSignUp.mobile}
+              helperText={errorsSignUp.mobile?.message}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FontAwesomeIcon icon={faPhone} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            <TextField
               placeholder="Enter your password"
               type={showPassword ? 'text' : 'password'}
               fullWidth
@@ -238,43 +263,8 @@ const AuthForm = () => {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
+                    <IconButton aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword(!showPassword)} edge="end">
                       <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size="sm" />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <TextField
-              placeholder="Confirm your password"
-              type={showConfirmPassword ? 'text' : 'password'}
-              fullWidth
-              margin="normal"
-              {...registerSignUp('confirmPassword', {
-                required: 'Confirm Password is required',
-                validate: (value) => value === passwordValue || 'Passwords must match',
-              })}
-              error={!!errorsSignUp.confirmPassword}
-              helperText={errorsSignUp.confirmPassword?.message}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FontAwesomeIcon icon={faKey} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      edge="end"
-                    >
-                      <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} size="sm" />
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -286,11 +276,7 @@ const AuthForm = () => {
               fullWidth
               variant="contained"
               sx={{
-                mt: 3,
-                mb: 1,
-                textTransform: 'none',
-                bgcolor: '#22c55e',
-                '&:hover': { bgcolor: '#16a34a' },
+                mt: 3, mb: 1, textTransform: 'none', bgcolor: '#22c55e', '&:hover': { bgcolor: '#16a34a' },
               }}
               disabled={isSubmittingSignUp}
             >
@@ -300,18 +286,12 @@ const AuthForm = () => {
         )}
 
         <Stack direction="row" justifyContent="center" alignItems="center" mt={2} spacing={1}>
-          <Typography variant="body2">
-            {isLogin ? "Don't have an account?" : 'Already have an account?'}
-          </Typography>
+          <Typography variant="body2">{isLogin ? "Don't have an account?" : 'Already have an account?'}</Typography>
           <Button
             onClick={toggleForm}
             variant="text"
             sx={{
-              fontWeight: 'bold',
-              textTransform: 'none',
-              padding: 0,
-              minWidth: 0,
-              color: '#22c55e',
+              fontWeight: 'bold', textTransform: 'none', padding: 0, minWidth: 0, color: '#22c55e',
             }}
           >
             {isLogin ? 'Sign Up' : 'Login'}

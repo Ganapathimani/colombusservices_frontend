@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import {
   Button, Stepper, Step, StepLabel, Stack,
 } from '@mui/material';
+import { useOrderUpsertMutation } from '#api/colombusLogisticsApi';
 import type { TLogisticsRegistrationForm } from '../../models/TLogisticsRegistrationForm';
 import OriginForm from './_useOriginForm';
 import DestinationForm from './_useDestinationForm';
@@ -18,6 +19,8 @@ const LogisticsRegistrationWizard = () => {
     mode: 'onBlur',
   });
 
+  const [orderUpsert] = useOrderUpsertMutation();
+
   const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = async () => {
@@ -29,9 +32,19 @@ const LogisticsRegistrationWizard = () => {
 
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
-  const onSubmit = (data: TLogisticsRegistrationForm) => {
-    console.log('Final Submit:', data);
-  };
+  const onSubmit = useCallback(async (formData: TLogisticsRegistrationForm) => {
+    try {
+      const payload = {
+        ...formData,
+        cargoDetails: formData.cargoDetails.map((cargo) => ({
+          ...cargo,
+        })),
+      };
+      await orderUpsert(payload).unwrap();
+    } catch (err: any) {
+      console.error('Error submitting order:', err);
+    }
+  }, [orderUpsert]);
 
   return (
     <FormProvider {...methods}>

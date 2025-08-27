@@ -1,27 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Stack,
-  Box,
-  Dialog,
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-  IconButton,
+  AppBar, Toolbar, Typography, Button, Stack, Box, Dialog, Drawer,
+  List, ListItemButton, ListItemIcon, ListItemText, Divider, IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@react-shanties/core';
+import { useUserGetQuery } from '#api/colombusLogisticsApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBars, faHome, faInfoCircle, faEnvelope, faTruck, faCalendarCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import AuthForm from '#pages/Layout/Login/AuthForm';
+import ProfileMenu from './ProfileMenu';
 
 const navItems = [
   { label: 'Home', path: '/', icon: faHome },
@@ -33,16 +23,41 @@ const navItems = [
 
 const Navbar = () => {
   const [isAuthFormOpen, , AuthFormActions] = useToggle(false);
-  const [sidebarOpen, ,sideBarActions] = useToggle(false);
+  const [sidebarOpen, , sideBarActions] = useToggle(false);
   const navigate = useNavigate();
 
-  const goToPath = useCallback(
-    (path?: string) => {
-      navigate(path ?? '/');
-      sideBarActions.setOff();
-    },
-    [navigate, sideBarActions],
-  );
+  const token = localStorage.getItem('token');
+  const email = localStorage.getItem('email');
+  const [currentUser, setCurrentUser] = useState<any>(() => {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  });
+
+  const { data: fetchedUser } = useUserGetQuery({ id: email! }, {
+    skip: !token,
+  });
+
+  useEffect(() => {
+    if (fetchedUser) {
+      setCurrentUser(fetchedUser);
+      localStorage.setItem('user', JSON.stringify(fetchedUser));
+    }
+  }, [fetchedUser]);
+
+  const handleLoginSuccess = useCallback((userData: any) => {
+    setCurrentUser(userData);
+    AuthFormActions.setOff();
+  }, [AuthFormActions]);
+
+  const handleLogout = useCallback(() => {
+    localStorage.clear();
+    setCurrentUser(null);
+  }, []);
+
+  const goToPath = useCallback((path?: string) => {
+    navigate(path ?? '/');
+    sideBarActions.setOff();
+  }, [navigate, sideBarActions]);
 
   return (
     <>
@@ -58,29 +73,12 @@ const Navbar = () => {
           borderBottom: '2px solid #bbb',
         }}
       >
-        <Toolbar
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            minHeight: '80px',
-            px: { xs: 2, sm: 4, md: 6 },
-          }}
+        <Toolbar sx={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center', minHeight: '80px', px: { xs: 2, sm: 4, md: 6 },
+        }}
         >
-          <Stack
-            sx={{ cursor: 'pointer', flexDirection: 'column' }}
-            onClick={() => goToPath('/')}
-          >
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                color: '#1a472a',
-                fontSize: { xs: '1.1rem', sm: '1.5rem' },
-              }}
-            >
-              Columbus Logistics
-            </Typography>
+          <Stack sx={{ cursor: 'pointer', flexDirection: 'column' }} onClick={() => goToPath('/')}>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: '#1a472a', fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>Columbus Logistics</Typography>
             <Typography
               variant="subtitle2"
               sx={{
@@ -91,18 +89,9 @@ const Navbar = () => {
             </Typography>
           </Stack>
 
-          <Stack
-            direction="row"
-            spacing={4}
-            alignItems="center"
-            sx={{ display: { xs: 'none', md: 'flex' } }}
-          >
+          <Stack direction="row" spacing={4} alignItems="center" sx={{ display: { xs: 'none', md: 'flex' } }}>
             {navItems.map((item) => (
-              <Box
-                key={item.label}
-                sx={{ cursor: 'pointer', py: 2, px: 1 }}
-                onClick={() => goToPath(item.path)}
-              >
+              <Box key={item.label} sx={{ cursor: 'pointer', py: 2, px: 1 }} onClick={() => goToPath(item.path)}>
                 <Typography
                   variant="body1"
                   sx={{
@@ -132,23 +121,28 @@ const Navbar = () => {
           </Stack>
 
           <Stack direction="row" spacing={1} alignItems="center">
-            <Button
-              variant="contained"
-              onClick={AuthFormActions.setOn}
-              sx={{
-                backgroundColor: '#166534',
-                color: '#ffffff',
-                textTransform: 'none',
-                fontWeight: 600,
-                fontSize: '0.95rem',
-                px: 4,
-                py: 1.5,
-                borderRadius: '8px',
-                '&:hover': { backgroundColor: '#14532d' },
-              }}
-            >
-              Login
-            </Button>
+            {currentUser ? (
+              <ProfileMenu user={currentUser} onLogout={handleLogout} />
+            ) : (
+              <Button
+                variant="contained"
+                onClick={AuthFormActions.setOn}
+                sx={{
+                  backgroundColor: '#166534',
+                  color: '#ffffff',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  fontSize: '0.95rem',
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: '8px',
+                  '&:hover': { backgroundColor: '#14532d' },
+                }}
+              >
+                Login
+              </Button>
+            )}
+
             <IconButton sx={{ display: { md: 'none' } }} onClick={sideBarActions.setOn}>
               <FontAwesomeIcon icon={faBars} />
             </IconButton>
@@ -156,29 +150,13 @@ const Navbar = () => {
         </Toolbar>
       </AppBar>
 
-      <Drawer
-        anchor="right"
-        open={sidebarOpen}
-        onClose={sideBarActions.setOff}
-        PaperProps={{ sx: { width: 280, backgroundColor: '#f9f9f9' } }}
-      >
+      <Drawer anchor="right" open={sidebarOpen} onClose={sideBarActions.setOff} PaperProps={{ sx: { width: 280, backgroundColor: '#f9f9f9' } }}>
         <Box sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, color: '#1a472a', mb: 1 }}>
-            Columbus Logistics
-          </Typography>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: '#1a472a', mb: 1 }}>Columbus Logistics</Typography>
           <Divider sx={{ mb: 1 }} />
-
           <List>
             {navItems.map((item) => (
-              <ListItemButton
-                key={item.label}
-                onClick={() => goToPath(item.path)}
-                sx={{
-                  borderRadius: 1,
-                  mb: 1,
-                  '&:hover': { backgroundColor: '#e6f4ea' },
-                }}
-              >
+              <ListItemButton key={item.label} onClick={() => goToPath(item.path)} sx={{ borderRadius: 1, mb: 1, '&:hover': { backgroundColor: '#e6f4ea' } }}>
                 <ListItemIcon>
                   <FontAwesomeIcon icon={item.icon} style={{ width: 20, height: 20, color: '#166534' }} />
                 </ListItemIcon>
@@ -189,14 +167,8 @@ const Navbar = () => {
         </Box>
       </Drawer>
 
-      <Dialog
-        open={isAuthFormOpen}
-        onClose={AuthFormActions.setOff}
-        maxWidth="xs"
-        fullWidth
-        PaperProps={{ sx: { borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' } }}
-      >
-        <AuthForm />
+      <Dialog open={isAuthFormOpen} onClose={AuthFormActions.setOff} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' } }}>
+        <AuthForm onSuccess={handleLoginSuccess} onClose={AuthFormActions.setOff} />
       </Dialog>
     </>
   );

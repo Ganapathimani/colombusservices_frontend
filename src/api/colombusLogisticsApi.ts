@@ -19,12 +19,14 @@ import {
 import with401Redirect from './with401Redirect';
 import withLoading from './withLoading';
 import loginUpsert from './_loginUpsert';
+import orderUpsert from './_createOrder';
 import signupUpsert from './_signupUpsert';
 import userGet from './_userGet';
 
 const tagTypes = [
   'Signup',
   'Login',
+  'Orders',
 ] as const;
 
 const baseQuery = createApi({
@@ -32,22 +34,18 @@ const baseQuery = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${window.envs.BFF_BASE_URL}/api/`,
     prepareHeaders: (headers) => {
-      const tokenMatch = document.cookie.match(/(?:^|; )jwt_token=([^;]*)/);
-      const token = tokenMatch?.[1];
-      const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('token');
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
-      }
-      if (userId) {
-        headers.set('x-user-id', userId);
       }
       return headers;
     },
   }),
   tagTypes,
   endpoints: (builder) => ({
-    signupUpsert: signupUpsert(builder),
     loginUpsert: loginUpsert(builder),
+    orderUpsert: orderUpsert(builder),
+    signupUpsert: signupUpsert(builder),
     userGet: userGet(builder),
   }),
 
@@ -79,6 +77,7 @@ export default colombusLogisticsApi;
 
 export const {
   useLoginUpsertMutation,
+  useOrderUpsertMutation,
   useSignupUpsertMutation,
   useUserGetQuery,
 } = colombusLogisticsApi;

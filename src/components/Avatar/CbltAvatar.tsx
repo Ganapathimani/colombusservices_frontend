@@ -24,7 +24,6 @@ export type AvatarProps = {
 
 const CBLTAvatar = ({ name, size = 35 }: AvatarProps) => {
   const firstChar = useMemo(() => name.charAt(0).toUpperCase(), [name]);
-
   return (
     <MuiAvatar
       sx={{

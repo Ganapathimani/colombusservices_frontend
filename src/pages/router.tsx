@@ -5,6 +5,10 @@ import LogisticsRegistrationForm from '#domain/ColombusLogistics/RegistrationFor
 import DashboardLayout from '#domain/ColombusLogistics/DashboardLayout/DashboardLayout';
 import Support from '#domain/ColombusLogistics/DashboardLayout/Support';
 import Profile from '#domain/ColombusLogistics/DashboardLayout/Profile';
+import RateRequest from '#domain/ColombusLogistics/DashboardLayout/RateRequest';
+import PickupConfirmation from '#domain/ColombusLogistics/DashboardLayout/PickupConfirmation';
+import Tracking from '#domain/ColombusLogistics/DashboardLayout/Tracking';
+import Documents from '#domain/ColombusLogistics/DashboardLayout/Documents';
 import Layout from './Layout/Layout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
@@ -46,6 +50,22 @@ const router = createBrowserRouter([
         path: 'dashboard',
         element: <DashboardLayout />,
         children: [
+          {
+            path: 'rate-requests',
+            element: <RateRequest />,
+          },
+          {
+            path: 'pickup-confirmations',
+            element: <PickupConfirmation />,
+          },
+          {
+            path: 'cargo-tracking',
+            element: <Tracking />,
+          },
+          {
+            path: 'documents',
+            element: <Documents />,
+          },
           {
             path: 'profile',
             element: <Profile />,
