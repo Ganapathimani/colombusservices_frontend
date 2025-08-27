@@ -2,6 +2,9 @@ import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import ErrorBoundary from '#components/ErrorBoundary/ErrorBoundary';
 import LogisticsRegistrationForm from '#domain/ColombusLogistics/RegistrationForm/LogisticsRegistrationForm';
+import DashboardLayout from '#domain/ColombusLogistics/DashboardLayout/DashboardLayout';
+import Support from '#domain/ColombusLogistics/DashboardLayout/Support';
+import Profile from '#domain/ColombusLogistics/DashboardLayout/Profile';
 import Layout from './Layout/Layout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
@@ -38,6 +41,20 @@ const router = createBrowserRouter([
       {
         path: 'contact',
         element: <ContactPage />,
+      },
+      {
+        path: 'dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            path: 'profile',
+            element: <Profile />,
+          },
+          {
+            path: 'support',
+            element: <Support />,
+          },
+        ],
       },
     ],
   },
