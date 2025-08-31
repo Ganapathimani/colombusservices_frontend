@@ -17,10 +17,10 @@ import {
   faEyeSlash,
   faSave,
 } from '@fortawesome/free-solid-svg-icons';
+import { useUserGetQuery } from '#api/colombusLogisticsApi';
 
 interface ProfileFormData {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   phone: string;
   currentPassword: string;
@@ -41,6 +41,8 @@ const Profile = () => {
     confirmPassword: false,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const email = localStorage.getItem('email');
+  const { data: user } = useUserGetQuery({ id: email! });
 
   const {
     handleSubmit,
@@ -50,10 +52,9 @@ const Profile = () => {
     formState: { errors },
   } = useForm<ProfileFormData>({
     defaultValues: {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john@example.com',
-      phone: '+91 9876543210',
+      name: user?.name,
+      email: user?.email,
+      phone: user?.mobile,
       currentPassword: '',
       newPassword: '',
       confirmPassword: '',
@@ -113,31 +114,31 @@ const Profile = () => {
                 Personal Info
               </Typography>
               <Controller
-                name="firstName"
+                name="name"
                 control={control}
-                rules={{ required: 'First name is required' }}
+                rules={{ required: 'Name is required' }}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="First Name"
+                    label="Enter your Name"
                     fullWidth
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
+                    error={!!errors.name}
+                    helperText={errors.name?.message}
                     margin="normal"
                   />
                 )}
               />
               <Controller
-                name="lastName"
+                name="phone"
                 control={control}
-                rules={{ required: 'Last name is required' }}
+                rules={{ required: 'Phone number is required' }}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Last Name"
+                    label="Phone Number"
                     fullWidth
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
+                    error={!!errors.phone}
+                    helperText={errors.phone?.message}
                     margin="normal"
                   />
                 )}
@@ -162,21 +163,6 @@ const Profile = () => {
                     fullWidth
                     error={!!errors.email}
                     helperText={errors.email?.message}
-                    margin="normal"
-                  />
-                )}
-              />
-              <Controller
-                name="phone"
-                control={control}
-                rules={{ required: 'Phone number is required' }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Phone Number"
-                    fullWidth
-                    error={!!errors.phone}
-                    helperText={errors.phone?.message}
                     margin="normal"
                   />
                 )}

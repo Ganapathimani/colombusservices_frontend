@@ -43,23 +43,34 @@ const CargoForm = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
           label="Package"
-          {...register('cargoDetails.0.package', { required: 'Package is required' })}
+          type="number"
+          {...register('cargoDetails.0.package', {
+            required: 'Package is required',
+            setValueAs: (v) => (v === '' ? undefined : Number(v)),
+          })}
           error={!!cargoDetailsErrors?.[0]?.package}
           helperText={cargoDetailsErrors?.[0]?.package?.message}
           fullWidth
         />
+
         <TextField
           label="Weight (kg)"
           type="number"
-          {...register('cargoDetails.0.weight', { required: 'Weight is required' })}
+          {...register('cargoDetails.0.weight', {
+            required: 'Weight is required',
+            setValueAs: (v) => (v === '' ? undefined : Number(v)),
+          })}
           error={!!cargoDetailsErrors?.[0]?.weight}
           helperText={cargoDetailsErrors?.[0]?.weight?.message}
           fullWidth
         />
+
         <TextField
           label="CBM"
-          type="number"
-          {...register('cargoDetails.0.cbm', { required: 'CBM is required' })}
+          {...register('cargoDetails.0.cbm', {
+            required: 'CBM is required',
+            setValueAs: (v) => (v === '' ? undefined : Number(v)),
+          })}
           error={!!cargoDetailsErrors?.[0]?.cbm}
           helperText={cargoDetailsErrors?.[0]?.cbm?.message}
           fullWidth
@@ -132,7 +143,7 @@ const CargoForm = () => {
             variant="contained"
             startIcon={<FontAwesomeIcon icon={faAdd} />}
             onClick={() => append({
-              handlingUnit: '', length: 0, width: 0, height: 0, cubicFeet: 0,
+              handlingUnit: 0, length: 0, width: 0, height: 0, cubicFeet: 0,
             })}
             sx={{
               alignSelf: 'flex-start',

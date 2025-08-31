@@ -1,17 +1,20 @@
 import React from 'react';
 import {
-  Stack, Typography, Card, CardContent, Divider,
+  Stack, Typography, Card,
+  CardContent, Divider, Link, Box,
 } from '@mui/material';
 import { map } from 'lodash/fp';
 
 const branches = [
   {
     name: 'Tirupur (Head Office)',
-    address: '141-C, Colombus Building, Iswarya Garden, Ammapalayam, Tirupur, Tamil Nadu',
+    address:
+      '141-C, Colombus Building, Iswarya Garden, Ammapalayam, Tirupur, Tamil Nadu',
     contact: 'Mr. Selva Kumar',
     phone: '+91 94426 02332',
     email: 'tirupur@colombusfreight.com',
-    map: 'https://www.google.com/maps/embed?...',
+    mapsEmbed:
+    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3914.3606428897747!2d77.296803!3d11.160910899999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba907dcf73c93f7%3A0xef2846de0e34092b!2sColombus%20Tirupur!5e0!3m2!1sen!2sin!4v1756613053959!5m2!1sen!2sin',
   },
   {
     name: 'Chennai - Manali (Corporate Office)',
@@ -19,7 +22,8 @@ const branches = [
     contact: 'Mr. Rajinikanth',
     phone: '+91 94426 45332 / +91 99528 45332',
     email: 'chennai@colombusfreight.com',
-    map: 'https://www.google.com/maps/embed?...',
+    mapsEmbed:
+      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31078.262956602965!2d80.27260150000001!3d13.17608595!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52653e6a8d316d%3A0xf125e0fa69c48747!2sManali%2C%20Chennai%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1756613195121!5m2!1sen!2sin',
   },
   {
     name: 'Coimbatore',
@@ -27,15 +31,17 @@ const branches = [
     contact: 'Branch Manager',
     phone: '+91 94426 47332 / +91 73050 25406',
     email: 'coimbatore@colombusfreight.com',
-    map: 'https://www.google.com/maps/embed?...',
+    mapsEmbed:
+    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3309.4228613965624!2d77.12119826310054!3d11.099765640373828!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba8ff0033913e47%3A0x17774a3530a1c6c4!2sColombus%20Transport!5e0!3m2!1sen!2sin!4v1756613238421!5m2!1sen!2sin',
   },
   {
-    name: 'Tuticorin',
-    address: 'Branch Office, Tuticorin, Tamil Nadu',
-    contact: 'Mr. Suresh',
+    name: 'Chennai - Pammal',
+    address: 'Branch Office, Pammal, Chennai',
+    contact: 'Branch Manager',
     phone: '+91 73394 19991 / +91 73394 19992',
-    email: 'tuticorin@colombusfreight.com',
-    map: 'https://www.google.com/maps/embed?...',
+    email: 'pammal@colombusfreight.com',
+    mapsEmbed:
+      'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3888.008963053885!2d80.1416678!3d12.9712781!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a525e332152f535%3A0x74e23acbd0523f08!2sCOLOMBUS%20FREIGHT%20LOGISTICS%20PVT%20LTD.!5e0!3m2!1sen!2sin!4v1756613157090!5m2!1sen!2sin',
   },
 ];
 
@@ -110,17 +116,21 @@ const AboutUsPage = () => (
         <Card
           key={branch.email}
           sx={{
-            borderRadius: '16px', overflow: 'hidden', boxShadow: 3, width: '100%',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            boxShadow: 3,
+            width: '100%',
+            maxWidth: 800,
           }}
         >
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
+          <CardContent sx={{ pb: 1 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
               {branch.name}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {branch.address}
             </Typography>
-            <Divider sx={{ my: 2 }} />
+
             <Typography variant="body2">
               <strong>Contact:</strong>
               {' '}
@@ -129,35 +139,47 @@ const AboutUsPage = () => (
             <Typography variant="body2">
               <strong>Phone:</strong>
               {' '}
-              {branch.phone}
+              <Link href={`tel:${branch.phone}`} underline="hover" color="primary">
+                {branch.phone}
+              </Link>
             </Typography>
             <Typography variant="body2">
               <strong>Email:</strong>
               {' '}
-              {branch.email || 'N/A'}
+              <Link href={`mailto:${branch.email}`} underline="hover" color="primary">
+                {branch.email}
+              </Link>
             </Typography>
           </CardContent>
-          <Stack sx={{ height: 250 }}>
+
+          <Divider />
+
+          <Box sx={{ width: '100%', height: { xs: 250, md: 350 } }}>
             <iframe
-              src={branch.map}
+              title={branch.name}
+              src={branch.mapsEmbed}
               width="100%"
               height="100%"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
-              title={branch.name}
             />
-          </Stack>
+          </Box>
         </Card>
       ))(branches)}
 
-      <Typography variant="body1" color="text.secondary" sx={{ mt: 4, textAlign: 'center' }}>
+      <Typography
+        variant="body1"
+        color="text.secondary"
+        sx={{ mt: 4, textAlign: 'center' }}
+      >
         With strategically located offices and fully equipped warehouses across
         Tamil Nadu and South India, Colombus Freight Logistics ensures timely
-        and safe delivery of goods, providing businesses with dependable
-        road freight solutions.
+        and safe delivery of goods, providing businesses with dependable road
+        freight solutions.
       </Typography>
     </Stack>
+
   </Stack>
 );
 

@@ -8,7 +8,6 @@ import Profile from '#domain/ColombusLogistics/DashboardLayout/Profile';
 import RateRequest from '#domain/ColombusLogistics/DashboardLayout/RateRequest';
 import PickupConfirmation from '#domain/ColombusLogistics/DashboardLayout/PickupConfirmation';
 import Tracking from '#domain/ColombusLogistics/DashboardLayout/Tracking';
-import Documents from '#domain/ColombusLogistics/DashboardLayout/Documents';
 import Layout from './Layout/Layout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
@@ -61,10 +60,6 @@ const router = createBrowserRouter([
           {
             path: 'cargo-tracking',
             element: <Tracking />,
-          },
-          {
-            path: 'documents',
-            element: <Documents />,
           },
           {
             path: 'profile',

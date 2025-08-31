@@ -114,8 +114,8 @@ const useVehicleForm = () => {
           rules={{ required: 'Please select FTL Type' }}
           render={({ field }) => (
             <RadioGroup row {...field}>
-              <FormControlLabel value="console" control={<Radio />} label="Console" />
-              <FormControlLabel value="separate" control={<Radio />} label="Separate" />
+              <FormControlLabel value="CONSOLIDATE" control={<Radio />} label="Console" />
+              <FormControlLabel value="SEPARATE" control={<Radio />} label="Separate" />
             </RadioGroup>
           )}
         />
@@ -130,8 +130,8 @@ const useVehicleForm = () => {
           rules={{ required: 'Please select Loading Type' }}
           render={({ field }) => (
             <RadioGroup row {...field}>
-              <FormControlLabel value="stackable" control={<Radio />} label="Stackable" />
-              <FormControlLabel value="nonStackable" control={<Radio />} label="Non-Stackable" />
+              <FormControlLabel value="STACKABLE" control={<Radio />} label="Stackable" />
+              <FormControlLabel value="NON_STACKABLE" control={<Radio />} label="Non-Stackable" />
             </RadioGroup>
           )}
         />

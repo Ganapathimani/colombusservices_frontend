@@ -9,9 +9,8 @@ import OriginForm from './_useOriginForm';
 import DestinationForm from './_useDestinationForm';
 import CargoForm from './_useCargoForm';
 import VehicleForm from './_useVehicleForm';
-import ReviewForm from './_usePreviewForm';
 
-const steps = ['Origin', 'Destination', 'Cargo', 'Vehicle', 'Review'];
+const steps = ['Origin', 'Destination', 'Cargo', 'Vehicle'];
 
 const LogisticsRegistrationWizard = () => {
   const methods = useForm<TLogisticsRegistrationForm>({
@@ -22,6 +21,9 @@ const LogisticsRegistrationWizard = () => {
   const [orderUpsert] = useOrderUpsertMutation();
 
   const [activeStep, setActiveStep] = useState(0);
+
+  const customerName = localStorage.getItem('name');
+  const customerEmail = localStorage.getItem('email');
 
   const handleNext = async () => {
     const isValid = await methods.trigger();
@@ -36,26 +38,29 @@ const LogisticsRegistrationWizard = () => {
     try {
       const payload = {
         ...formData,
+        customer: {
+          name: customerName,
+          email: customerEmail,
+        },
         cargoDetails: formData.cargoDetails.map((cargo) => ({
           ...cargo,
         })),
       };
       await orderUpsert(payload).unwrap();
     } catch (err: any) {
-      console.error('Error submitting order:', err);
+      throw new Error(err);
     }
-  }, [orderUpsert]);
+  }, [orderUpsert, customerName, customerEmail]);
 
   return (
     <FormProvider {...methods}>
       <Stack spacing={4} maxWidth={900} margin="auto" p={4}>
-        {/* Stepper */}
         <Stepper
           activeStep={activeStep}
           alternativeLabel
           sx={{
             '& .MuiStepIcon-root': {
-              color: '#A5D6A7', // default
+              color: '#A5D6A7',
               '&.Mui-active': { color: '#43A047' },
               '&.Mui-completed': { color: '#2E7D32' },
             },
@@ -70,17 +75,13 @@ const LogisticsRegistrationWizard = () => {
           ))}
         </Stepper>
 
-        {/* Form */}
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           {activeStep === 0 && <OriginForm />}
           {activeStep === 1 && <DestinationForm />}
           {activeStep === 2 && <CargoForm />}
           {activeStep === 3 && <VehicleForm />}
-          {activeStep === 4 && <ReviewForm />}
 
-          {/* Buttons */}
           <Stack direction="row" justifyContent="space-between" mt={4}>
-            {/* Back Button */}
             {activeStep > 0 ? (
               <Button
                 onClick={handleBack}

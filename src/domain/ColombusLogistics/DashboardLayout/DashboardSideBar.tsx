@@ -27,7 +27,6 @@ const menuItems = [
   { label: 'Rate Requests', icon: faHome, to: '/dashboard/rate-requests' },
   { label: 'Pickup Confirmations', icon: faTruck, to: '/dashboard/pickup-confirmations' },
   { label: 'Cargo Tracking', icon: faFileAlt, to: '/dashboard/cargo-tracking' },
-  { label: 'Documents', icon: faFileAlt, to: '/dashboard/documents' },
   { label: 'Profile', icon: faUser, to: '/dashboard/profile' },
   { label: 'Support', icon: faHeadset, to: '/dashboard/support' },
 ];

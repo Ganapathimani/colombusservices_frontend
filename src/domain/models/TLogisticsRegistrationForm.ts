@@ -1,5 +1,5 @@
 export type TDimension = {
-  handlingUnit: string;
+  handlingUnit: number;
   length: number;
   width: number;
   height: number;
@@ -7,9 +7,9 @@ export type TDimension = {
 };
 
 export type TCargoDetail = {
-  package: string;
+  package: number;
   cbm: string;
-  weight: string;
+  weight: number;
   materialType: string;
   photo: File | null;
   hasDimensions: boolean;

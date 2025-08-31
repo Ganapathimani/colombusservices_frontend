@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Button,
   TextField,
@@ -38,6 +38,41 @@ type AuthFormProps = {
   onClose: () => void;
 };
 
+type StoredUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  token: string;
+};
+
+const STORAGE_KEY = 'user';
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+const setWithExpiry = (key: string, value: unknown, ttl: number) => {
+  const now = Date.now();
+  const item = { value, expiry: now + ttl };
+  localStorage.setItem(key, JSON.stringify(item));
+};
+
+const getWithExpiry = <T,>(key: string): T | null => {
+  const raw = localStorage.getItem(key);
+  if (!raw) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(raw) as { value: T; expiry: number };
+    if (Date.now() > parsed.expiry) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return parsed.value;
+  } catch {
+    localStorage.removeItem(key);
+    return null;
+  }
+};
+
 const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -63,14 +98,30 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const mobileRegex = /^[0-9]{10}$/;
 
+  useEffect(() => {
+    const existing = getWithExpiry<StoredUser>(STORAGE_KEY);
+    if (existing?.email && existing?.token) {
+      onSuccess(existing.email);
+      onClose();
+    }
+  }, [onClose, onSuccess]);
+
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
     try {
       setErrorMessage(null);
       const response = await loginUpsert({ email: data.email, password: data.password }).unwrap();
-      localStorage.setItem('user', JSON.stringify(response.user));
-      localStorage.setItem('email', response.user.email);
-      localStorage.setItem('role', response.user.role);
-      localStorage.setItem('token', response.token);
+
+      setWithExpiry(
+        STORAGE_KEY,
+        {
+          id: response.user.id,
+          name: response.user.name,
+          email: response.user.email,
+          role: response.user.role,
+          token: response.token,
+        } as StoredUser,
+        DAY_MS,
+      );
 
       resetLogin();
       onSuccess(response.user.email);
@@ -89,10 +140,18 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
         password: data.password,
         mobile: data.mobile,
       }).unwrap();
-      localStorage.setItem('user', JSON.stringify(response.user.name));
-      localStorage.setItem('email', JSON.stringify(response.user.email));
-      localStorage.setItem('role', JSON.stringify(response.user.role));
-      localStorage.setItem('token', response.token);
+
+      setWithExpiry(
+        STORAGE_KEY,
+        {
+          id: response.user.id,
+          name: response.user.name,
+          email: response.user.email,
+          role: response.user.role,
+          token: response.token,
+        } as StoredUser,
+        DAY_MS,
+      );
 
       resetSignUp();
       onSuccess(response.user.email);
@@ -111,9 +170,16 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
 
   return (
     <Stack justifyContent="center" alignItems="center" sx={{ backgroundColor: '#f0fdf4' }}>
-      <Stack sx={{
-        p: 4, borderRadius: 3, textAlign: 'center', backgroundColor: 'white', boxShadow: 6,
-      }}
+      <Stack
+        sx={{
+          p: 4,
+          borderRadius: 3,
+          textAlign: 'center',
+          backgroundColor: 'white',
+          boxShadow: 6,
+          width: 420,
+          maxWidth: '96vw',
+        }}
       >
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           {isLogin ? 'Welcome Back' : 'Create Account'}
@@ -165,7 +231,11 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <IconButton
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
                       <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size="sm" />
                     </IconButton>
                   </InputAdornment>
@@ -178,7 +248,11 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
               fullWidth
               variant="contained"
               sx={{
-                mt: 3, mb: 1, textTransform: 'none', bgcolor: '#22c55e', '&:hover': { bgcolor: '#16a34a' },
+                mt: 3,
+                mb: 1,
+                textTransform: 'none',
+                bgcolor: '#22c55e',
+                '&:hover': { bgcolor: '#16a34a' },
               }}
               disabled={isSubmittingLogin}
             >
@@ -263,7 +337,11 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <IconButton
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
                       <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size="sm" />
                     </IconButton>
                   </InputAdornment>
@@ -276,7 +354,11 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
               fullWidth
               variant="contained"
               sx={{
-                mt: 3, mb: 1, textTransform: 'none', bgcolor: '#22c55e', '&:hover': { bgcolor: '#16a34a' },
+                mt: 3,
+                mb: 1,
+                textTransform: 'none',
+                bgcolor: '#22c55e',
+                '&:hover': { bgcolor: '#16a34a' },
               }}
               disabled={isSubmittingSignUp}
             >
@@ -286,12 +368,18 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
         )}
 
         <Stack direction="row" justifyContent="center" alignItems="center" mt={2} spacing={1}>
-          <Typography variant="body2">{isLogin ? "Don't have an account?" : 'Already have an account?'}</Typography>
+          <Typography variant="body2">
+            {isLogin ? "Don't have an account?" : 'Already have an account?'}
+          </Typography>
           <Button
             onClick={toggleForm}
             variant="text"
             sx={{
-              fontWeight: 'bold', textTransform: 'none', padding: 0, minWidth: 0, color: '#22c55e',
+              fontWeight: 'bold',
+              textTransform: 'none',
+              padding: 0,
+              minWidth: 0,
+              color: '#22c55e',
             }}
           >
             {isLogin ? 'Sign Up' : 'Login'}
