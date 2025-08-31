@@ -27,7 +27,7 @@ const ProfileMenu = ({ user, onLogout }: ProfileMenuProps) => {
   if (storedUser) {
     try {
       const userRole = JSON.parse(storedUser);
-      isAdmin = userRole?.value?.role === 'ADMIN';
+      isAdmin = userRole?.role === 'ADMIN';
     } catch (err) {
       throw new Error(err as string);
     }
@@ -88,7 +88,7 @@ const ProfileMenu = ({ user, onLogout }: ProfileMenuProps) => {
 
         {isAdmin && (
           <MenuItem onClick={handleGoToAdmin}>
-            <Typography variant="body2" fontSize={{ xs: 14, sm: 16 }}>Go to Admin</Typography>
+            <Typography variant="body2" fontSize={{ xs: 14, sm: 16 }}>Admin Dashboard</Typography>
           </MenuItem>
         )}
 

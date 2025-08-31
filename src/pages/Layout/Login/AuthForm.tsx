@@ -34,7 +34,7 @@ type LoginInputs = {
 };
 
 type AuthFormProps = {
-  onSuccess: (userEmail: string) => void;
+  onSuccess: (user: StoredUser) => void;
   onClose: () => void;
 };
 
@@ -101,65 +101,67 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
   useEffect(() => {
     const existing = getWithExpiry<StoredUser>(STORAGE_KEY);
     if (existing?.email && existing?.token) {
-      onSuccess(existing.email);
+      onSuccess(existing);
       onClose();
     }
   }, [onClose, onSuccess]);
 
-  const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
-    try {
-      setErrorMessage(null);
-      const response = await loginUpsert({ email: data.email, password: data.password }).unwrap();
+  const onLoginSubmit: SubmitHandler<LoginInputs> = useCallback(
+    async (data) => {
+      try {
+        setErrorMessage(null);
 
-      setWithExpiry(
-        STORAGE_KEY,
-        {
+        const response = await loginUpsert({ email: data.email, password: data.password }).unwrap();
+
+        const user: StoredUser = {
           id: response.user.id,
           name: response.user.name,
           email: response.user.email,
           role: response.user.role,
           token: response.token,
-        } as StoredUser,
-        DAY_MS,
-      );
+        };
 
-      resetLogin();
-      onSuccess(response.user.email);
-      onClose();
-    } catch (error: any) {
-      setErrorMessage(error?.data?.message || 'Login failed. Please try again.');
-    }
-  };
+        setWithExpiry(STORAGE_KEY, user, DAY_MS);
+        resetLogin();
+        onSuccess(user); // pass full user
+        onClose();
+      } catch (error: any) {
+        setErrorMessage(error?.data?.message || 'Login failed. Please try again.');
+      }
+    },
+    [loginUpsert, onClose, onSuccess, resetLogin],
+  );
 
-  const onSignUpSubmit: SubmitHandler<SignUpInputs> = async (data) => {
-    try {
-      setErrorMessage(null);
-      const response = await signupUpsert({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        mobile: data.mobile,
-      }).unwrap();
+  const onSignUpSubmit: SubmitHandler<SignUpInputs> = useCallback(
+    async (data) => {
+      try {
+        setErrorMessage(null);
 
-      setWithExpiry(
-        STORAGE_KEY,
-        {
+        const response = await signupUpsert({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          mobile: data.mobile,
+        }).unwrap();
+
+        const user: StoredUser = {
           id: response.user.id,
           name: response.user.name,
           email: response.user.email,
           role: response.user.role,
           token: response.token,
-        } as StoredUser,
-        DAY_MS,
-      );
+        };
 
-      resetSignUp();
-      onSuccess(response.user.email);
-      onClose();
-    } catch (error: any) {
-      setErrorMessage(error?.data?.message || 'Signup failed. Please try again.');
-    }
-  };
+        setWithExpiry(STORAGE_KEY, user, DAY_MS);
+        resetSignUp();
+        onSuccess(user); // pass full user
+        onClose();
+      } catch (error: any) {
+        setErrorMessage(error?.data?.message || 'Signup failed. Please try again.');
+      }
+    },
+    [signupUpsert, onClose, onSuccess, resetSignUp],
+  );
 
   const toggleForm = useCallback(() => {
     setIsLogin((prev) => !prev);

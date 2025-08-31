@@ -14,6 +14,7 @@ import AboutPage from './Layout/HomePage/AboutPage';
 import TrackingPage from './Layout/HomePage/TrackingPage';
 import ContactPage from './Layout/Contact/ContactPage';
 import ServicesPage from './Layout/Services/Services';
+import Admin from './Layout/Admin/Admin';
 
 const router = createBrowserRouter([
   {
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
             element: <Support />,
           },
         ],
+      },
+      {
+        path: 'admin',
+        element: <Admin />,
       },
     ],
   },

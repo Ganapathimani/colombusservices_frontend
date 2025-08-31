@@ -21,6 +21,15 @@ const navItems = [
   { label: 'Book Now', path: '/registration', icon: faCalendarCheck },
 ];
 
+const roleRoutes: Record<string, string> = {
+  CUSTOMER: '/',
+  ASSISTANT: '/assistant/home',
+  ADMIN: '/admin/dashboard',
+  PICKUP: '/pickup/home',
+  LR: '/lr/home',
+  DELIVERY: '/delivery/home',
+};
+
 const Navbar = () => {
   const [isAuthFormOpen, , AuthFormActions] = useToggle(false);
   const [sidebarOpen, , sideBarActions] = useToggle(false);
@@ -57,8 +66,10 @@ const Navbar = () => {
 
   const handleLoginSuccess = useCallback((userData: any) => {
     setCurrentUser(userData);
+    const path = roleRoutes[userData.role] || '/';
+    navigate(path);
     AuthFormActions.setOff();
-  }, [AuthFormActions]);
+  }, [AuthFormActions, navigate]);
 
   const handleLogout = useCallback(() => {
     localStorage.clear();
