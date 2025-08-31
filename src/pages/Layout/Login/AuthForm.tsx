@@ -113,20 +113,27 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
 
         const response = await loginUpsert({ email: data.email, password: data.password }).unwrap();
 
-        const user: StoredUser = {
-          id: response.user.id,
-          name: response.user.name,
-          email: response.user.email,
-          role: response.user.role,
-          token: response.token,
-        };
+        const userData = response?.user || response?.user;
+        const token = response?.token || response?.token;
+        localStorage.setItem('token', token);
 
+        if (!userData || !token) {
+          throw new Error('Invalid login response');
+        }
+
+        const user: StoredUser = {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role,
+          token,
+        };
         setWithExpiry(STORAGE_KEY, user, DAY_MS);
         resetLogin();
-        onSuccess(user); // pass full user
+        onSuccess(user);
         onClose();
       } catch (error: any) {
-        setErrorMessage(error?.data?.message || 'Login failed. Please try again.');
+        setErrorMessage(error?.data?.message || error?.message || 'Login failed. Please try again.');
       }
     },
     [loginUpsert, onClose, onSuccess, resetLogin],
@@ -143,21 +150,27 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
           password: data.password,
           mobile: data.mobile,
         }).unwrap();
+        const userData = response?.user || response?.user;
+        const token = response?.token || response?.token;
+        localStorage.setItem('token', token);
+
+        if (!userData || !token) {
+          throw new Error('Invalid signup response');
+        }
 
         const user: StoredUser = {
-          id: response.user.id,
-          name: response.user.name,
-          email: response.user.email,
-          role: response.user.role,
-          token: response.token,
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role,
+          token,
         };
-
         setWithExpiry(STORAGE_KEY, user, DAY_MS);
         resetSignUp();
-        onSuccess(user); // pass full user
+        onSuccess(user);
         onClose();
       } catch (error: any) {
-        setErrorMessage(error?.data?.message || 'Signup failed. Please try again.');
+        setErrorMessage(error?.data?.message || error?.message || 'Signup failed. Please try again.');
       }
     },
     [signupUpsert, onClose, onSuccess, resetSignUp],

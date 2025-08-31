@@ -24,7 +24,7 @@ const navItems = [
 const roleRoutes: Record<string, string> = {
   CUSTOMER: '/',
   ASSISTANT: '/assistant/home',
-  ADMIN: '/admin/dashboard',
+  ADMIN: '/admin',
   PICKUP: '/pickup/home',
   LR: '/lr/home',
   DELIVERY: '/delivery/home',

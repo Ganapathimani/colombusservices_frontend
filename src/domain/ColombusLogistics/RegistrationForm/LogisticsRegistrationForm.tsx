@@ -58,10 +58,12 @@ const LogisticsRegistrationWizard = () => {
         })),
       };
       await orderUpsert(payload).unwrap();
+      methods.reset();
+      setActiveStep(0);
     } catch (err: any) {
       throw new Error(err);
     }
-  }, [orderUpsert, customerName, customerEmail]);
+  }, [customerName, customerEmail, orderUpsert, methods]);
 
   return (
     <FormProvider {...methods}>

@@ -36,13 +36,9 @@ const baseQuery = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${window.envs.BFF_BASE_URL}/api/`,
     prepareHeaders: (headers) => {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        const { token } = user.value;
-        if (token) {
-          headers.set('Authorization', `Bearer ${token}`);
-        }
+      const token = localStorage.getItem('token');
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
       }
       return headers;
     },
