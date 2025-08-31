@@ -2,12 +2,12 @@ import React, { useState, useMemo, useCallback } from 'react';
 import {
   Card, CardContent, CardHeader, Typography, Table, TableHead,
   TableRow, TableCell, TableBody, TableContainer, Chip, Box,
-  Button, MenuItem, Select, FormControl, InputLabel, Avatar,
+  Button, MenuItem, Select, FormControl, InputLabel,
   LinearProgress, Stack,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faArrowTrendUp, faPlus, faFilter, faTruck,
+  faPlus, faFilter, faTruck,
   faCheckCircle, faTimesCircle, faClock, faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { map } from 'lodash/fp';
@@ -33,7 +33,7 @@ const RateRequests = () => {
       origin: o?.originCustomerName ?? '—',
       destination: o?.destinationCustomerName ?? '—',
       vehicle: o?.vehicleType ?? '—',
-      amount: o?.rate ?? 0,
+      rate: o?.rate ?? 0,
       priority: o?.ftlType ?? 'Normal',
       notes: o?.notes ?? '',
       vehicleModel: o?.vehicleModel ?? '—',
@@ -42,20 +42,11 @@ const RateRequests = () => {
     [orders],
   );
 
-  const counts = useMemo(
-    () => ({
-      Total: mappedRequests.length,
-      Pending: mappedRequests.filter((r) => r.status === 'PENDING').length,
-      Approved: mappedRequests.filter((r) => r.status === 'APPROVED').length,
-      Rejected: mappedRequests.filter((r) => r.status === 'REJECTED').length,
-    }),
-    [mappedRequests],
-  );
-
   const filteredRequests = useMemo(
-    () => (filter === 'ALL'
-      ? mappedRequests
-      : mappedRequests.filter((req) => req.status === filter)),
+    () => mappedRequests.filter(
+      (req) => req.rate === '0'
+        && (filter === 'ALL' ? true : req.status === filter),
+    ),
     [mappedRequests, filter],
   );
 
@@ -93,33 +84,6 @@ const RateRequests = () => {
     }
   };
 
-  const stats = [
-    {
-      label: 'Total Requests',
-      value: counts.Total,
-      color: '#3b82f6',
-      icon: faArrowTrendUp,
-    },
-    {
-      label: 'Pending',
-      value: counts.Pending,
-      color: '#f59e0b',
-      icon: faClock,
-    },
-    {
-      label: 'Approved',
-      value: counts.Approved,
-      color: '#10b981',
-      icon: faCheckCircle,
-    },
-    {
-      label: 'Rejected',
-      value: counts.Rejected,
-      color: '#ef4444',
-      icon: faTimesCircle,
-    },
-  ];
-
   const getStatusChip = (status: string) => {
     const config = getStatusConfig(status);
     return (
@@ -143,7 +107,7 @@ const RateRequests = () => {
     <Box sx={{ backgroundColor: '#f8fafc', minHeight: '100vh', p: 3 }}>
       <Box sx={{ mb: 3 }}>
         <Typography
-          variant="h5"
+          variant="h6"
           sx={{
             fontWeight: 700,
             background: 'linear-gradient(135deg, #43a047 0%, #2e7d32 100%)',
@@ -157,45 +121,6 @@ const RateRequests = () => {
           Manage and track all your transportation rate requests
         </Typography>
       </Box>
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} mb={4}>
-        {map((stat: any) => (
-          <Card
-            key={stat.label}
-            elevation={0}
-            sx={{
-              flex: 1,
-              borderRadius: 3,
-              background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-              border: '1px solid #e2e8f0',
-              transition: 'all 0.3s ease',
-              '&:hover': { boxShadow: '0 10px 25px rgba(0,0,0,0.1)' },
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              <Box display="flex" alignItems="center" justifyContent="space-between">
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    {stat.label}
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: stat.color }}>
-                    {stat.value}
-                  </Typography>
-                </Box>
-                <Avatar
-                  sx={{
-                    backgroundColor: `${stat.color}15`,
-                    color: stat.color,
-                    width: 56,
-                    height: 56,
-                  }}
-                >
-                  <FontAwesomeIcon icon={stat.icon} />
-                </Avatar>
-              </Box>
-            </CardContent>
-          </Card>
-        ))(stats)}
-      </Stack>
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         spacing={2}
@@ -293,7 +218,7 @@ const RateRequests = () => {
                     <TableCell>{req.vehicleModel}</TableCell>
                     <TableCell>
                       ₹
-                      {req.amount?.toLocaleString()}
+                      {req.rate?.toLocaleString()}
                     </TableCell>
                     <TableCell>
                       <Box display="flex" alignItems="center" gap={1}>

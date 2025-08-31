@@ -23,6 +23,7 @@ import listOrders from './_listOrders';
 import orderUpsert from './_createOrder';
 import signupUpsert from './_signupUpsert';
 import userGet from './_userGet';
+import updateProfile from './_updateProfile';
 
 const tagTypes = [
   'Signup',
@@ -49,6 +50,7 @@ const baseQuery = createApi({
     signupUpsert: signupUpsert(builder),
     userGet: userGet(builder),
     listOrders: listOrders(builder),
+    updateProfile: updateProfile(builder),
   }),
 
 });
@@ -83,4 +85,5 @@ export const {
   useOrderUpsertMutation,
   useSignupUpsertMutation,
   useUserGetQuery,
+  useUpdateProfileMutation,
 } = colombusLogisticsApi;

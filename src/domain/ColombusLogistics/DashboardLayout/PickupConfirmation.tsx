@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -13,8 +13,10 @@ import {
   Paper,
   Chip,
   Box,
-  Grid,
   Divider,
+  LinearProgress,
+  Stack,
+  Button,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -22,33 +24,32 @@ import {
   faCircleCheck,
   faClock,
   faList,
+  faRupeeSign,
+  faDownload,
 } from '@fortawesome/free-solid-svg-icons';
+import { map } from 'lodash/fp';
+import { useListOrdersQuery } from '#api/colombusLogisticsApi';
 
 const PickupConfirmations = () => {
-  const pickups = [
-    {
-      id: 1,
-      pickupDate: '2025-08-30',
-      origin: 'Kvp',
-      destination: 'Cbe',
-      vehicleType: 'Flatbed Truck',
-      vehicleModel: '17 feet',
-      status: 'Confirmed',
-    },
-    {
-      id: 2,
-      pickupDate: '2025-08-29',
-      origin: 'Chennai',
-      destination: 'Bangalore',
-      vehicleType: 'Container Truck',
-      vehicleModel: '20 feet',
-      status: 'In Progress',
-    },
-  ];
+  const { data, isLoading } = useListOrdersQuery();
+
+  const pickups = useMemo(
+    () => map((o: any) => ({
+      id: o?.id ?? '—',
+      pickupDate: o?.pickupDate ?? null,
+      origin: o?.originCustomerName ?? '—',
+      destination: o?.destinationCustomerName ?? '—',
+      vehicleType: o?.vehicleType ?? '—',
+      vehicleModel: o?.vehicleModel ?? '—',
+      status: (o?.status ?? 'Pending').toUpperCase(),
+      amount: o?.rate ?? 0,
+    }))(Array.isArray(data) ? data : []).filter((p) => p.status !== 'PENDING'),
+    [data],
+  );
 
   const getStatusChip = (status: string) => {
     switch (status) {
-      case 'Confirmed':
+      case 'CONFIRMED':
         return (
           <Chip
             icon={<FontAwesomeIcon icon={faCircleCheck} />}
@@ -61,7 +62,7 @@ const PickupConfirmations = () => {
             }}
           />
         );
-      case 'In Progress':
+      case 'IN PROGRESS':
         return (
           <Chip
             icon={<FontAwesomeIcon icon={faClock} />}
@@ -80,121 +81,132 @@ const PickupConfirmations = () => {
   };
 
   const totalPickups = pickups.length;
-  const confirmedCount = pickups.filter((p) => p.status === 'Confirmed').length;
-  const inProgressCount = pickups.filter(
-    (p) => p.status === 'In Progress',
-  ).length;
+  const confirmedCount = pickups.filter((p) => p.status === 'CONFIRMED').length;
+  const inProgressCount = pickups.filter((p) => p.status === 'IN PROGRESS').length;
+
+  const handleDownload = (id: string) => {
+    alert(`Downloading Receipt & LR for Order ID: ${id}`);
+  };
 
   return (
     <Box p={3} sx={{ bgcolor: '#f9fafb' }}>
-      <Typography
-        variant="h4"
-        sx={{
-          fontWeight: 700,
-          mb: 3,
-          background: 'linear-gradient(135deg, #43a047, #2e7d32)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-        }}
-      >
-        Pickup Confirmations Dashboard
-      </Typography>
-
-      <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} sm={4}>
-          <Card
-            sx={{
-              borderRadius: 3,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-              '&:hover': { transform: 'translateY(-3px)', transition: '0.3s' },
-            }}
-          >
-            <CardContent sx={{ textAlign: 'center' }}>
-              <FontAwesomeIcon icon={faList} size="lg" color="#2e7d32" />
-              <Typography variant="h5" fontWeight="bold" color="#2e7d32">
-                {totalPickups}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Total Pickups
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <Card
-            sx={{
-              borderRadius: 3,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-              '&:hover': { transform: 'translateY(-3px)', transition: '0.3s' },
-            }}
-          >
-            <CardContent sx={{ textAlign: 'center' }}>
-              <FontAwesomeIcon icon={faCircleCheck} size="lg" color="#2e7d32" />
-              <Typography variant="h5" fontWeight="bold" color="#2e7d32">
-                {confirmedCount}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Confirmed
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <Card
-            sx={{
-              borderRadius: 3,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-              '&:hover': { transform: 'translateY(-3px)', transition: '0.3s' },
-            }}
-          >
-            <CardContent sx={{ textAlign: 'center' }}>
-              <FontAwesomeIcon icon={faClock} size="lg" color="#fb8c00" />
-              <Typography variant="h5" fontWeight="bold" color="#fb8c00">
-                {inProgressCount}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                In Progress
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Table Section */}
-      <Card
-        elevation={3}
-        sx={{ borderRadius: 3, boxShadow: '0 6px 20px rgba(0,0,0,0.08)' }}
-      >
-        <CardHeader
-          title="Pickup Confirmations"
-          avatar={<FontAwesomeIcon icon={faTruck} color="#2e7d32" />}
-          titleTypographyProps={{
-            sx: { color: '#2e7d32', fontWeight: 'bold', fontSize: '1.25rem' },
+      <Box sx={{ mb: 3 }}>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 700,
+            background: 'linear-gradient(135deg, #43a047, #2e7d32)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
           }}
+        >
+          Pickup Confirmations Dashboard
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Monitor, confirm, and manage all pickup requests with real-time status tracking.
+        </Typography>
+      </Box>
+
+      {isLoading && <LinearProgress sx={{ mb: 3, borderRadius: 1 }} />}
+
+      <Stack
+        direction="row"
+        spacing={3}
+        mb={3}
+        flexWrap="wrap"
+        justifyContent="center"
+      >
+        <Card
+          sx={{
+            flex: 1,
+            minWidth: 220,
+            borderRadius: 3,
+            border: '1px solid #e0e0e0',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+            transition: 'all 0.2s ease',
+            '&:hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
+          }}
+        >
+          <CardContent sx={{ textAlign: 'center', p: 3 }}>
+            <FontAwesomeIcon icon={faList} size="2x" color="#2e7d32" />
+            <Typography variant="h5" fontWeight={700} mt={1} color="text.primary">
+              {totalPickups}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Total Pickups
+            </Typography>
+          </CardContent>
+        </Card>
+
+        <Card
+          sx={{
+            flex: 1,
+            minWidth: 220,
+            borderRadius: 3,
+            border: '1px solid #e0e0e0',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+            transition: 'all 0.2s ease',
+            '&:hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
+          }}
+        >
+          <CardContent sx={{ textAlign: 'center', p: 3 }}>
+            <FontAwesomeIcon icon={faCircleCheck} size="2x" color="#2e7d32" />
+            <Typography variant="h5" fontWeight={700} mt={1} color="text.primary">
+              {confirmedCount}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Confirmed
+            </Typography>
+          </CardContent>
+        </Card>
+
+        <Card
+          sx={{
+            flex: 1,
+            minWidth: 220,
+            borderRadius: 3,
+            border: '1px solid #e0e0e0',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+            transition: 'all 0.2s ease',
+            '&:hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
+          }}
+        >
+          <CardContent sx={{ textAlign: 'center', p: 3 }}>
+            <FontAwesomeIcon icon={faClock} size="2x" color="#fb8c00" />
+            <Typography variant="h5" fontWeight={700} mt={1} color="text.primary">
+              {inProgressCount}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              In Progress
+            </Typography>
+          </CardContent>
+        </Card>
+      </Stack>
+
+      <Card elevation={3} sx={{ borderRadius: 3, boxShadow: '0 6px 20px rgba(0,0,0,0.08)' }}>
+        <CardHeader
+          title={(
+            <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a202c' }}>
+              Pickup Confirmation Requests (
+              {pickups.length}
+              )
+            </Typography>
+            )}
+          sx={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
         />
         <Divider />
         <CardContent>
           <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
             <Table>
               <TableHead>
-                <TableRow sx={{ backgroundColor: '#e8f5e9' }}>
-                  <TableCell>
-                    <b>Date</b>
-                  </TableCell>
-                  <TableCell>
-                    <b>Origin</b>
-                  </TableCell>
-                  <TableCell>
-                    <b>Destination</b>
-                  </TableCell>
-                  <TableCell>
-                    <b>Vehicle</b>
-                  </TableCell>
-                  <TableCell align="center">
-                    <b>Status</b>
-                  </TableCell>
+                <TableRow sx={{ backgroundColor: '#f1f5f9' }}>
+                  <TableCell><b>Date</b></TableCell>
+                  <TableCell><b>Origin</b></TableCell>
+                  <TableCell><b>Destination</b></TableCell>
+                  <TableCell><b>Vehicle</b></TableCell>
+                  <TableCell align="center"><b>Amount</b></TableCell>
+                  <TableCell align="center"><b>Status</b></TableCell>
+                  <TableCell align="center"><b>Action</b></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -204,13 +216,14 @@ const PickupConfirmations = () => {
                     hover
                     sx={{
                       '&:nth-of-type(odd)': { backgroundColor: '#fafafa' },
-                      '&:hover': {
-                        backgroundColor: '#f1f8f4',
-                        transition: '0.3s',
-                      },
+                      '&:hover': { backgroundColor: '#f1f8f4', transition: '0.3s' },
                     }}
                   >
-                    <TableCell>{pickup.pickupDate}</TableCell>
+                    <TableCell>
+                      {pickup.pickupDate
+                        ? new Date(pickup.pickupDate).toLocaleDateString('en-GB')
+                        : '—'}
+                    </TableCell>
                     <TableCell>{pickup.origin}</TableCell>
                     <TableCell>{pickup.destination}</TableCell>
                     <TableCell>
@@ -223,7 +236,32 @@ const PickupConfirmations = () => {
                       )
                     </TableCell>
                     <TableCell align="center">
-                      {getStatusChip(pickup.status)}
+                      <FontAwesomeIcon
+                        icon={faRupeeSign}
+                        style={{ fontSize: 14, marginRight: 4 }}
+                      />
+                      {pickup.amount?.toLocaleString()}
+                    </TableCell>
+                    <TableCell align="center">{getStatusChip(pickup.status)}</TableCell>
+                    <TableCell align="center">
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                          textTransform: 'none',
+                          borderColor: '#2e7d32',
+                          color: '#2e7d32',
+                          fontWeight: 600,
+                          '&:hover': {
+                            backgroundColor: '#2e7d32',
+                            color: 'white',
+                          },
+                        }}
+                        onClick={() => handleDownload(pickup.id)}
+                        startIcon={<FontAwesomeIcon icon={faDownload} />}
+                      >
+                        Download
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

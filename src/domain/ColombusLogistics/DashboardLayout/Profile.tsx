@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Box,
   Typography,
@@ -17,7 +17,7 @@ import {
   faEyeSlash,
   faSave,
 } from '@fortawesome/free-solid-svg-icons';
-import { useUserGetQuery } from '#api/colombusLogisticsApi';
+import { useUpdateProfileMutation, useUserGetQuery } from '#api/colombusLogisticsApi';
 
 interface ProfileFormData {
   name: string;
@@ -41,6 +41,7 @@ const Profile = () => {
     confirmPassword: false,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [updateProfile] = useUpdateProfileMutation();
   const email = localStorage.getItem('email');
   const { data: user } = useUserGetQuery({ id: email! });
 
@@ -65,24 +66,31 @@ const Profile = () => {
     setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const onSubmit = async (data: ProfileFormData) => {
+  const onSubmit = useCallback(async (data: ProfileFormData) => {
     setIsLoading(true);
     try {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 1500);
-      });
+      const payload = {
+        id: user?.id!,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        currentPassword: data.currentPassword || undefined,
+        newPassword: data.newPassword || undefined,
+      };
+
+      await updateProfile(payload).unwrap();
       reset({
         ...data,
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
       });
-    } catch (error) {
-      throw new Error(error as string);
+    } catch (err) {
+      console.error('Update failed:', err);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [reset, updateProfile, user?.id]);
 
   const getValidationRules = (
     field: keyof typeof fieldLabels,
