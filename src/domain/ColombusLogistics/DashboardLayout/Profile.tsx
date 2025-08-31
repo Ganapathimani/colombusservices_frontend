@@ -42,9 +42,10 @@ const Profile = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [updateProfile] = useUpdateProfileMutation();
-  const email = localStorage.getItem('email');
+  const userData = localStorage.getItem('user');
+  const users = JSON.parse(userData!);
+  const { email } = users.value;
   const { data: user } = useUserGetQuery({ id: email! });
-
   const {
     handleSubmit,
     control,

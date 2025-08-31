@@ -21,7 +21,17 @@ const ProfileMenu = ({ user, onLogout }: ProfileMenuProps) => {
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
-  const isAdmin = localStorage.getItem('role') === 'ADMIN';
+  const storedUser = localStorage.getItem('user');
+  let isAdmin = false;
+
+  if (storedUser) {
+    try {
+      const userRole = JSON.parse(storedUser);
+      isAdmin = userRole?.value?.role === 'ADMIN';
+    } catch (err) {
+      throw new Error(err as string);
+    }
+  }
 
   const handleSignOut = useCallback(() => {
     onLogout();

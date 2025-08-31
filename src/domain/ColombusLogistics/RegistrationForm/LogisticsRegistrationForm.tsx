@@ -22,8 +22,19 @@ const LogisticsRegistrationWizard = () => {
 
   const [activeStep, setActiveStep] = useState(0);
 
-  const customerName = localStorage.getItem('name');
-  const customerEmail = localStorage.getItem('email');
+  const storedUser = localStorage.getItem('user');
+  let customerName: string | null = null;
+  let customerEmail: string | null = null;
+
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser);
+      customerName = user?.value?.name ?? null;
+      customerEmail = user?.value?.email ?? null;
+    } catch (err) {
+      throw new Error(err as string);
+    }
+  }
 
   const handleNext = async () => {
     const isValid = await methods.trigger();
@@ -133,7 +144,6 @@ const LogisticsRegistrationWizard = () => {
               </Button>
             )}
           </Stack>
-
         </form>
       </Stack>
     </FormProvider>

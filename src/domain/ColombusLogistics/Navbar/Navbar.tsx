@@ -26,8 +26,19 @@ const Navbar = () => {
   const [sidebarOpen, , sideBarActions] = useToggle(false);
   const navigate = useNavigate();
 
-  const token = localStorage.getItem('token');
-  const email = localStorage.getItem('email');
+  const storedUser = localStorage.getItem('user');
+  let token: string | null = null;
+  let email: string | null = null;
+
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser);
+      token = user?.value?.token ?? null;
+      email = user?.value?.email ?? null;
+    } catch (err) {
+      throw new Error(err as string);
+    }
+  }
   const [currentUser, setCurrentUser] = useState<any>(() => {
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
