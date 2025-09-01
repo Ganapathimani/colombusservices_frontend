@@ -22,6 +22,11 @@ export type TLogisticsRegistrationForm = {
   phoneNumber: string;
   vehicleType: string;
   vehicleModel: string;
+  rate: number;
+  rateQuotedBy: string;
+  orderForName: string;
+  orderForContactNumber: string;
+  notes: string;
   ftlType: 'console' | 'separate';
   loadingType: 'stackable' | 'non-stackable';
   cargoDetails: TCargoDetail[];

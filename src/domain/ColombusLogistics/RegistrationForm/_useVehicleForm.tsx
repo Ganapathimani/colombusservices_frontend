@@ -11,13 +11,26 @@ import {
   Radio,
   FormHelperText,
   MenuItem,
+  Typography,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTruck, faCarSide } from '@fortawesome/free-solid-svg-icons';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
 
 const useVehicleForm = () => {
-  const { control, formState: { errors } } = useFormContext<TLogisticsRegistrationForm>();
+  const { register, control, formState: { errors } } = useFormContext<TLogisticsRegistrationForm>();
+
+  const storedUser = localStorage.getItem('user');
+  let isAdmin = false;
+
+  if (storedUser) {
+    try {
+      const userRole = JSON.parse(storedUser);
+      isAdmin = userRole.role !== 'CUSTOMER';
+    } catch (err) {
+      throw new Error(err as string);
+    }
+  }
 
   const vehicleTypes = [
     'Open Truck',
@@ -137,6 +150,57 @@ const useVehicleForm = () => {
         />
         {errors.loadingType && <FormHelperText>{errors.loadingType.message}</FormHelperText>}
       </FormControl>
+      {
+        isAdmin && (
+          <>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              <TextField
+                label="Rate"
+                type="number"
+                {...register('rate', {
+                  required: 'rate is required',
+                  setValueAs: (v) => (v === '' ? undefined : Number(v)),
+                })}
+                fullWidth
+              />
+
+              <TextField
+                label="Rate Quoted By"
+                {...register('rateQuotedBy', {
+                  setValueAs: (v) => (v === '' ? undefined : v),
+                })}
+                fullWidth
+              />
+            </Stack>
+            <Typography fontSize={18}>Order For</Typography>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              <TextField
+                label="Name"
+                {...register('orderForName', {
+                  required: 'Name is required',
+                  setValueAs: (v) => (v === '' ? undefined : v),
+                })}
+                fullWidth
+              />
+
+              <TextField
+                label="Contact number"
+                type="number"
+                {...register('orderForContactNumber', {
+                  setValueAs: (v) => (v === '' ? undefined : Number(v)),
+                })}
+                fullWidth
+              />
+            </Stack>
+            <TextField
+              label="Tell something about order (if any)"
+              {...register('notes')}
+              multiline
+              rows={3}
+            />
+          </>
+        )
+        }
     </Stack>
   );
 };

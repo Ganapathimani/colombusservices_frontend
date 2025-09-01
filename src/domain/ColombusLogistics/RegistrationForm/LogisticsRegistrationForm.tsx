@@ -20,7 +20,7 @@ const LogisticsRegistrationWizard = () => {
 
   const [orderUpsert] = useOrderUpsertMutation();
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(3);
 
   const storedUser = localStorage.getItem('user');
   let customerName: string | null = null;
@@ -116,7 +116,7 @@ const LogisticsRegistrationWizard = () => {
               <div />
             )}
 
-            {activeStep < steps.length - 1 ? (
+            {activeStep < steps.length ? (
               <Button
                 onClick={handleNext}
                 variant="contained"
