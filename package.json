@@ -1,28 +1,20 @@
 {
-  "name": "react",
+  "name": "react-frontend",
   "private": true,
-  "version": "0.0.0",
-  "main": "main.tsx",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint .",
-    "tsc:typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "tsc:typecheck": "tsc --noEmit"
   },
-  "wireit": {
-    "precommit": {
-      "dependencies": [
-        "lint",
-        "tsc:typecheck"
-      ]
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": ""
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fortawesome/fontawesome-svg-core": "^7.0.0",
@@ -39,8 +31,6 @@
     "dotenv": "^17.2.1",
     "dotenv-flow": "^4.1.0",
     "lodash": "^4.17.21",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.62.0",
     "react-hot-toast": "^2.6.0",
@@ -53,9 +43,8 @@
   "devDependencies": {
     "@react-ddd/eslint-config": "^0.4.0",
     "@types/lodash": "^4.17.20",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.6.0",
+    "@types/react": "^18.2.7",
+    "@types/react-dom": "^18.2.4",
     "globals": "^16.3.0",
     "typescript": "~5.8.3",
     "vite": "^7.0.4"
