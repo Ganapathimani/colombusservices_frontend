@@ -54,8 +54,8 @@ export const menuItems: MenuItem[] = [
     title: 'Admin',
     icon: <FontAwesomeIcon icon={faCircleQuestion} size="xl" />,
     subItems: [
-      { name: 'Admin', link: 'admin/dashboard/orders' },
-      { name: 'Create User', link: 'admin/dashboard/userCreate' },
+      { name: 'Admin', link: 'order-entries' },
+      { name: 'Create User', link: 'create-user' },
     ],
   },
   {

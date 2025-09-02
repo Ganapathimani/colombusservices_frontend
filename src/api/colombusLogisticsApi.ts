@@ -18,17 +18,21 @@ import {
 } from 'lodash/fp';
 import with401Redirect from './with401Redirect';
 import withLoading from './withLoading';
+import createUser from './_createUser';
+import deleteOrder from './_deleteOrder';
 import loginUpsert from './_loginUpsert';
 import listOrders from './_listOrders';
 import orderUpsert from './_createOrder';
 import signupUpsert from './_signupUpsert';
 import userGet from './_userGet';
 import updateProfile from './_updateProfile';
+import updateOrder from './_updateOrder';
 
 const tagTypes = [
   'Signup',
   'Login',
   'Orders',
+  'createUser',
 ] as const;
 
 const baseQuery = createApi({
@@ -46,12 +50,15 @@ const baseQuery = createApi({
 
   tagTypes,
   endpoints: (builder) => ({
+    createUser: createUser(builder),
+    deleteOrder: deleteOrder(builder),
     loginUpsert: loginUpsert(builder),
     orderUpsert: orderUpsert(builder),
     signupUpsert: signupUpsert(builder),
     userGet: userGet(builder),
     listOrders: listOrders(builder),
     updateProfile: updateProfile(builder),
+    updateOrder: updateOrder(builder),
   }),
 
 });
@@ -81,10 +88,13 @@ ColombusLogisticsTagType,
 export default colombusLogisticsApi;
 
 export const {
+  useCreateUserMutation,
+  useDeleteOrderMutation,
   useLoginUpsertMutation,
   useListOrdersQuery,
   useOrderUpsertMutation,
   useSignupUpsertMutation,
   useUserGetQuery,
   useUpdateProfileMutation,
+  useUpdateOrderMutation,
 } = colombusLogisticsApi;
