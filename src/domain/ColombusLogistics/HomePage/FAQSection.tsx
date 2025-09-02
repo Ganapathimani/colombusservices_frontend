@@ -6,7 +6,6 @@ import {
   AccordionSummary,
   AccordionDetails,
   Box,
-  IconButton,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
@@ -113,9 +112,7 @@ const FAQSection = () => {
           >
             <AccordionSummary
               expandIcon={(
-                <IconButton size="small" sx={{ color: 'green' }}>
-                  <FontAwesomeIcon icon={faChevronDown} />
-                </IconButton>
+                <FontAwesomeIcon icon={faChevronDown} style={{ color: 'green' }} />
               )}
             >
               <Typography sx={{ fontWeight: 500 }}>

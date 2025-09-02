@@ -4,6 +4,7 @@ import {
   Button, Stepper, Step, StepLabel, Stack,
 } from '@mui/material';
 import { useOrderUpsertMutation } from '#api/colombusLogisticsApi';
+import toast from 'react-hot-toast';
 import type { TLogisticsRegistrationForm } from '../../models/TLogisticsRegistrationForm';
 import OriginForm from './_useOriginForm';
 import DestinationForm from './_useDestinationForm';
@@ -59,6 +60,7 @@ const LogisticsRegistrationWizard = () => {
       };
       await orderUpsert(payload).unwrap();
       methods.reset();
+      toast.success('Order created Successfully');
       setActiveStep(0);
     } catch (err: any) {
       throw new Error(err);

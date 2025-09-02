@@ -20,6 +20,7 @@ import {
   faPhone,
 } from '@fortawesome/free-solid-svg-icons';
 import { useLoginUpsertMutation, useSignupUpsertMutation } from '#api/colombusLogisticsApi';
+import toast from 'react-hot-toast';
 
 type SignUpInputs = {
   name: string;
@@ -113,8 +114,8 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
 
         const response = await loginUpsert({ email: data.email, password: data.password }).unwrap();
 
-        const userData = response?.user || response?.user;
-        const token = response?.token || response?.token;
+        const userData = response?.user;
+        const token = response?.token;
         localStorage.setItem('token', token);
 
         if (!userData || !token) {
@@ -131,6 +132,7 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
         setWithExpiry(STORAGE_KEY, user, DAY_MS);
         resetLogin();
         onSuccess(user);
+        toast.success(`Welcome ${user.name}!`);
         onClose();
       } catch (error: any) {
         setErrorMessage(error?.data?.message || error?.message || 'Login failed. Please try again.');

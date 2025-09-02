@@ -11,7 +11,7 @@ import {
   Radio,
   FormHelperText,
   MenuItem,
-  Typography,
+  // Typography,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTruck, faCarSide } from '@fortawesome/free-solid-svg-icons';
@@ -172,7 +172,7 @@ const useVehicleForm = () => {
                 fullWidth
               />
             </Stack>
-            <Typography fontSize={18}>Order For</Typography>
+            {/* <Typography fontSize={18}>Order For</Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <TextField
                 label="Name"
@@ -191,7 +191,7 @@ const useVehicleForm = () => {
                 })}
                 fullWidth
               />
-            </Stack>
+            </Stack> */}
             <TextField
               label="Tell something about order (if any)"
               {...register('notes')}
