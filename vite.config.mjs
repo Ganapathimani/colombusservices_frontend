@@ -15,38 +15,33 @@ dotenvFlow.config();
 const publicEnvs = flow(
   toPairs,
   filter(([name]) => startsWith('PUBLIC_', name)),
-  map(([name, value]) => [
-    replace(/^PUBLIC_/, '', name),
-    value,
-  ]),
+  map(([name, value]) => [replace(/^PUBLIC_/, '', name), value]),
   fromPairs,
 )(process.env);
+
 const publicEnvsScript = `window.envs = ${JSON.stringify(publicEnvs)}`;
 
 const injectEnv = () => ({
   name: 'inject-env',
-  apply: 'serve',
   transformIndexHtml: (html) => html.replace('<%= windowInjection %>', publicEnvsScript),
 });
 
 export default defineConfig({
+  base: '/',
   server: {
     port: 4000,
     open: true,
   },
-  plugins: [
-    react(),
-    tsconfigPaths(),
-    injectEnv(),
-  ],
+  plugins: [react(), tsconfigPaths(), injectEnv()],
   resolve: {
     alias: {
-      '#assets/*': './src/assests/*',
+      '#assets/*': './src/assets/*',
       '#domain/*': './src/domain/*',
       '#constants/*': './src/constants/*',
       '#components/*': './src/components/*',
       '#pages/*': './src/pages/*',
       '#utils/*': './src/utils/*',
+      '#api/*': './src/api/*',
     },
   },
 });

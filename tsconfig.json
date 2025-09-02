@@ -3,44 +3,24 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": false,
+    "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "Node",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "incremental": true,
-    "lib": ["DOM", "ES2015"],
-    "jsx": "react",
-    "outDir": "./dist",
+    "lib": ["DOM", "ESNext"],
+    "jsx": "react-jsx",
     "paths": {
-      "#api/*": [
-        "./src/api/*"
-      ],
-      "#assets/*": [
-        "./src/assets/*"
-      ],
-      "#components/*": [
-        "./src/components/*"
-      ],
-      "#constants/*": [
-        "./src/constants/*"
-      ],
-      "#domain/*": [
-        "./src/domain/*"
-      ],
-      "#pages/*": [
-        "./src/pages/*"
-      ],
+      "#api/*": ["./src/api/*"],
+      "#assets/*": ["./src/assets/*"],
+      "#components/*": ["./src/components/*"],
+      "#constants/*": ["./src/constants/*"],
+      "#domain/*": ["./src/domain/*"],
+      "#pages/*": ["./src/pages/*"],
+      "#utils/*": ["./src/utils/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "vite.config.mjs",
-    "vite.config.js"  ],
-  "exclude": [
-    "**/node_modules",
-    "cdk.out",
-    "dist"
-  ]
-}  
+  "include": ["**/*.ts", "**/*.tsx", "vite.config.ts"],
+  "exclude": ["**/node_modules", "cdk.out", "dist"]
+}
