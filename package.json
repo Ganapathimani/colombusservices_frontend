@@ -13,8 +13,6 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fortawesome/fontawesome-svg-core": "^7.0.0",
@@ -31,6 +29,8 @@
     "dotenv": "^17.2.1",
     "dotenv-flow": "^4.1.0",
     "lodash": "^4.17.21",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.62.0",
     "react-hot-toast": "^2.6.0",
