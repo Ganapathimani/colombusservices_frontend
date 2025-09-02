@@ -23,11 +23,11 @@ const navItems = [
 
 const roleRoutes: Record<string, string> = {
   CUSTOMER: '/',
-  ASSISTANT: '/assistant/home',
+  ASSISTANT: '/admin/assistant',
   ADMIN: '/admin',
-  PICKUP: '/pickup/home',
-  LR: '/lr/home',
-  DELIVERY: '/delivery/home',
+  PICKUP: '/admin/pickup',
+  LR: '/admin/lr',
+  DELIVERY: '/admin/delivery',
 };
 
 const Navbar = () => {
