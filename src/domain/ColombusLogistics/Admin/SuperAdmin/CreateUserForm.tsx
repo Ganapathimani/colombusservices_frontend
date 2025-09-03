@@ -10,8 +10,8 @@ import {
   IconButton,
   CardContent,
   Fade,
-  CircularProgress,
   MenuItem,
+  Divider,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -21,7 +21,6 @@ import {
   faEnvelope,
   faPhone,
   faLock,
-  faUserPlus,
   faShield,
   faCheckCircle,
 } from '@fortawesome/free-solid-svg-icons';
@@ -41,44 +40,38 @@ const roles = [
   {
     value: 'ADMIN',
     label: 'Administrator',
-    description: 'Full system access',
-    color: '#d32f2f',
-    bgColor: '#ffebee',
+    description: 'Full system access and management',
+    color: '#1565c0',
   },
   {
     value: 'ASSISTANT',
     label: 'Assistant',
-    description: 'Support operations',
-    color: '#1976d2',
-    bgColor: '#e3f2fd',
+    description: 'Administrative support operations',
+    color: '#2e7d32',
   },
   {
     value: 'PICKUP',
     label: 'Pickup Staff',
-    description: 'Collection services',
-    color: '#f57c00',
-    bgColor: '#fff3e0',
+    description: 'Package collection services',
+    color: '#ed6c02',
   },
   {
     value: 'LR',
     label: 'LR Staff',
-    description: 'Logistics & routing',
+    description: 'Logistics and routing operations',
     color: '#7b1fa2',
-    bgColor: '#f3e5f5',
   },
   {
     value: 'DELIVERY',
     label: 'Delivery Staff',
-    description: 'Delivery operations',
-    color: '#388e3c',
-    bgColor: '#e8f5e8',
+    description: 'Package delivery operations',
+    color: '#d32f2f',
   },
   {
     value: 'CUSTOMER',
     label: 'Customer',
-    description: 'Client account',
-    color: '#616161',
-    bgColor: '#f5f5f5',
+    description: 'Client account access',
+    color: '#424242',
   },
 ];
 
@@ -86,12 +79,12 @@ const AdminCreateUserForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [createUser] = useCreateUserMutation();
 
   const {
     handleSubmit,
     control,
     reset,
-    watch,
     formState: { errors },
   } = useForm<AdminCreateUserFormValues>({
     defaultValues: {
@@ -102,10 +95,6 @@ const AdminCreateUserForm = () => {
       role: 'CUSTOMER',
     },
   });
-  const [createUser] = useCreateUserMutation();
-
-  const watchedRole = watch('role');
-  const selectedRoleInfo = roles.find((role) => role.value === watchedRole);
 
   const onSubmit = async (data: AdminCreateUserFormValues) => {
     try {
@@ -125,7 +114,7 @@ const AdminCreateUserForm = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          background: 'linear-gradient(135deg, #e8f5e8 0%, #c8e6c8 50%, #a5d6a7 100%)',
+          backgroundColor: '#f8fafc',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -134,37 +123,54 @@ const AdminCreateUserForm = () => {
       >
         <Fade in={submitSuccess}>
           <Paper
-            elevation={12}
+            elevation={4}
             sx={{
-              maxWidth: 400,
+              maxWidth: 420,
               p: 6,
-              borderRadius: 4,
+              borderRadius: 2,
               textAlign: 'center',
-              background: 'linear-gradient(145deg, #ffffff 0%, #f8fbf8 100%)',
+              backgroundColor: '#ffffff',
+              border: '1px solid #e2e8f0',
             }}
           >
             <Box
               sx={{
-                width: 80,
-                height: 80,
-                backgroundColor: '#e8f5e8',
+                width: 64,
+                height: 64,
+                backgroundColor: '#f0f9ff',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 mx: 'auto',
                 mb: 3,
-                boxShadow: '0 8px 32px rgba(76, 175, 80, 0.3)',
+                border: '2px solid #0ea5e9',
               }}
             >
-              <FontAwesomeIcon icon={faCheckCircle} size="2x" color="#4caf50" />
+              <FontAwesomeIcon icon={faCheckCircle} size="2x" color="#0ea5e9" />
             </Box>
-            <Typography variant="h4" fontWeight={700} color="#2e7d32" mb={2}>
-              User Created Successfully!
+            <Typography variant="h5" fontWeight={600} color="#1e293b" mb={2}>
+              User Created Successfully
             </Typography>
-            <Typography variant="body1" color="text.secondary">
-              The new user account has been set up and is ready to use.
+            <Typography variant="body1" color="#64748b" mb={4}>
+              The new user account has been set up and is ready for use.
             </Typography>
+            <Button
+              variant="outlined"
+              onClick={() => setSubmitSuccess(false)}
+              sx={{
+                borderColor: '#0ea5e9',
+                color: '#0ea5e9',
+                textTransform: 'none',
+                fontWeight: 500,
+                '&:hover': {
+                  backgroundColor: '#f0f9ff',
+                  borderColor: '#0284c7',
+                },
+              }}
+            >
+              Create Another User
+            </Button>
           </Paper>
         </Fade>
       </Box>
@@ -175,6 +181,7 @@ const AdminCreateUserForm = () => {
     <Box
       sx={{
         minHeight: '100vh',
+        backgroundColor: '#f8fafc',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -182,63 +189,33 @@ const AdminCreateUserForm = () => {
       }}
     >
       <Paper
-        elevation={16}
+        elevation={4}
         sx={{
           maxWidth: 500,
           width: '100%',
-          borderRadius: 4,
+          borderRadius: 2,
           overflow: 'hidden',
-          background: 'linear-gradient(145deg, #ffffff 0%, #f8fbf8 100%)',
-          boxShadow: '0 20px 60px rgba(76, 175, 80, 0.15)',
+          backgroundColor: '#ffffff',
+          border: '1px solid #e2e8f0',
         }}
       >
         <Box
           sx={{
-            background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
-            color: 'white',
-            p: 1,
+            p: 2,
+            color: '#1e293b',
             textAlign: 'center',
-            position: 'relative',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%)',
-              backgroundSize: '20px 20px',
-            },
           }}
         >
-          <Box sx={{ position: 'relative', zIndex: 1 }}>
-            <Box
-              sx={{
-                width: 50,
-                height: 50,
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mx: 'auto',
-                mb: 2,
-                backdropFilter: 'blur(10px)',
-              }}
-            >
-              <FontAwesomeIcon icon={faUserPlus} size="lg" />
-            </Box>
-            <Typography variant="h4" fontWeight={700} mb={1}>
-              Create New User
-            </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.9 }}>
-              Add a new team member to your organization
-            </Typography>
-          </Box>
+          <Typography variant="h5" fontWeight={600} mb={1}>
+            Create New User
+          </Typography>
+          <Typography variant="body2" sx={{ opacity: 0.8 }}>
+            Add a new team member to your organization
+          </Typography>
         </Box>
 
         <CardContent sx={{ p: 4 }}>
-          <Box component="div" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <Controller
               name="name"
               control={control}
@@ -257,24 +234,22 @@ const AdminCreateUserForm = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <FontAwesomeIcon icon={faUser} color="#4caf50" />
+                        <FontAwesomeIcon icon={faUser} color="#64748b" />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
-                      backgroundColor: '#f8fbf8',
-                      '&:hover fieldset': { borderColor: '#4caf50' },
-                      '&.Mui-focused fieldset': { borderColor: '#4caf50', borderWidth: 2 },
+                      backgroundColor: '#fafbfc',
+                      '&:hover fieldset': { borderColor: '#0ea5e9' },
+                      '&.Mui-focused fieldset': { borderColor: '#0ea5e9', borderWidth: 2 },
                     },
-                    '& .MuiInputLabel-root.Mui-focused': { color: '#4caf50' },
+                    '& .MuiInputLabel-root.Mui-focused': { color: '#0ea5e9' },
                   }}
                 />
               )}
             />
 
-            {/* Email Field */}
             <Controller
               name="email"
               control={control}
@@ -293,31 +268,29 @@ const AdminCreateUserForm = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <FontAwesomeIcon icon={faEnvelope} color="#4caf50" />
+                        <FontAwesomeIcon icon={faEnvelope} color="#64748b" />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
-                      backgroundColor: '#f8fbf8',
-                      '&:hover fieldset': { borderColor: '#4caf50' },
-                      '&.Mui-focused fieldset': { borderColor: '#4caf50', borderWidth: 2 },
+                      backgroundColor: '#fafbfc',
+                      '&:hover fieldset': { borderColor: '#0ea5e9' },
+                      '&.Mui-focused fieldset': { borderColor: '#0ea5e9', borderWidth: 2 },
                     },
-                    '& .MuiInputLabel-root.Mui-focused': { color: '#4caf50' },
+                    '& .MuiInputLabel-root.Mui-focused': { color: '#0ea5e9' },
                   }}
                 />
               )}
             />
 
-            {/* Mobile Field */}
             <Controller
               name="mobile"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Mobile Number (Optional)"
+                  label="Mobile Number"
                   variant="outlined"
                   error={!!errors.mobile}
                   helperText={errors.mobile?.message}
@@ -325,30 +298,32 @@ const AdminCreateUserForm = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <FontAwesomeIcon icon={faPhone} color="#4caf50" />
+                        <FontAwesomeIcon icon={faPhone} color="#64748b" />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
-                      backgroundColor: '#f8fbf8',
-                      '&:hover fieldset': { borderColor: '#4caf50' },
-                      '&.Mui-focused fieldset': { borderColor: '#4caf50', borderWidth: 2 },
+                      backgroundColor: '#fafbfc',
+                      '&:hover fieldset': { borderColor: '#0ea5e9' },
+                      '&.Mui-focused fieldset': { borderColor: '#0ea5e9', borderWidth: 2 },
                     },
-                    '& .MuiInputLabel-root.Mui-focused': { color: '#4caf50' },
+                    '& .MuiInputLabel-root.Mui-focused': { color: '#0ea5e9' },
                   }}
                 />
               )}
             />
 
-            {/* Password Field */}
             <Controller
               name="password"
               control={control}
               rules={{
                 required: 'Password is required',
-                minLength: { value: 6, message: 'Password must be at least 6 characters' },
+                minLength: { value: 8, message: 'Password must be at least 8 characters' },
+                pattern: {
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                  message: 'Password must contain uppercase, lowercase, and number',
+                },
               }}
               render={({ field }) => (
                 <TextField
@@ -357,12 +332,12 @@ const AdminCreateUserForm = () => {
                   type={showPassword ? 'text' : 'password'}
                   variant="outlined"
                   error={!!errors.password}
-                  helperText={errors.password?.message}
+                  helperText={errors.password?.message || 'Must contain uppercase, lowercase, and number'}
                   fullWidth
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <FontAwesomeIcon icon={faLock} color="#4caf50" />
+                        <FontAwesomeIcon icon={faLock} color="#64748b" />
                       </InputAdornment>
                     ),
                     endAdornment: (
@@ -370,7 +345,7 @@ const AdminCreateUserForm = () => {
                         <IconButton
                           onClick={() => setShowPassword(!showPassword)}
                           edge="end"
-                          sx={{ color: '#0c150cff' }}
+                          sx={{ color: '#64748b' }}
                         >
                           <FontAwesomeIcon size="sm" icon={showPassword ? faEyeSlash : faEye} />
                         </IconButton>
@@ -379,12 +354,11 @@ const AdminCreateUserForm = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
-                      backgroundColor: '#f8fbf8',
-                      '&:hover fieldset': { borderColor: '#4caf50' },
-                      '&.Mui-focused fieldset': { borderColor: '#4caf50', borderWidth: 2 },
+                      backgroundColor: '#fafbfc',
+                      '&:hover fieldset': { borderColor: '#0ea5e9' },
+                      '&.Mui-focused fieldset': { borderColor: '#0ea5e9', borderWidth: 2 },
                     },
-                    '& .MuiInputLabel-root.Mui-focused': { color: '#4caf50' },
+                    '& .MuiInputLabel-root.Mui-focused': { color: '#0ea5e9' },
                   }}
                 />
               )}
@@ -406,46 +380,30 @@ const AdminCreateUserForm = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <FontAwesomeIcon icon={faShield} color="#4caf50" />
+                        <FontAwesomeIcon icon={faShield} color="#64748b" />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
-                      backgroundColor: '#f8fbf8',
-                      '&:hover fieldset': { borderColor: '#4caf50' },
-                      '&.Mui-focused fieldset': { borderColor: '#4caf50', borderWidth: 2 },
+                      backgroundColor: '#fafbfc',
+                      '&:hover fieldset': { borderColor: '#0ea5e9' },
+                      '&.Mui-focused fieldset': { borderColor: '#0ea5e9', borderWidth: 2 },
                     },
-                    '& .MuiInputLabel-root.Mui-focused': { color: '#4caf50' },
+                    '& .MuiInputLabel-root.Mui-focused': { color: '#0ea5e9' },
                     '& .MuiSelect-select': {
-                      color: '#2e7d32',
+                      color: '#1e293b',
                       fontWeight: 500,
                     },
                   }}
                 >
                   {roles.map((role) => (
-                    <MenuItem
-                      key={role.value}
-                      value={role.value}
-                      sx={{
-                        borderRadius: 2,
-                        '&:hover': {
-                          backgroundColor: '#e8f5e8',
-                        },
-                        '&.Mui-selected': {
-                          backgroundColor: '#e8f5e8',
-                          '&:hover': {
-                            backgroundColor: '#e8f5e8',
-                          },
-                        },
-                      }}
-                    >
+                    <MenuItem key={role.value} value={role.value}>
                       <Box>
-                        <Typography variant="subtitle2" fontWeight={600} color="#2e7d32">
+                        <Typography variant="body1" fontWeight={500} color="#1e293b">
                           {role.label}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant="body2" color="#64748b">
                           {role.description}
                         </Typography>
                       </Box>
@@ -454,84 +412,33 @@ const AdminCreateUserForm = () => {
                 </TextField>
               )}
             />
-
-            {selectedRoleInfo && (
-              <Fade in>
-                <Paper
-                  sx={{
-                    background: 'linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%)',
-                    border: '2px solid #a5d6a7',
-                    borderRadius: 3,
-                    p: 2,
-                  }}
-                >
-                  <Box display="flex" alignItems="center">
-                    <FontAwesomeIcon icon={faShield} color="#4caf50" style={{ marginRight: 12 }} />
-                    <Box>
-                      <Typography variant="subtitle1" fontWeight={600} color="#2e7d32">
-                        Selected Role:
-                        {' '}
-                        {selectedRoleInfo.label}
-                      </Typography>
-                      <Typography variant="body2" color="#388e3c">
-                        {selectedRoleInfo.description}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Paper>
-              </Fade>
-            )}
+            <Divider sx={{ my: 1 }} />
 
             <Button
-              type="button"
-              onClick={handleSubmit(onSubmit)}
+              type="submit"
               variant="contained"
               size="large"
               disabled={isSubmitting}
-              startIcon={
-                isSubmitting ? (
-                  <CircularProgress size={20} color="inherit" />
-                ) : (
-                  <FontAwesomeIcon icon={faUserPlus} />
-                )
-              }
               sx={{
-                py: 2,
-                borderRadius: 3,
-                background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
+                py: 1.5,
+                backgroundColor: '#0ea5e9',
                 fontWeight: 600,
-                fontSize: '1.1rem',
                 textTransform: 'none',
-                boxShadow: '0 8px 25px rgba(76, 175, 80, 0.4)',
+                boxShadow: 'none',
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #388e3c 0%, #2e7d32 100%)',
-                  boxShadow: '0 12px 35px rgba(76, 175, 80, 0.5)',
+                  backgroundColor: '#0284c7',
+                  boxShadow: 'none',
                 },
                 '&:disabled': {
-                  background: '#c8e6c8',
-                  color: '#81c784',
+                  backgroundColor: '#cbd5e1',
+                  color: '#94a3b8',
                 },
-                transition: 'all 0.3s ease',
               }}
             >
               {isSubmitting ? 'Creating User...' : 'Create User Account'}
             </Button>
           </Box>
         </CardContent>
-
-        <Box
-          sx={{
-            backgroundColor: '#f1f8e9',
-            borderTop: '1px solid #c8e6c8',
-            p: 2,
-            textAlign: 'center',
-          }}
-        >
-          <Typography variant="caption" color="text.secondary">
-            By creating this account, you agree to provide accurate
-            information and follow company policies.
-          </Typography>
-        </Box>
       </Paper>
     </Box>
   );

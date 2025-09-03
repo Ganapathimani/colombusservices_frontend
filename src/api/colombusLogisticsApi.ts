@@ -20,6 +20,7 @@ import with401Redirect from './with401Redirect';
 import withLoading from './withLoading';
 import createUser from './_createUser';
 import deleteOrder from './_deleteOrder';
+import getOrder from './_getOrder';
 import loginUpsert from './_loginUpsert';
 import listOrders from './_listOrders';
 import orderUpsert from './_createOrder';
@@ -58,6 +59,7 @@ const baseQuery = createApi({
     userGet: userGet(builder),
     listOrders: listOrders(builder),
     updateProfile: updateProfile(builder),
+    getOrder: getOrder(builder),
     updateOrder: updateOrder(builder),
   }),
 
@@ -89,6 +91,7 @@ export default colombusLogisticsApi;
 
 export const {
   useCreateUserMutation,
+  useGetOrderQuery,
   useDeleteOrderMutation,
   useLoginUpsertMutation,
   useListOrdersQuery,

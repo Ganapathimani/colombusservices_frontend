@@ -12,12 +12,20 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Stack,
+  LinearProgress,
 } from '@mui/material';
 import type { GridColDef, GridRenderCellParams, GridPaginationModel } from '@mui/x-data-grid';
 import { DataGrid } from '@mui/x-data-grid';
-import { useListOrdersQuery, useDeleteOrderMutation } from '#api/colombusLogisticsApi';
+import {
+  useListOrdersQuery,
+  useDeleteOrderMutation,
+  useGetOrderQuery,
+} from '#api/colombusLogisticsApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import LogisticsRegistrationWizard from '#domain/ColombusLogistics/RegistrationForm/LogisticsRegistrationForm';
+import type { TLogisticsRegistrationForm, TCargoDetail, TDimension } from '#domain/models/TLogisticsRegistrationForm';
 
 type OrderType = {
   id: string;
@@ -38,11 +46,17 @@ const OrdersDataGrid = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState<OrderType | null>(null);
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuOrder, setMenuOrder] = useState<OrderType | null>(null);
 
   const [deleteOrder, { isLoading: deleting }] = useDeleteOrderMutation();
+
+  const {
+    data: orderData,
+    isFetching: fetchingOrder,
+  } = useGetOrderQuery(selectedOrder?.id as string, {
+    skip: !selectedOrder,
+  });
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
@@ -57,28 +71,69 @@ const OrdersDataGrid = () => {
     );
   }
 
+  const mapOrderToForm = (order: any): TLogisticsRegistrationForm => ({
+    id: order.id,
+    companyName: order.customer?.name ?? '',
+    emailId: order.customer?.email ?? '',
+    phoneNumber: order.originContactNumber,
+    vehicleType: order.vehicleType,
+    vehicleModel: order.vehicleModel,
+    rate: Number(order.rate) || 0,
+    rateQuotedBy: order.rateQuotedBy || '',
+    orderForName: order.destinationCustomerName,
+    orderForContactNumber: order.destinationContactNumber,
+    notes: order.notes || '',
+    ftlType: order.ftlType,
+    loadingType: order.loadingType,
+    cargoDetails: (order.packages || []).map((pkg: any): TCargoDetail => ({
+      package: pkg.packages,
+      cbm: String(pkg.cbm),
+      weight: pkg.weight,
+      materialType: pkg.materialType,
+      photo: null,
+      hasDimensions: pkg.hasDimensions,
+      dimensions: (pkg.dimensions || []).map((dim: any): TDimension => ({
+        handlingUnit: dim.handlingUnit,
+        length: dim.length,
+        width: dim.width,
+        height: dim.height,
+        cubicFeet: dim.cubicFeet,
+      })),
+    })),
+    originCustomerName: order.originCustomerName,
+    originAddress: order.originAddress,
+    originLocation: order.originLocation,
+    originPincode: order.originPincode,
+    originEmailId: order.originEmailId,
+    originContactNumber: order.originContactNumber,
+    pickupDate: order.pickupDate ? new Date(order.pickupDate) : null,
+    destinationCustomerName: order.destinationCustomerName,
+    destinationAddress: order.destinationAddress,
+    destinationEmailId: order.destinationEmailId,
+    destinationLocation: order.destinationLocation,
+    destinationPincode: order.destinationPincode,
+    destinationContactNumber: order.destinationContactNumber,
+  });
+
+  // Menu handlers
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, order: OrderType) => {
     setAnchorEl(event.currentTarget);
     setMenuOrder(order);
   };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
     setMenuOrder(null);
   };
-
   const handleEdit = (order: OrderType) => {
     setSelectedOrder(order);
     setDrawerOpen(true);
     handleMenuClose();
   };
-
   const handleDeleteClick = (order: OrderType) => {
     setOrderToDelete(order);
     setDeleteDialogOpen(true);
     handleMenuClose();
   };
-
   const handleDeleteConfirm = async () => {
     if (!orderToDelete) {
       return;
@@ -87,6 +142,15 @@ const OrdersDataGrid = () => {
     setDeleteDialogOpen(false);
     setOrderToDelete(null);
   };
+
+  const rows = data?.map((order) => ({
+    id: order.id,
+    orderNumber: order.orderNumber,
+    customer: order.originCustomerName,
+    origin: order.originLocation,
+    destination: order.destinationLocation,
+    status: order.status,
+  })) || [];
 
   const columns: GridColDef[] = [
     { field: 'orderNumber', headerName: 'Order Number', flex: 1 },
@@ -108,20 +172,21 @@ const OrdersDataGrid = () => {
     },
   ];
 
-  const rows = data?.map((order) => ({
-    id: order.id,
-    orderNumber: order.orderNumber,
-    customer: order.originCustomerName,
-    origin: order.originLocation,
-    destination: order.destinationLocation,
-    status: order.status,
-  })) || [];
-
   return (
     <Box p={3} height="80vh">
-      <Typography variant="h6" fontWeight={600} mb={2}>
-        Orders Management
-      </Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h6" fontWeight={600}>Orders Management</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            setSelectedOrder(null);
+            setDrawerOpen(true);
+          }}
+        >
+          Create Order
+        </Button>
+      </Stack>
 
       <DataGrid
         rows={rows}
@@ -134,24 +199,26 @@ const OrdersDataGrid = () => {
       />
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-        <MenuItem onClick={() => handleEdit(menuOrder!)}>
-          Edit
-        </MenuItem>
-        <MenuItem onClick={() => handleDeleteClick(menuOrder!)}>
-          Delete
-        </MenuItem>
+        <MenuItem onClick={() => handleEdit(menuOrder!)}>Edit</MenuItem>
+        <MenuItem onClick={() => handleDeleteClick(menuOrder!)}>Delete</MenuItem>
       </Menu>
 
-      <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)} PaperProps={{ sx: { width: 450, p: 3 } }}>
-        <Typography variant="h6" mb={2}>
-          Edit Order
-        </Typography>
-        {selectedOrder && (
-          <Typography>
-            Editing Order:
-            {' '}
-            <strong>{selectedOrder.orderNumber}</strong>
-          </Typography>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        PaperProps={{ sx: { width: { md: 650, xs: 400 } } }}
+      >
+        {fetchingOrder ? (
+          <Box display="flex" justifyContent="center" mt={5}>
+            <LinearProgress />
+          </Box>
+        ) : (
+          <LogisticsRegistrationWizard
+            defaultValues={selectedOrder ? mapOrderToForm(orderData) : undefined}
+            onClose={() => setDrawerOpen(false)}
+            title={selectedOrder ? 'Edit Order' : 'Create Order'}
+          />
         )}
       </Drawer>
 
