@@ -21,10 +21,10 @@ const OriginForm = () => {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Stack spacing={3}>
         <TextField
-          label="Customer Name"
-          {...register('originCustomerName', { required: 'Customer Name is required' })}
-          error={!!errors.originCustomerName}
-          helperText={errors.originCustomerName?.message}
+          label="Company Name"
+          {...register('originCompanyName', { required: 'Company Name is required' })}
+          error={!!errors.originCompanyName}
+          helperText={errors.originCompanyName?.message}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -119,7 +119,6 @@ const OriginForm = () => {
         <Controller
           name="pickupDate"
           control={control}
-          rules={{ required: 'Pickup date is required' }}
           render={({ field }) => (
             <DatePicker
               {...field}
@@ -129,8 +128,6 @@ const OriginForm = () => {
               value={field.value}
               slotProps={{
                 textField: {
-                  error: !!errors.pickupDate,
-                  helperText: errors.pickupDate?.message,
                   fullWidth: true,
                   InputProps: {
                     startAdornment: (
@@ -144,6 +141,7 @@ const OriginForm = () => {
             />
           )}
         />
+
       </Stack>
     </LocalizationProvider>
   );

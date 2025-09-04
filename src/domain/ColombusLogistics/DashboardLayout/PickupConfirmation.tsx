@@ -37,8 +37,8 @@ const PickupConfirmations = () => {
     () => map((o: any) => ({
       id: o?.id ?? '—',
       pickupDate: o?.pickupDate ?? null,
-      origin: o?.originCustomerName ?? '—',
-      destination: o?.destinationCustomerName ?? '—',
+      origin: o?.originCompanyName ?? '—',
+      destination: o?.destinationCompanyName ?? '—',
       vehicleType: o?.vehicleType ?? '—',
       vehicleModel: o?.vehicleModel ?? '—',
       status: (o?.status ?? 'Pending').toUpperCase(),

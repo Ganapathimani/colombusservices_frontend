@@ -17,6 +17,7 @@ import {
   faEyeSlash,
   faUser,
   faKey,
+  faBuilding,
   faPhone,
 } from '@fortawesome/free-solid-svg-icons';
 import { useLoginUpsertMutation, useSignupUpsertMutation } from '#api/colombusLogisticsApi';
@@ -26,6 +27,7 @@ type SignUpInputs = {
   name: string;
   email: string;
   password: string;
+  companyName: string;
   mobile: string;
 };
 
@@ -151,6 +153,7 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
           email: data.email,
           password: data.password,
           mobile: data.mobile,
+          companyName: data.companyName,
         }).unwrap();
         const userData = response?.user || response?.user;
         const token = response?.token || response?.token;
@@ -330,6 +333,24 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
                 startAdornment: (
                   <InputAdornment position="start">
                     <FontAwesomeIcon icon={faPhone} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              placeholder="Enter your company name"
+              fullWidth
+              margin="normal"
+              {...registerSignUp('companyName', {
+                required: 'Company name is required',
+                minLength: { value: 2, message: 'Company name should be at least 2 characters' },
+              })}
+              error={!!errorsSignUp.companyName}
+              helperText={errorsSignUp.companyName?.message}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FontAwesomeIcon icon={faBuilding} color="#6b7280" />
                   </InputAdornment>
                 ),
               }}

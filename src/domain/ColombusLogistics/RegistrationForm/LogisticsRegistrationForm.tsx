@@ -10,8 +10,9 @@ import OriginForm from './_useOriginForm';
 import DestinationForm from './_useDestinationForm';
 import CargoForm from './_useCargoForm';
 import VehicleForm from './_useVehicleForm';
+import CustomerDetailsForm from './_useCustomerDetailsForm';
 
-const steps = ['Origin', 'Destination', 'Cargo', 'Vehicle'];
+const steps = ['Customer Details', 'Origin', 'Destination', 'Cargo', 'Vehicle'];
 
 type LogisticsRegistrationWizardProps = {
   defaultValues?: TLogisticsRegistrationForm;
@@ -103,10 +104,11 @@ const LogisticsRegistrationWizard = ({ defaultValues, onClose, title = 'Create O
         </Stepper>
 
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          {activeStep === 0 && <OriginForm />}
-          {activeStep === 1 && <DestinationForm />}
-          {activeStep === 2 && <CargoForm />}
-          {activeStep === 3 && <VehicleForm />}
+          {activeStep === 0 && <CustomerDetailsForm />}
+          {activeStep === 1 && <OriginForm />}
+          {activeStep === 2 && <DestinationForm />}
+          {activeStep === 3 && <CargoForm />}
+          {activeStep === 4 && <VehicleForm />}
 
           <Stack direction="row" justifyContent="space-between" mt={4}>
             {activeStep > 0 ? (

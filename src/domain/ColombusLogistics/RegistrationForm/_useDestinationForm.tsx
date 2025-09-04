@@ -17,10 +17,10 @@ const useDestinationForm = () => {
   return (
     <Stack spacing={3}>
       <TextField
-        label="Customer Name"
-        {...register('destinationCustomerName', { required: 'Customer Name is required' })}
-        error={!!errors.destinationCustomerName}
-        helperText={errors.destinationCustomerName?.message}
+        label="Company Name"
+        {...register('destinationCompanyName', { required: 'Company Name is required' })}
+        error={!!errors.destinationCompanyName}
+        helperText={errors.destinationCompanyName?.message}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

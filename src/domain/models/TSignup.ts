@@ -3,6 +3,7 @@ export type TSignup = {
   email: string,
   mobile?: string,
   password: string,
+  companyName: string,
   role?: string,
   adminSecret?: string,
 };

@@ -30,7 +30,7 @@ import type { TLogisticsRegistrationForm, TCargoDetail, TDimension } from '#doma
 type OrderType = {
   id: string;
   orderNumber: string;
-  originCustomerName: string;
+  originCompanyName: string;
   originLocation: string;
   destinationLocation: string;
   status: string;
@@ -80,7 +80,7 @@ const OrdersDataGrid = () => {
     vehicleModel: order.vehicleModel,
     rate: Number(order.rate) || 0,
     rateQuotedBy: order.rateQuotedBy || '',
-    orderForName: order.destinationCustomerName,
+    orderForName: order.destinationCompanyName,
     orderForContactNumber: order.destinationContactNumber,
     notes: order.notes || '',
     ftlType: order.ftlType,
@@ -100,22 +100,25 @@ const OrdersDataGrid = () => {
         cubicFeet: dim.cubicFeet,
       })),
     })),
-    originCustomerName: order.originCustomerName,
+    originCompanyName: order.originCompanyName,
     originAddress: order.originAddress,
     originLocation: order.originLocation,
     originPincode: order.originPincode,
     originEmailId: order.originEmailId,
     originContactNumber: order.originContactNumber,
     pickupDate: order.pickupDate ? new Date(order.pickupDate) : null,
-    destinationCustomerName: order.destinationCustomerName,
+    destinationCompanyName: order.destinationCompanyName,
     destinationAddress: order.destinationAddress,
     destinationEmailId: order.destinationEmailId,
     destinationLocation: order.destinationLocation,
     destinationPincode: order.destinationPincode,
     destinationContactNumber: order.destinationContactNumber,
+    customerName: order?.customerName,
+    customerEmail: order?.customerEmail,
+    customerMobile: order?.customerMobile,
+    customerCompanyName: order?.customerCompanyName,
   });
 
-  // Menu handlers
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, order: OrderType) => {
     setAnchorEl(event.currentTarget);
     setMenuOrder(order);
@@ -146,7 +149,7 @@ const OrdersDataGrid = () => {
   const rows = data?.map((order) => ({
     id: order.id,
     orderNumber: order.orderNumber,
-    customer: order.originCustomerName,
+    customer: order.originCompanyName,
     origin: order.originLocation,
     destination: order.destinationLocation,
     status: order.status,
