@@ -13,6 +13,7 @@ import {
 import { map } from 'lodash/fp';
 import { useListOrdersQuery } from '#api/colombusLogisticsApi';
 import { useNavigate } from 'react-router-dom';
+import ActionsColumn from './_actionsColoumn';
 
 const RateRequests = () => {
   const [filter, setFilter] = useState('ALL');
@@ -188,6 +189,7 @@ const RateRequests = () => {
                   <TableCell sx={{ fontWeight: 700 }}>Amount</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Priority</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -239,6 +241,18 @@ const RateRequests = () => {
                       </Box>
                     </TableCell>
                     <TableCell>{getStatusChip(req.status)}</TableCell>
+                    <TableCell>
+                      <ActionsColumn
+                        row={req}
+                        onDelete={(id: any) => {
+                          console.log('Delete request with id:', id);
+                        }}
+                        onEdit={(updatedData: any) => {
+                          console.log('Edited data:', updatedData);
+                        }}
+                      />
+                    </TableCell>
+
                   </TableRow>
                 ))}
               </TableBody>

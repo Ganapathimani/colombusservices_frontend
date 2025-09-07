@@ -36,6 +36,19 @@ const CustomerDetailsForm = () => {
   return (
     <Stack spacing={3}>
       <TextField
+        label="Company Name"
+        {...register('customerCompanyName', { required: 'Company name is required' })}
+        error={!!errors.customerCompanyName}
+        helperText={errors.customerCompanyName?.message}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <FontAwesomeIcon icon={faBuilding} />
+            </InputAdornment>
+          ),
+        }}
+      />
+      <TextField
         label="Customer Name"
         {...register('customerName', { required: 'Customer Name is required' })}
         error={!!errors.customerName}
@@ -79,20 +92,6 @@ const CustomerDetailsForm = () => {
           startAdornment: (
             <InputAdornment position="start">
               <FontAwesomeIcon icon={faPhone} />
-            </InputAdornment>
-          ),
-        }}
-      />
-
-      <TextField
-        label="Company Name"
-        {...register('customerCompanyName', { required: 'Company name is required' })}
-        error={!!errors.customerCompanyName}
-        helperText={errors.customerCompanyName?.message}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <FontAwesomeIcon icon={faBuilding} />
             </InputAdornment>
           ),
         }}

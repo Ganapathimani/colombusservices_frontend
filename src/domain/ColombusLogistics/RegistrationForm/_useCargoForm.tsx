@@ -1,4 +1,3 @@
-import React from 'react';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import {
   Stack,
@@ -38,7 +37,7 @@ const CargoForm = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h6">Cargo Details</Typography>
+      <Typography variant="h6">Package Details</Typography>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
@@ -54,25 +53,36 @@ const CargoForm = () => {
         />
 
         <TextField
-          label="Weight (kg)"
+          label="Net Weight (kgs)"
           type="number"
-          {...register('cargoDetails.0.weight', {
+          {...register('cargoDetails.0.netWeight', {
             required: 'Weight is required',
             setValueAs: (v) => (v === '' ? undefined : Number(v)),
           })}
-          error={!!cargoDetailsErrors?.[0]?.weight}
-          helperText={cargoDetailsErrors?.[0]?.weight?.message}
+          error={!!cargoDetailsErrors?.[0]?.netWeight}
+          helperText={cargoDetailsErrors?.[0]?.netWeight?.message}
+          fullWidth
+        />
+        <TextField
+          label="Cross Weight (kgs)"
+          type="number"
+          {...register('cargoDetails.0.crossWeight', {
+            required: 'Weight is required',
+            setValueAs: (v) => (v === '' ? undefined : Number(v)),
+          })}
+          error={!!cargoDetailsErrors?.[0]?.crossWeight}
+          helperText={cargoDetailsErrors?.[0]?.crossWeight?.message}
           fullWidth
         />
 
         <TextField
-          label="CBM"
-          {...register('cargoDetails.0.cbm', {
+          label="CBM (cubic feet)"
+          {...register('cargoDetails.0.CbmFeet', {
             required: 'CBM is required',
             setValueAs: (v) => (v === '' ? undefined : Number(v)),
           })}
-          error={!!cargoDetailsErrors?.[0]?.cbm}
-          helperText={cargoDetailsErrors?.[0]?.cbm?.message}
+          error={!!cargoDetailsErrors?.[0]?.CbmFeet}
+          helperText={cargoDetailsErrors?.[0]?.CbmFeet?.message}
           fullWidth
         />
       </Stack>
@@ -136,6 +146,8 @@ const CargoForm = () => {
               remove={remove}
               dimensionErrors={dimensionErrors}
               register={register}
+              setValue={setValue}
+              watch={watch}
             />
           ))}
 
@@ -143,7 +155,11 @@ const CargoForm = () => {
             variant="contained"
             startIcon={<FontAwesomeIcon icon={faAdd} />}
             onClick={() => append({
-              handlingUnit: 0, length: 0, width: 0, height: 0, cubicFeet: 0,
+              handlingUnit: 0,
+              length: 0,
+              width: 0,
+              height: 0,
+              cubicFeet: 0,
             })}
             sx={{
               alignSelf: 'flex-start',

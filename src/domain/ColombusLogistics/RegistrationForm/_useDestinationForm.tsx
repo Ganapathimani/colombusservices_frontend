@@ -83,6 +83,7 @@ const useDestinationForm = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
           label="Location"
+          fullWidth
           {...register('destinationLocation', { required: 'Location is required' })}
           error={!!errors.destinationLocation}
           helperText={errors.destinationLocation?.message}
@@ -94,8 +95,10 @@ const useDestinationForm = () => {
             ),
           }}
         />
+
         <TextField
           label="Pin Code"
+          fullWidth
           {...register('destinationPincode', {
             required: 'Pin Code is required',
             pattern: { value: /^[0-9]{5,10}$/, message: 'Invalid Pin Code' },
@@ -111,6 +114,7 @@ const useDestinationForm = () => {
           }}
         />
       </Stack>
+
     </Stack>
   );
 };

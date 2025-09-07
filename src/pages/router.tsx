@@ -9,7 +9,8 @@ import RateRequest from '#domain/ColombusLogistics/DashboardLayout/RateRequest';
 import PickupConfirmation from '#domain/ColombusLogistics/DashboardLayout/PickupConfirmation';
 import Tracking from '#domain/ColombusLogistics/DashboardLayout/Tracking';
 import AdminCreateUserForm from '#domain/ColombusLogistics/Admin/SuperAdmin/CreateUserForm';
-import OrdersDataGrid from '#domain/ColombusLogistics/Admin/SuperAdmin/OrdersDataTable';
+import OrdersTableGrid from '#domain/ColombusLogistics/Admin/SuperAdmin/OrdersTable';
+import LROrdersTable from '#domain/ColombusLogistics/Admin/LorryReceipt/LROrdersTable';
 import Layout from './Layout/Layout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
@@ -84,19 +85,11 @@ const router = createBrowserRouter([
           },
           {
             path: 'order-entries',
-            element: <OrdersDataGrid />,
+            element: <OrdersTableGrid />,
           },
           {
-            path: 'cargo-tracking',
-            element: <Tracking />,
-          },
-          {
-            path: 'profile',
-            element: <Profile />,
-          },
-          {
-            path: 'support',
-            element: <Support />,
+            path: 'lorry-receipts',
+            element: <LROrdersTable />,
           },
         ],
       },

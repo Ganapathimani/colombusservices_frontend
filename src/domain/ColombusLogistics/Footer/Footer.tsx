@@ -62,7 +62,7 @@ const Footer = () => {
             Contact Us
           </Typography>
           <Box>
-            <Typography mb={1}>NO. 141/C, Columbus Building,</Typography>
+            <Typography mb={1}>NO. 141/C, Colombus Building,</Typography>
             <Typography mb={1}>Iswarya Garden, Ammanpalayam</Typography>
             <Typography mb={1}>Tirupur - 641652</Typography>
             <Typography mb={1}>
@@ -84,7 +84,7 @@ const Footer = () => {
           ©
           {' '}
           {new Date().getFullYear()}
-          <strong> Columbus Logistics</strong>
+          <strong> Colombus Logistics</strong>
           . All rights reserved.
         </Typography>
       </Box>

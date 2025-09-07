@@ -1,4 +1,4 @@
-# 🚀 Columbus Logistics Web Application
+# 🚀 Colombus Logistics Web Application
 
 A modern logistics management platform built with **React**, **TypeScript**, **Redux Toolkit (RTK Query)**, and **Material-UI (MUI)**.
 The application provides seamless logistics workflows, authentication, and real-time integration.
@@ -66,8 +66,8 @@ npm -v
 ### 2️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/columbus-logistics-app.git
-cd columbus-logistics-app
+git clone https://github.com/your-org/colombus-logistics-app.git
+cd colombus-logistics-app
 ```
 
 ---
@@ -87,7 +87,8 @@ yarn install
 Create a `.env` file in the root directory:
 
 ```env
-VITE_API_BASE_URL=http://localhost:4000/api
+// backend server url
+PUBLIC_BFF_BASE_URL='http://localhost:5000'
 ```
 
 ---
@@ -100,7 +101,7 @@ npm run dev
 yarn dev
 ```
 
-The app will be available at: **[http://localhost:5173](http://localhost:5173)**
+The app will be available at: **[http://localhost:4000](http://localhost:4000)**
 
 ---
 

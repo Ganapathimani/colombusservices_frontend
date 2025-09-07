@@ -36,7 +36,7 @@ type OrderType = {
   status: string;
 };
 
-const OrdersDataGrid = () => {
+const OrdersTableGrid = () => {
   const { data, isLoading } = useListOrdersQuery() as {
     data: OrderType[] | undefined;
     isLoading: boolean;
@@ -244,4 +244,4 @@ const OrdersDataGrid = () => {
   );
 };
 
-export default OrdersDataGrid;
+export default OrdersTableGrid;

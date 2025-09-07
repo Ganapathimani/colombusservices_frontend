@@ -100,7 +100,7 @@ const Navbar = () => {
         }}
         >
           <Stack sx={{ cursor: 'pointer', flexDirection: 'column' }} onClick={() => goToPath('/')}>
-            <Typography variant="h4" sx={{ fontWeight: 700, color: '#1a472a', fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>Columbus Logistics</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: '#1a472a', fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>Colombus Logistics</Typography>
             <Typography
               variant="subtitle2"
               sx={{
@@ -174,7 +174,7 @@ const Navbar = () => {
 
       <Drawer anchor="right" open={sidebarOpen} onClose={sideBarActions.setOff} PaperProps={{ sx: { width: 280, backgroundColor: '#f9f9f9' } }}>
         <Box sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, color: '#1a472a', mb: 1 }}>Columbus Logistics</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: '#1a472a', mb: 1 }}>Colombus Logistics</Typography>
           <Divider sx={{ mb: 1 }} />
           <List>
             {navItems.map((item) => (

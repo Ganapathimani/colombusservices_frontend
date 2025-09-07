@@ -1,12 +1,12 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faFileSignature,
-  faBookOpen,
-  faUserTie,
-  faShareNodes,
-  faCircleQuestion,
-  faHandHoldingHeart,
+  faUsers,
+  faTruckPickup,
+  faFileInvoice,
+  faTruckFast,
+  faUserShield,
+  faHandsHelping,
 } from '@fortawesome/free-solid-svg-icons';
 
 export type MenuSubItem = {
@@ -24,35 +24,27 @@ export type MenuItem = {
 export const menuItems: MenuItem[] = [
   {
     title: 'Assistant Team',
-    icon: <FontAwesomeIcon icon={faFileSignature} size="xl" />,
-    subItems: [
-      { name: 'Assistant Orders', link: 'assistant/orders' },
-    ],
+    icon: <FontAwesomeIcon icon={faUsers} size="xl" />,
+    subItems: [{ name: 'Assistant Orders', link: 'assistant/orders' }],
   },
   {
     title: 'Pickup Team',
-    icon: <FontAwesomeIcon icon={faBookOpen} size="xl" />,
-    subItems: [
-      { name: 'Order Pickup', link: 'orderPickup' },
-    ],
+    icon: <FontAwesomeIcon icon={faTruckPickup} size="xl" />,
+    subItems: [{ name: 'Order Pickup', link: 'orderPickup' }],
   },
   {
     title: 'LR Team',
-    icon: <FontAwesomeIcon icon={faUserTie} size="xl" />,
-    subItems: [
-      { name: 'LR', link: 'lrteam' },
-    ],
+    icon: <FontAwesomeIcon icon={faFileInvoice} size="xl" />,
+    subItems: [{ name: 'LR', link: 'lorry-receipts' }],
   },
   {
     title: 'Delivery Team',
-    icon: <FontAwesomeIcon icon={faShareNodes} size="xl" />,
-    subItems: [
-      { name: 'Delivery', link: 'deliveries' },
-    ],
+    icon: <FontAwesomeIcon icon={faTruckFast} size="xl" />,
+    subItems: [{ name: 'Delivery', link: 'deliveries' }],
   },
   {
     title: 'Admin',
-    icon: <FontAwesomeIcon icon={faCircleQuestion} size="xl" />,
+    icon: <FontAwesomeIcon icon={faUserShield} size="xl" />,
     subItems: [
       { name: 'Admin', link: 'order-entries' },
       { name: 'Create User', link: 'create-user' },
@@ -60,9 +52,7 @@ export const menuItems: MenuItem[] = [
   },
   {
     title: 'Help Center',
-    icon: <FontAwesomeIcon icon={faHandHoldingHeart} size="xl" />,
-    subItems: [
-      { name: 'Help Center', link: 'helpCenter' },
-    ],
+    icon: <FontAwesomeIcon icon={faHandsHelping} size="xl" />,
+    subItems: [{ name: 'Help Center', link: 'helpCenter' }],
   },
 ];

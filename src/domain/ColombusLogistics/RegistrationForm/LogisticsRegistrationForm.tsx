@@ -18,9 +18,15 @@ type LogisticsRegistrationWizardProps = {
   defaultValues?: TLogisticsRegistrationForm;
   onClose?: () => void;
   title?: string;
+  onSubmitSuccess?: (updatedData: TLogisticsRegistrationForm) => void;
 };
 
-const LogisticsRegistrationWizard = ({ defaultValues, onClose, title = 'Create Order' }: LogisticsRegistrationWizardProps) => {
+const LogisticsRegistrationWizard = ({
+  defaultValues,
+  onClose,
+  onSubmitSuccess,
+  title = 'Create Order',
+}: LogisticsRegistrationWizardProps) => {
   const methods = useForm<TLogisticsRegistrationForm>({
     defaultValues: defaultValues || {},
     mode: 'onBlur',
@@ -62,6 +68,7 @@ const LogisticsRegistrationWizard = ({ defaultValues, onClose, title = 'Create O
   const onSubmit = useCallback(
     async (formData: TLogisticsRegistrationForm) => {
       try {
+        console.log(formData);
         const payload = {
           ...formData,
           customer: { name: customerName, email: customerEmail },
@@ -71,6 +78,7 @@ const LogisticsRegistrationWizard = ({ defaultValues, onClose, title = 'Create O
         if (defaultValues?.id) {
           await updateOrder({ orderId: defaultValues.id, data: payload }).unwrap();
           toast.success('Order updated successfully');
+          onSubmitSuccess?.(payload);
         } else {
           await orderUpsert(payload).unwrap();
           toast.success('Order created successfully');
@@ -83,7 +91,11 @@ const LogisticsRegistrationWizard = ({ defaultValues, onClose, title = 'Create O
         toast.error('Failed to save order');
       }
     },
-    [customerName, customerEmail, defaultValues?.id, methods, onClose, updateOrder, orderUpsert],
+    [
+      customerName, customerEmail,
+      defaultValues?.id, methods, onClose, updateOrder,
+      onSubmitSuccess, orderUpsert,
+    ],
   );
 
   return (
@@ -124,28 +136,37 @@ const LogisticsRegistrationWizard = ({ defaultValues, onClose, title = 'Create O
               </Button>
             ) : <div />}
 
-            {activeStep < steps.length ? (
+            {activeStep < steps.length - 1 ? (
               <Button
                 type="button"
                 onClick={handleNext}
                 variant="contained"
                 sx={{
-                  backgroundColor: '#43A047', color: '#fff', '&:hover': { backgroundColor: '#2E7D32' }, borderRadius: 2, px: 3,
+                  backgroundColor: '#43A047',
+                  color: '#fff',
+                  '&:hover': { backgroundColor: '#2E7D32' },
+                  borderRadius: 2,
+                  px: 3,
                 }}
               >
-                {activeStep < steps.length - 1 ? 'Next' : 'Submit'}
+                Next
               </Button>
             ) : (
               <Button
                 type="submit"
                 variant="contained"
                 sx={{
-                  backgroundColor: '#43A047', color: '#fff', '&:hover': { backgroundColor: '#2E7D32' }, borderRadius: 2, px: 3,
+                  backgroundColor: '#43A047',
+                  color: '#fff',
+                  '&:hover': { backgroundColor: '#2E7D32' },
+                  borderRadius: 2,
+                  px: 3,
                 }}
               >
                 {defaultValues ? 'Update Order' : 'Create Order'}
               </Button>
             )}
+
           </Stack>
         </form>
       </Stack>
