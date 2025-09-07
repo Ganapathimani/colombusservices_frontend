@@ -11,6 +11,8 @@ import Tracking from '#domain/ColombusLogistics/DashboardLayout/Tracking';
 import AdminCreateUserForm from '#domain/ColombusLogistics/Admin/SuperAdmin/CreateUserForm';
 import OrdersTableGrid from '#domain/ColombusLogistics/Admin/SuperAdmin/OrdersTable';
 import LROrdersTable from '#domain/ColombusLogistics/Admin/LorryReceipt/LROrdersTable';
+import UpdateRateToOrder from '#domain/ColombusLogistics/Admin/SuperAdmin/UpdateRateToOrder';
+import UpdateVehicleDetails from '#domain/ColombusLogistics/Admin/SuperAdmin/UpdateVehicleDetails';
 import Layout from './Layout/Layout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
@@ -82,6 +84,14 @@ const router = createBrowserRouter([
           {
             path: 'create-user',
             element: <AdminCreateUserForm />,
+          },
+          {
+            path: 'confirmOrder',
+            element: <UpdateRateToOrder />,
+          },
+          {
+            path: 'orderPickup',
+            element: <UpdateVehicleDetails />,
           },
           {
             path: 'order-entries',

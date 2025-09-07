@@ -25,7 +25,7 @@ export const menuItems: MenuItem[] = [
   {
     title: 'Assistant Team',
     icon: <FontAwesomeIcon icon={faUsers} size="xl" />,
-    subItems: [{ name: 'Assistant Orders', link: 'assistant/orders' }],
+    subItems: [{ name: 'Assistant Orders', link: 'confirmOrder' }],
   },
   {
     title: 'Pickup Team',

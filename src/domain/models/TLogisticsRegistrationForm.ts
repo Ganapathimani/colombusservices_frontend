@@ -44,4 +44,9 @@ export type TLogisticsRegistrationForm = {
   rate?: number,
   rateQuotedBy?: string,
   notes: string,
+  status: string,
+  vehicleNumber: string,
+  driverMobile: string,
+  driverName: string,
+  pickupTeamNotes: string,
 };
