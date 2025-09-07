@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -44,8 +44,13 @@ const Profile = () => {
   const [updateProfile] = useUpdateProfileMutation();
   const userData = localStorage.getItem('user');
   const users = JSON.parse(userData!);
-  const { email } = users.value;
-  const { data: user } = useUserGetQuery({ id: email! });
+  const { email } = users;
+
+  const { data: user } = useUserGetQuery(
+    { id: email! },
+    { skip: !email },
+  );
+
   const {
     handleSubmit,
     control,
@@ -62,6 +67,19 @@ const Profile = () => {
       confirmPassword: '',
     },
   });
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        name: user.name ?? '',
+        email: user.email ?? '',
+        phone: user.mobile ?? '',
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+    }
+  }, [user, reset]);
 
   const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
     setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
@@ -87,7 +105,7 @@ const Profile = () => {
         confirmPassword: '',
       });
     } catch (err) {
-      console.error('Update failed:', err);
+      throw new Error(err as string);
     } finally {
       setIsLoading(false);
     }
@@ -113,6 +131,15 @@ const Profile = () => {
     return {};
   };
 
+  if (!email) {
+    return (
+      <Box p={3}>
+        <Typography variant="h6" color="error">
+          No user found. Please log in again.
+        </Typography>
+      </Box>
+    );
+  }
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'grey.100', p: 3 }}>
       <Box sx={{ maxWidth: '1000px' }}>
