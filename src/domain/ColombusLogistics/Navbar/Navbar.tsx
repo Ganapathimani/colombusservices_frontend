@@ -11,6 +11,7 @@ import {
   faBars, faHome, faInfoCircle, faEnvelope, faTruck, faCalendarCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import AuthForm from '#pages/Layout/Login/AuthForm';
+import logo from '#assets/logo.png';
 import ProfileMenu from './ProfileMenu';
 
 const navItems = [
@@ -99,16 +100,24 @@ const Navbar = () => {
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', minHeight: '80px', px: { xs: 2, sm: 4, md: 6 },
         }}
         >
-          <Stack sx={{ cursor: 'pointer', flexDirection: 'column' }} onClick={() => goToPath('/')}>
-            <Typography variant="h4" sx={{ fontWeight: 700, color: '#1a472a', fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>Colombus Logistics</Typography>
-            <Typography
-              variant="subtitle2"
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={1.5}
+            sx={{ cursor: 'pointer' }}
+            onClick={() => goToPath('/')}
+          >
+            <Box
+              component="img"
+              src={logo}
+              alt="Columbus Logistics Logo"
               sx={{
-                color: '#4CAF50', fontWeight: 500, fontSize: '0.875rem', marginTop: '-2px',
+                height: { xs: 32, sm: 48 },
+                width: 'auto',
+                objectFit: 'contain',
+                transition: 'transform 0.2s ease-in-out',
               }}
-            >
-              Connecting Indian Commerce
-            </Typography>
+            />
           </Stack>
 
           <Stack direction="row" spacing={4} alignItems="center" sx={{ display: { xs: 'none', md: 'flex' } }}>

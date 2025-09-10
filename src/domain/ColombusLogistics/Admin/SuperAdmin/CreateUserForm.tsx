@@ -421,12 +421,12 @@ const AdminCreateUserForm = () => {
               disabled={isSubmitting}
               sx={{
                 py: 1.5,
-                backgroundColor: '#0ea5e9',
+                backgroundColor: '#328436',
                 fontWeight: 600,
                 textTransform: 'none',
                 boxShadow: 'none',
                 '&:hover': {
-                  backgroundColor: '#0284c7',
+                  backgroundColor: '#328436',
                   boxShadow: 'none',
                 },
                 '&:disabled': {

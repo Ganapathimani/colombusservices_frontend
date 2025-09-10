@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Box,
   Drawer,
@@ -13,6 +13,9 @@ import {
   Menu,
   MenuItem,
   Stack,
+  Select,
+  FormControl,
+  InputLabel,
   LinearProgress,
 } from '@mui/material';
 import type { GridColDef, GridRenderCellParams, GridPaginationModel } from '@mui/x-data-grid';
@@ -23,9 +26,13 @@ import {
   useGetOrderQuery,
 } from '#api/colombusLogisticsApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faFilter, faPlus } from '@fortawesome/free-solid-svg-icons';
 import LogisticsRegistrationWizard from '#domain/ColombusLogistics/RegistrationForm/LogisticsRegistrationForm';
-import type { TLogisticsRegistrationForm, TCargoDetail, TDimension } from '#domain/models/TLogisticsRegistrationForm';
+import type {
+  TLogisticsRegistrationForm,
+  TCargoDetail,
+  TDimension,
+} from '#domain/models/TLogisticsRegistrationForm';
 
 type OrderType = {
   id: string;
@@ -49,6 +56,7 @@ const OrdersTableGrid = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuOrder, setMenuOrder] = useState<OrderType | null>(null);
 
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [deleteOrder, { isLoading: deleting }] = useDeleteOrderMutation();
 
   const {
@@ -63,6 +71,24 @@ const OrdersTableGrid = () => {
     pageSize: 10,
   });
 
+  const rows = useMemo(() => (
+    data?.map((order) => ({
+      id: order.id,
+      orderNumber: order.orderNumber,
+      customer: order.originCompanyName,
+      origin: order.originLocation,
+      destination: order.destinationLocation,
+      status: order.status,
+    })) || []
+  ), [data]);
+
+  const filteredRows = useMemo(() => {
+    if (statusFilter === 'all') {
+      return rows;
+    }
+    return rows.filter((row) => row.status.toLowerCase() === statusFilter.toLowerCase());
+  }, [rows, statusFilter]);
+
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" mt={5}>
@@ -73,33 +99,33 @@ const OrdersTableGrid = () => {
 
   const mapOrderToForm = (order: any): TLogisticsRegistrationForm => ({
     id: order.id,
-    companyName: order.customer?.name ?? '',
-    emailId: order.customer?.email ?? '',
-    phoneNumber: order.originContactNumber,
     vehicleType: order.vehicleType,
     vehicleModel: order.vehicleModel,
     rate: Number(order.rate) || 0,
     rateQuotedBy: order.rateQuotedBy || '',
-    orderForName: order.destinationCompanyName,
-    orderForContactNumber: order.destinationContactNumber,
     notes: order.notes || '',
     ftlType: order.ftlType,
     loadingType: order.loadingType,
-    cargoDetails: (order.packages || []).map((pkg: any): TCargoDetail => ({
-      package: pkg.packages,
-      cbm: String(pkg.cbm),
-      weight: pkg.weight,
-      materialType: pkg.materialType,
-      photo: null,
-      hasDimensions: pkg.hasDimensions,
-      dimensions: (pkg.dimensions || []).map((dim: any): TDimension => ({
-        handlingUnit: dim.handlingUnit,
-        length: dim.length,
-        width: dim.width,
-        height: dim.height,
-        cubicFeet: dim.cubicFeet,
-      })),
-    })),
+    cargoDetails: (order.packages || []).map(
+      (pkg: any): TCargoDetail => ({
+        package: pkg.packages,
+        CbmFeet: pkg.CbmFeet,
+        netWeight: pkg.netWeight,
+        crossWeight: pkg.crossWeight,
+        materialType: pkg.materialType,
+        photo: null,
+        hasDimensions: pkg.hasDimensions,
+        dimensions: (pkg.dimensions || []).map(
+          (dim: any): TDimension => ({
+            handlingUnit: dim.handlingUnit,
+            length: dim.length,
+            width: dim.width,
+            height: dim.height,
+            cubicFeet: dim.cubicFeet,
+          }),
+        ),
+      }),
+    ),
     originCompanyName: order.originCompanyName,
     originAddress: order.originAddress,
     originLocation: order.originLocation,
@@ -117,6 +143,11 @@ const OrdersTableGrid = () => {
     customerEmail: order?.customerEmail,
     customerMobile: order?.customerMobile,
     customerCompanyName: order?.customerCompanyName,
+    status: '',
+    vehicleNumber: '',
+    driverMobile: '',
+    driverName: '',
+    pickupTeamNotes: '',
   });
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, order: OrderType) => {
@@ -146,15 +177,6 @@ const OrdersTableGrid = () => {
     setOrderToDelete(null);
   };
 
-  const rows = data?.map((order) => ({
-    id: order.id,
-    orderNumber: order.orderNumber,
-    customer: order.originCompanyName,
-    origin: order.originLocation,
-    destination: order.destinationLocation,
-    status: order.status,
-  })) || [];
-
   const columns: GridColDef[] = [
     { field: 'orderNumber', headerName: 'Order Number', flex: 1 },
     { field: 'customer', headerName: 'Customer', flex: 1 },
@@ -176,12 +198,46 @@ const OrdersTableGrid = () => {
   ];
 
   return (
-    <Box p={3} height="80vh">
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6" fontWeight={600}>Orders Management</Typography>
+    <Box sx={{ backgroundColor: '#f8fafc', minHeight: '100vh', p: 3 }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" sx={{ color: 'green', fontWeight: 600 }}>
+          Admin
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1, mt: 1 }}>
+          Manage and track all logistics orders, including vehicle and driver assignments.
+        </Typography>
+      </Box>
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={2}
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <FormControl sx={{ minWidth: 200 }} size="small">
+          <InputLabel id="status-filter-label">
+            <FontAwesomeIcon icon={faFilter} style={{ marginRight: 6 }} />
+            Status
+          </InputLabel>
+          <Select
+            labelId="status-filter-label"
+            value={statusFilter}
+            label="Status"
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <MenuItem value="all">All Status</MenuItem>
+            <MenuItem value="Pending">Pending</MenuItem>
+            <MenuItem value="Completed">Confirmed</MenuItem>
+          </Select>
+        </FormControl>
         <Button
           variant="contained"
-          color="primary"
+          sx={{
+            bgcolor: '#328436',
+            borderRadius: '8px',
+            px: 3,
+          }}
+          startIcon={<FontAwesomeIcon icon={faPlus} style={{ fontSize: '15px' }} />}
           onClick={() => {
             setSelectedOrder(null);
             setDrawerOpen(true);
@@ -192,7 +248,7 @@ const OrdersTableGrid = () => {
       </Stack>
 
       <DataGrid
-        rows={rows}
+        rows={filteredRows}
         columns={columns}
         autoHeight
         disableRowSelectionOnClick
