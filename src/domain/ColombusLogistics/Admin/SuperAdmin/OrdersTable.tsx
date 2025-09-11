@@ -109,7 +109,6 @@ const OrdersTableGrid = () => {
     cargoDetails: (order.packages || []).map(
       (pkg: any): TCargoDetail => ({
         package: pkg.packages,
-        CbmFeet: pkg.CbmFeet,
         netWeight: pkg.netWeight,
         crossWeight: pkg.crossWeight,
         materialType: pkg.materialType,

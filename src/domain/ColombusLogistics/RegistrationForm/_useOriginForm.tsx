@@ -87,6 +87,7 @@ const OriginForm = () => {
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
           <TextField
             label="Location"
+            fullWidth
             {...register('originLocation', { required: 'Location is required' })}
             error={!!errors.originLocation}
             helperText={errors.originLocation?.message}
@@ -100,6 +101,7 @@ const OriginForm = () => {
           />
           <TextField
             label="Pin Code"
+            fullWidth
             {...register('originPincode', {
               required: 'Pin Code is required',
               pattern: { value: /^[0-9]{5,10}$/, message: 'Invalid Pin Code' },

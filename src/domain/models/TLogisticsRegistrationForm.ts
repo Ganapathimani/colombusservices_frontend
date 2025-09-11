@@ -4,17 +4,27 @@ export type TDimension = {
   width: number,
   height: number,
   cubicFeet: number,
+  unit?: 'cm',
 };
 
 export type TCargoDetail = {
   package: number,
   netWeight: number,
   crossWeight: number,
-  CbmFeet: number,
   materialType: string,
   photo: File | null,
   hasDimensions: boolean,
   dimensions: TDimension[],
+};
+
+export type TDocumentUpload = {
+  ewayBillUrl?: string;
+  ewayBillLink?: string;
+  packageListUrl?: string;
+  invoiceUrls?: string[];
+  lrNumber?: string;
+  lrUrl?: string;
+  manifestLocation?: 'Chennai Airport' | 'Chennai Seaport' | 'Thoothukudi' | 'Bangalore' | 'Tirupur';
 };
 
 export type TLogisticsRegistrationForm = {
@@ -49,4 +59,5 @@ export type TLogisticsRegistrationForm = {
   driverMobile: string,
   driverName: string,
   pickupTeamNotes: string,
+  documents: TDocumentUpload,
 };

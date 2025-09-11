@@ -1,9 +1,18 @@
 import React, { useEffect } from 'react';
-import { Stack, TextField, IconButton } from '@mui/material';
+import {
+  Stack,
+  TextField,
+  IconButton,
+  MenuItem,
+} from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import type {
-  UseFormRegister, FieldError, Merge, UseFormSetValue, UseFormWatch,
+  UseFormRegister,
+  FieldError,
+  Merge,
+  UseFormSetValue,
+  UseFormWatch,
 } from 'react-hook-form';
 import type { TDimension } from '#domain/models/TLogisticsRegistrationForm';
 
@@ -16,23 +25,44 @@ interface CargoDimensionRowProps {
   watch: UseFormWatch<any>;
 }
 
+const convertToFeet = (value: number, unit: string): number => {
+  switch (unit) {
+    case 'inch':
+      return value / 12; // 12 inches = 1 ft
+    case 'cm':
+      return value * 0.0328084;
+    case 'mm':
+      return value * 0.00328084;
+    default:
+      return value;
+  }
+};
+
 const CargoDimensionRow = ({
-  index, remove, register, setValue, watch,
+  index,
+  remove,
+  register,
+  setValue,
+  watch,
 }: CargoDimensionRowProps) => {
-  const lengthCm = watch(`cargoDetails.0.dimensions.${index}.lengthCm`);
-  const widthCm = watch(`cargoDetails.0.dimensions.${index}.widthCm`);
-  const heightCm = watch(`cargoDetails.0.dimensions.${index}.heightCm`);
+  const length = watch(`cargoDetails.0.dimensions.${index}.length`);
+  const width = watch(`cargoDetails.0.dimensions.${index}.width`);
+  const height = watch(`cargoDetails.0.dimensions.${index}.height`);
+  const unit = watch(`cargoDetails.0.dimensions.${index}.unit`);
 
   useEffect(() => {
-    if (lengthCm && widthCm && heightCm) {
-      const lengthFt = lengthCm * 0.0328084;
-      const widthFt = widthCm * 0.0328084;
-      const heightFt = heightCm * 0.0328084;
+    if (length && width && height) {
+      const lengthFt = convertToFeet(Number(length), unit);
+      const widthFt = convertToFeet(Number(width), unit);
+      const heightFt = convertToFeet(Number(height), unit);
 
       const cubicFeet = lengthFt * widthFt * heightFt;
-      setValue(`cargoDetails.0.dimensions.${index}.cubicFeet`, Number(cubicFeet.toFixed(3)));
+      setValue(
+        `cargoDetails.0.dimensions.${index}.cubicFeet`,
+        Number(cubicFeet.toFixed(3)),
+      );
     }
-  }, [lengthCm, widthCm, heightCm, index, setValue]);
+  }, [length, width, height, unit, index, setValue]);
 
   return (
     <Stack
@@ -53,23 +83,36 @@ const CargoDimensionRow = ({
       />
 
       <TextField
-        label="Length (cm)"
+        label="Length"
         type="number"
-        {...register(`cargoDetails.0.dimensions.${index}.lengthCm`)}
+        {...register(`cargoDetails.0.dimensions.${index}.length`)}
         fullWidth
       />
       <TextField
-        label="Width (cm)"
+        label="Width"
         type="number"
-        {...register(`cargoDetails.0.dimensions.${index}.widthCm`)}
+        {...register(`cargoDetails.0.dimensions.${index}.width`)}
         fullWidth
       />
       <TextField
-        label="Height (cm)"
+        label="Height"
         type="number"
-        {...register(`cargoDetails.0.dimensions.${index}.heightCm`)}
+        {...register(`cargoDetails.0.dimensions.${index}.height`)}
         fullWidth
       />
+
+      {/* Unit Dropdown */}
+      <TextField
+        select
+        label="Unit"
+        defaultValue="cm"
+        {...register(`cargoDetails.0.dimensions.${index}.unit`)}
+        fullWidth
+      >
+        <MenuItem value="cm">cm</MenuItem>
+        <MenuItem value="inch">inch</MenuItem>
+        <MenuItem value="mm">mm</MenuItem>
+      </TextField>
 
       <TextField
         label="Cubic Feet"

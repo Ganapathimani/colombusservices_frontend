@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import {
   Stack,
@@ -11,29 +12,78 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAdd, faImage } from '@fortawesome/free-solid-svg-icons';
 import Dropzone from 'react-dropzone';
-import type { FieldErrorsImpl, FieldError, Merge } from 'react-hook-form';
-import type { TLogisticsRegistrationForm, TCargoDetail, TDimension } from '#domain/models/TLogisticsRegistrationForm';
+import type {
+  FieldErrorsImpl,
+  FieldError,
+  Merge,
+} from 'react-hook-form';
+import type {
+  TLogisticsRegistrationForm,
+  TCargoDetail,
+  TDimension,
+} from '#domain/models/TLogisticsRegistrationForm';
 import CargoDimensionRow from './cargoDimensionRow';
+import CargoSummary from './_cargoSummary';
 
 const CargoForm = () => {
   const {
-    control, register, formState: { errors }, setValue, watch,
+    control,
+    register,
+    formState: { errors },
+    setValue,
+    watch,
   } = useFormContext<TLogisticsRegistrationForm>();
 
   const cargoDetailsErrors = errors.cargoDetails as
-  | FieldErrorsImpl<TCargoDetail>[]
-  | undefined;
+    | FieldErrorsImpl<TCargoDetail>[]
+    | undefined;
 
   const dimensionErrors = cargoDetailsErrors?.[0]?.dimensions as
-  | (Merge<FieldError, Partial<TDimension>> | undefined)[]
-  | undefined;
+    | (Merge<FieldError, Partial<TDimension>> | undefined)[]
+    | undefined;
+
   const hasDimensions = watch('cargoDetails.0.hasDimensions', false);
   const photo = watch('cargoDetails.0.photo');
 
-  const { fields, append, remove } = useFieldArray({
+  const {
+    fields, append, remove, replace,
+  } = useFieldArray({
     control,
     name: 'cargoDetails.0.dimensions',
   });
+
+  const dimensions = watch('cargoDetails.0.dimensions') || [];
+  const hasDimension = watch('cargoDetails.0.hasDimensions', false);
+  useEffect(() => {
+    if (hasDimension) {
+      if (fields.length === 0) {
+        append({
+          handlingUnit: 0,
+          length: 0,
+          width: 0,
+          height: 0,
+          unit: 'cm',
+          cubicFeet: 0,
+        });
+      }
+    } else {
+      replace([]);
+    }
+  }, [hasDimension, append, fields.length, replace]);
+
+  const totals = dimensions.reduce(
+    (acc: any, dim: any) => {
+      acc.packages += Number(dim.handlingUnit || 0);
+      acc.length += Number(dim.length || 0);
+      acc.width += Number(dim.width || 0);
+      acc.height += Number(dim.height || 0);
+      acc.cubicFeet += Number(dim.cubicFeet || 0);
+      return acc;
+    },
+    {
+      packages: 0, length: 0, width: 0, height: 0, cubicFeet: 0,
+    },
+  );
 
   return (
     <Stack spacing={3}>
@@ -63,6 +113,7 @@ const CargoForm = () => {
           helperText={cargoDetailsErrors?.[0]?.netWeight?.message}
           fullWidth
         />
+
         <TextField
           label="Cross Weight (kgs)"
           type="number"
@@ -74,19 +125,9 @@ const CargoForm = () => {
           helperText={cargoDetailsErrors?.[0]?.crossWeight?.message}
           fullWidth
         />
-
-        <TextField
-          label="CBM (cubic feet)"
-          {...register('cargoDetails.0.CbmFeet', {
-            required: 'CBM is required',
-            setValueAs: (v) => (v === '' ? undefined : Number(v)),
-          })}
-          error={!!cargoDetailsErrors?.[0]?.CbmFeet}
-          helperText={cargoDetailsErrors?.[0]?.CbmFeet?.message}
-          fullWidth
-        />
       </Stack>
 
+      {/* Upload Photo */}
       <Dropzone
         accept={{ 'image/*': [] }}
         onDrop={(acceptedFiles) => setValue('cargoDetails.0.photo', acceptedFiles[0])}
@@ -107,9 +148,16 @@ const CargoForm = () => {
           >
             <input {...getInputProps()} />
             <FontAwesomeIcon icon={faImage} size="2x" color="gray" />
-            <Typography mt={1}>Drag & drop a photo, or click to select</Typography>
+            <Typography mt={1}>
+              Drag & drop a photo, or click to select
+            </Typography>
             {photo && (
-              <Typography variant="caption" display="block" color="green" mt={1}>
+              <Typography
+                variant="caption"
+                display="block"
+                color="green"
+                mt={1}
+              >
                 {photo.name}
               </Typography>
             )}
@@ -120,7 +168,9 @@ const CargoForm = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
           label="Material Type"
-          {...register('cargoDetails.0.materialType', { required: 'Material type is required' })}
+          {...register('cargoDetails.0.materialType', {
+            required: 'Material type is required',
+          })}
           error={!!cargoDetailsErrors?.[0]?.materialType}
           helperText={cargoDetailsErrors?.[0]?.materialType?.message}
           fullWidth
@@ -130,7 +180,13 @@ const CargoForm = () => {
           control={control}
           render={({ field }) => (
             <FormControlLabel
-              control={<Checkbox {...field} checked={field.value} sx={{ color: 'green' }} />}
+              control={(
+                <Checkbox
+                  {...field}
+                  checked={field.value}
+                  sx={{ color: 'green' }}
+                />
+              )}
               label="Add Dimensions"
             />
           )}
@@ -159,6 +215,7 @@ const CargoForm = () => {
               length: 0,
               width: 0,
               height: 0,
+              unit: 'cm',
               cubicFeet: 0,
             })}
             sx={{
@@ -170,6 +227,7 @@ const CargoForm = () => {
           >
             Add More Items
           </Button>
+          <CargoSummary totals={totals} />
         </Stack>
       )}
     </Stack>
