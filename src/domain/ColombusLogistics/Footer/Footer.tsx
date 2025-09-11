@@ -6,8 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faEnvelope, faPhone, faArrowUpLong,
 } from '@fortawesome/free-solid-svg-icons';
-
-import vehicle1 from '../../../assets/vehicle1.jpg';
+import logo from '#assets/logo.png';
 
 const Footer = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -41,12 +40,20 @@ const Footer = () => {
     >
       <Grid container spacing={2}>
         <Grid size={{ md: 4, xs: 12 }}>
-          <Box
-            component="img"
-            src={vehicle1}
-            alt="Description of image"
-            sx={{ width: 280, height: 'auto' }}
-          />
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Box
+              component="img"
+              src={logo}
+              alt="Colombus Logistics Logo"
+              sx={{ width: 140, height: 'auto', mb: 2 }}
+            />
+            <Typography variant="h5" fontWeight={700} gutterBottom>
+              Colombus Logistics
+            </Typography>
+            <Typography variant="body1" color="grey.400">
+              Delivering Trust, On Time.
+            </Typography>
+          </Box>
         </Grid>
         <Grid size={{ md: 4, sm: 6, xs: 12 }}>
           <Typography variant="h5" mb={1} fontWeight={600}>Quick Links</Typography>
