@@ -16,21 +16,56 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { menuItems } from './_menuItems';
 
+const getUserRole = (): string => {
+  try {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+      return 'customer';
+    }
+    const user = JSON.parse(userStr);
+    return user?.role?.toLowerCase() || 'customer';
+  } catch {
+    return 'customer';
+  }
+};
+
 interface AdminSidePanelProps {
   onSelectCategory: (category: string) => void;
   selectedCategory: string;
 }
+
+const roleAccess: Record<string, string[]> = {
+  assistant: ['Assistant Team', 'Help Center'],
+  pickup: ['Pickup Team', 'Help Center'],
+  lr: ['LR Team', 'Help Center'],
+  delivery: ['Delivery Team', 'Help Center'],
+  admin: [
+    'Assistant Team',
+    'Pickup Team',
+    'LR Team',
+    'Delivery Team',
+    'Admin',
+    'Help Center',
+  ],
+};
 
 const AdminSidePanel = ({ onSelectCategory, selectedCategory }: AdminSidePanelProps) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [openSection, setOpenSection] = useState<string | null>(null);
 
+  const userRole = getUserRole();
+  const allowedTabs = roleAccess[userRole] || [];
+
+  const filteredMenu = menuItems.filter((item) => allowedTabs.includes(item.title));
+
   const getActiveItem = useMemo(() => {
-    const active = menuItems.find((item) => item.link === pathname.replace('/skillsync-console/', '')
-      || item.subItems?.some((sub) => sub.link === pathname.replace('/skillsync-console/', '')));
+    const active = filteredMenu.find(
+      (item) => item.link === pathname.replace('/admin/', '')
+        || item.subItems?.some((sub) => sub.link === pathname.replace('/admin/', '')),
+    );
     return active?.title || '';
-  }, [pathname]);
+  }, [pathname, filteredMenu]);
 
   useEffect(() => {
     if (getActiveItem && !openSection) {
@@ -51,26 +86,9 @@ const AdminSidePanel = ({ onSelectCategory, selectedCategory }: AdminSidePanelPr
   );
 
   return (
-    <Box
-      sx={{
-        width: '230px',
-        bgcolor: '#FAFAFA',
-        borderRight: 1,
-        borderColor: 'divider',
-        height: '100vh',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-      }}
-    >
-      <List
-        sx={{
-          width: '230px',
-          height: '100%',
-          overflowY: 'auto',
-          p: 1,
-        }}
-        component="nav"
-      >
-        {menuItems.map((item) => {
+    <Box sx={{ width: '230px', bgcolor: '#FAFAFA', height: '100vh' }}>
+      <List component="nav">
+        {filteredMenu.map((item) => {
           const isActive = selectedCategory === item.title || getActiveItem === item.title;
           const isOpen = openSection === item.title;
 

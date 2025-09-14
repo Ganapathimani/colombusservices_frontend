@@ -135,7 +135,7 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
         toast.success(`Welcome ${user.name}!`);
         onClose();
       } catch (error: any) {
-        setErrorMessage(error?.data?.message || error?.message || 'Login failed. Please try again.');
+        setErrorMessage(error?.data?.error || 'Login failed. Please try again.');
       }
     },
     [loginUpsert, onClose, onSuccess, resetLogin],
@@ -163,7 +163,7 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
         toast.success(`Welcome ${user.name}!`);
         onClose();
       } catch (error: any) {
-        setErrorMessage(error?.data?.message || error?.message || 'Signup failed. Please try again.');
+        setErrorMessage(error?.data?.error || 'Signup failed. Please try again.');
       }
     },
     [signupUpsert, onClose, onSuccess, resetSignUp],
