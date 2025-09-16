@@ -1,4 +1,3 @@
-import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import ErrorBoundary from '#components/ErrorBoundary/ErrorBoundary';
 import LogisticsRegistrationForm from '#domain/ColombusLogistics/RegistrationForm/LogisticsRegistrationForm';
@@ -22,24 +21,7 @@ import ContactPage from './Layout/Contact/ContactPage';
 import ServicesPage from './Layout/Services/Services';
 import Admin from './Layout/Admin/Admin';
 
-const getUserRole = (): string => {
-  try {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      return 'customer';
-    }
-    const user = JSON.parse(userStr);
-    return user?.role?.toLowerCase() || 'customer'; // convert ADMIN → "admin"
-  } catch {
-    return 'customer';
-  }
-};
-
-const userRole = getUserRole();
-
-console.log(userRole, 'userRole');
-
-const router = createBrowserRouter([
+const builderRouter = (userRole: string) => createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
@@ -83,4 +65,4 @@ const router = createBrowserRouter([
   },
 ]);
 
-export default router;
+export default builderRouter;
