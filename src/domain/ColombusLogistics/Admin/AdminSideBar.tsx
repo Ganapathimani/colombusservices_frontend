@@ -47,6 +47,15 @@ const roleAccess: Record<string, string[]> = {
     'Admin',
     'Help Center',
   ],
+  superadmin: [
+    'Super Admin',
+    'Admin',
+    'Assistant Team',
+    'Pickup Team',
+    'LR Team',
+    'Delivery Team',
+    'Help Center',
+  ],
 };
 
 const AdminSidePanel = ({ onSelectCategory, selectedCategory }: AdminSidePanelProps) => {
@@ -54,7 +63,8 @@ const AdminSidePanel = ({ onSelectCategory, selectedCategory }: AdminSidePanelPr
   const { pathname } = useLocation();
   const [openSection, setOpenSection] = useState<string | null>(null);
 
-  const userRole = getUserRole();
+  // const userRole = getUserRole();
+  const userRole = 'superadmin';
   const allowedTabs = roleAccess[userRole] || [];
 
   const filteredMenu = menuItems.filter((item) => allowedTabs.includes(item.title));

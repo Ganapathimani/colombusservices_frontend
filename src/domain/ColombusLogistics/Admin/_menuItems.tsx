@@ -7,6 +7,7 @@ import {
   faTruckFast,
   faUserShield,
   faHandsHelping,
+  faCrown,
 } from '@fortawesome/free-solid-svg-icons';
 
 export type MenuSubItem = {
@@ -22,6 +23,22 @@ export type MenuItem = {
 };
 
 export const menuItems: MenuItem[] = [
+  {
+    title: 'Super Admin',
+    icon: <FontAwesomeIcon icon={faCrown} size="xl" />,
+    subItems: [
+      { name: 'Create Assistant', link: 'creare-assistant' },
+      { name: 'Create Admin', link: 'creare-admin' },
+    ],
+  },
+  {
+    title: 'Admin',
+    icon: <FontAwesomeIcon icon={faUserShield} size="xl" />,
+    subItems: [
+      { name: 'Admin', link: 'order-entries' },
+      { name: 'Create User', link: 'create-user' },
+    ],
+  },
   {
     title: 'Assistant Team',
     icon: <FontAwesomeIcon icon={faUsers} size="xl" />,
@@ -41,14 +58,6 @@ export const menuItems: MenuItem[] = [
     title: 'Delivery Team',
     icon: <FontAwesomeIcon icon={faTruckFast} size="xl" />,
     subItems: [{ name: 'Delivery', link: 'deliveries' }],
-  },
-  {
-    title: 'Admin',
-    icon: <FontAwesomeIcon icon={faUserShield} size="xl" />,
-    subItems: [
-      { name: 'Admin', link: 'order-entries' },
-      { name: 'Create User', link: 'create-user' },
-    ],
   },
   {
     title: 'Help Center',
