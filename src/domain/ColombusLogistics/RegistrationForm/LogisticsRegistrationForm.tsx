@@ -68,7 +68,6 @@ const LogisticsRegistrationWizard = ({
   const onSubmit = useCallback(
     async (formData: TLogisticsRegistrationForm) => {
       try {
-        console.log(formData);
         const payload = {
           ...formData,
           customer: { name: customerName, email: customerEmail },

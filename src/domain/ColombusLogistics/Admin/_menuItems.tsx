@@ -27,8 +27,7 @@ export const menuItems: MenuItem[] = [
     title: 'Super Admin',
     icon: <FontAwesomeIcon icon={faCrown} size="xl" />,
     subItems: [
-      { name: 'Create Assistant', link: 'creare-assistant' },
-      { name: 'Create Admin', link: 'creare-admin' },
+      { name: 'Create Employee', link: 'create-employee' },
     ],
   },
   {

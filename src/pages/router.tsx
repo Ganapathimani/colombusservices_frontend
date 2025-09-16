@@ -13,6 +13,7 @@ import LROrdersTable from '#domain/ColombusLogistics/Admin/LorryReceipt/LROrders
 import UpdateRateToOrder from '#domain/ColombusLogistics/Admin/admin/UpdateRateToOrder';
 import UpdateVehicleDetails from '#domain/ColombusLogistics/Admin/admin/UpdateVehicleDetails';
 import ProtectedRoute from '#components/ProtectedRoute/ProtectedRoute';
+import SuperAdminRoleCreationForm from '#domain/ColombusLogistics/Admin/SuperAdmin/SuperAdminRoleCreationForm';
 import Layout from './Layout/Layout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
@@ -55,6 +56,7 @@ const builderRouter = (userRole: string) => createBrowserRouter([
         ),
         children: [
           { path: 'create-user', element: <AdminCreateUserForm /> },
+          { path: 'create-employee', element: <SuperAdminRoleCreationForm /> },
           { path: 'confirmOrder', element: <UpdateRateToOrder /> },
           { path: 'orderPickup', element: <UpdateVehicleDetails /> },
           { path: 'order-entries', element: <OrdersTableGrid /> },

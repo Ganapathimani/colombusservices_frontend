@@ -19,6 +19,7 @@ import {
 import with401Redirect from './with401Redirect';
 import withLoading from './withLoading';
 import createUser from './_createUser';
+import createEmployee from './_createEmployee';
 import deleteOrder from './_deleteOrder';
 import getOrder from './_getOrder';
 import loginUpsert from './_loginUpsert';
@@ -34,6 +35,7 @@ const tagTypes = [
   'Login',
   'Orders',
   'createUser',
+  'Employees',
 ] as const;
 
 const baseQuery = createApi({
@@ -52,6 +54,7 @@ const baseQuery = createApi({
   tagTypes,
   endpoints: (builder) => ({
     createUser: createUser(builder),
+    createEmployee: createEmployee(builder),
     deleteOrder: deleteOrder(builder),
     loginUpsert: loginUpsert(builder),
     orderUpsert: orderUpsert(builder),
@@ -91,6 +94,7 @@ export default colombusLogisticsApi;
 
 export const {
   useCreateUserMutation,
+  useCreateEmployeeMutation,
   useGetOrderQuery,
   useDeleteOrderMutation,
   useLoginUpsertMutation,
