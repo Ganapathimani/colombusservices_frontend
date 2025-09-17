@@ -21,7 +21,7 @@ import {
   faPhone,
   faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import { useLoginUpsertMutation, useSignupUpsertMutation } from '#api/colombusLogisticsApi';
+import { useCreateLoginMutation, useCreateSignupMutation } from '#api/colombusLogisticsApi';
 import toast from 'react-hot-toast';
 
 export type SignUpInputs = {
@@ -84,8 +84,8 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const [signupUpsert] = useSignupUpsertMutation();
-  const [loginUpsert] = useLoginUpsertMutation();
+  const [signupUpsert] = useCreateSignupMutation();
+  const [loginUpsert] = useCreateLoginMutation();
 
   const {
     register: registerLogin,

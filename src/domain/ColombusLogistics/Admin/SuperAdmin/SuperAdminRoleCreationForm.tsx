@@ -21,7 +21,9 @@ import {
   faUserShield,
   faBuilding,
 } from '@fortawesome/free-solid-svg-icons';
-import { useCreateEmployeeMutation } from '#api/colombusLogisticsApi';
+import { useToggle } from '@react-shanties/core';
+import { useCreateEmployeeMutation, useCreateBranchMutation, useListBranchesQuery } from '#api/colombusLogisticsApi';
+import CreateBranchDialog from './CreateBranchDialog';
 
 export type UserFormValues = {
   name: string;
@@ -35,7 +37,11 @@ export type UserFormValues = {
 const SuperAdminRoleCreationForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openBranchDialog, , BranchDialogActions] = useToggle(false);
   const [createEmployeeMutation] = useCreateEmployeeMutation();
+
+  const { data: branches, refetch } = useListBranchesQuery();
+  const [createBranchMutation] = useCreateBranchMutation();
 
   const {
     handleSubmit,
@@ -59,7 +65,7 @@ const SuperAdminRoleCreationForm = () => {
   const onSubmit = useCallback(async (data: UserFormValues) => {
     try {
       setIsSubmitting(true);
-      await createEmployeeMutation({ ...data, role: 'ADMIN' }).unwrap();
+      await createEmployeeMutation({ ...data }).unwrap();
       reset();
       toast.success('Employee created successfully');
     } catch (err: any) {
@@ -68,6 +74,13 @@ const SuperAdminRoleCreationForm = () => {
       setIsSubmitting(false);
     }
   }, [createEmployeeMutation, reset]);
+
+  const handleCreateBranch = useCallback(async (branchName: string) => {
+    await createBranchMutation({
+      name: branchName,
+    }).unwrap();
+    await refetch();
+  }, [createBranchMutation, refetch]);
 
   return (
     <Box
@@ -81,20 +94,44 @@ const SuperAdminRoleCreationForm = () => {
       <Box
         sx={{
           width: '100%',
-          maxWidth: 500,
+          maxWidth: 600,
           backdropFilter: 'blur(8px)',
           p: 4,
         }}
       >
-        <Box textAlign="center" mb={4}>
-          <Typography variant="h4" fontWeight={700} gutterBottom>
-            {selectedRole === 'ADMIN' ? 'Create Admin' : 'Create Assistant'}
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            {selectedRole === 'ADMIN'
-              ? 'Add a new admin with branch assignment and elevated privileges'
-              : 'Add a new assistant for administrative operations'}
-          </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mb: 3,
+          }}
+        >
+          <Box>
+            <Typography variant="h4" fontWeight={700} gutterBottom>
+              {selectedRole === 'ADMIN' ? 'Create Admin' : 'Create Assistant'}
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              {selectedRole === 'ADMIN'
+                ? 'Add a new admin with branch assignment'
+                : 'Add a new assistant for administrative operations'}
+            </Typography>
+          </Box>
+
+          <Button
+            variant="contained"
+            color="success"
+            sx={{
+              borderRadius: 2,
+              fontWeight: 600,
+              textTransform: 'none',
+              ml: 2,
+              height: 'fit-content',
+            }}
+            onClick={BranchDialogActions.setOn}
+          >
+            + Create Branch
+          </Button>
         </Box>
 
         <Box
@@ -189,7 +226,7 @@ const SuperAdminRoleCreationForm = () => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={() => setShowPassword(!showPassword)}>
-                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size="xs" />
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -245,15 +282,15 @@ const SuperAdminRoleCreationForm = () => {
                   }}
                   fullWidth
                 >
-                  <MenuItem value="MANALI_CHENNAI">Manali (Chennai)</MenuItem>
-                  <MenuItem value="PAMMAL_CHENNAI">Pammal (Chennai)</MenuItem>
-                  <MenuItem value="COIMBATORE">Coimbatore</MenuItem>
-                  <MenuItem value="TIRUPUR">Tirupur</MenuItem>
+                  {branches?.map((branch: any) => (
+                    <MenuItem key={branch.id} value={branch.id}>
+                      {branch.name}
+                    </MenuItem>
+                  ))}
                 </TextField>
               )}
             />
           )}
-
           <Button
             type="submit"
             variant="contained"
@@ -273,6 +310,12 @@ const SuperAdminRoleCreationForm = () => {
           </Button>
         </Box>
       </Box>
+      <CreateBranchDialog
+        open={openBranchDialog}
+        onClose={BranchDialogActions.setOff}
+        onCreate={handleCreateBranch}
+      />
+
     </Box>
   );
 };

@@ -1,7 +1,7 @@
-import type { TSignup } from '#domain/models/TSignup';
+import type { TLogin } from '#domain/models/TLogin';
 import type { ColombusLogisticsBuilder, ColombusLogisticsTagType } from './colombusLogisticsApi';
 
-type SignupResponse = {
+type LoginResponse = {
   message: string;
   user: {
     id: string;
@@ -13,25 +13,25 @@ type SignupResponse = {
   expiresIn: string;
 };
 
-const signupUpsert = (
+const createLogin = (
   builder: ColombusLogisticsBuilder,
-) => builder.mutation<SignupResponse, TSignup>({
-  query: (request: Partial<TSignup>) => ({
+) => builder.mutation<LoginResponse, TLogin>({
+  query: (request: Partial<TLogin>) => ({
     method: 'POST',
-    url: '/auth/register',
+    url: '/auth/login',
     body: request,
   }),
   transformResponse: (it: any) => it,
   invalidatesTags: (res: any) => [
     {
-      type: 'Signup',
+      type: 'Login',
       id: 'all',
     },
     {
-      type: 'Signup' as ColombusLogisticsTagType,
+      type: 'Login' as ColombusLogisticsTagType,
       id: res,
     },
   ],
 });
 
-export default signupUpsert;
+export default createLogin;

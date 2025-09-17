@@ -3,7 +3,7 @@ import type { ColombusLogisticsBuilder, ColombusLogisticsTagType } from './colom
 
 const listOrders = (
   builder: ColombusLogisticsBuilder,
-) => builder.query<TLogisticsRegistrationForm, void>({
+) => builder.query<TLogisticsRegistrationForm[], void>({
   query: () => '/orders',
   transformResponse: (it: any) => it.orders,
   providesTags: () => [

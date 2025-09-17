@@ -1,7 +1,7 @@
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
 import type { ColombusLogisticsBuilder, ColombusLogisticsTagType } from './colombusLogisticsApi';
 
-const orderUpsert = (
+const createOrder = (
   builder: ColombusLogisticsBuilder,
 ) => builder.mutation<string, TLogisticsRegistrationForm>({
   query: (request: Partial<TLogisticsRegistrationForm>) => ({
@@ -22,4 +22,4 @@ const orderUpsert = (
   ],
 });
 
-export default orderUpsert;
+export default createOrder;

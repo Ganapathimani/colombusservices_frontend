@@ -19,13 +19,15 @@ import {
 import with401Redirect from './with401Redirect';
 import withLoading from './withLoading';
 import createUser from './_createUser';
+import createOrder from './_createOrder';
+import createBranch from './_createBranch';
 import createEmployee from './_createEmployee';
 import deleteOrder from './_deleteOrder';
 import getOrder from './_getOrder';
-import loginUpsert from './_loginUpsert';
+import createLogin from './_createLogin';
+import listBranches from './_listBranches';
 import listOrders from './_listOrders';
-import orderUpsert from './_createOrder';
-import signupUpsert from './_signupUpsert';
+import createSignup from './_createSignup';
 import userGet from './_userGet';
 import updateProfile from './_updateProfile';
 import updateOrder from './_updateOrder';
@@ -36,6 +38,7 @@ const tagTypes = [
   'Orders',
   'createUser',
   'Employees',
+  'Branches',
 ] as const;
 
 const baseQuery = createApi({
@@ -53,13 +56,15 @@ const baseQuery = createApi({
 
   tagTypes,
   endpoints: (builder) => ({
+    createBranch: createBranch(builder),
     createUser: createUser(builder),
     createEmployee: createEmployee(builder),
     deleteOrder: deleteOrder(builder),
-    loginUpsert: loginUpsert(builder),
-    orderUpsert: orderUpsert(builder),
-    signupUpsert: signupUpsert(builder),
+    createLogin: createLogin(builder),
+    createOrder: createOrder(builder),
+    createSignup: createSignup(builder),
     userGet: userGet(builder),
+    listBranches: listBranches(builder),
     listOrders: listOrders(builder),
     updateProfile: updateProfile(builder),
     getOrder: getOrder(builder),
@@ -93,14 +98,16 @@ ColombusLogisticsTagType,
 export default colombusLogisticsApi;
 
 export const {
+  useCreateBranchMutation,
   useCreateUserMutation,
   useCreateEmployeeMutation,
   useGetOrderQuery,
   useDeleteOrderMutation,
-  useLoginUpsertMutation,
+  useCreateLoginMutation,
+  useListBranchesQuery,
   useListOrdersQuery,
-  useOrderUpsertMutation,
-  useSignupUpsertMutation,
+  useCreateOrderMutation,
+  useCreateSignupMutation,
   useUserGetQuery,
   useUpdateProfileMutation,
   useUpdateOrderMutation,

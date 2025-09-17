@@ -3,7 +3,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import {
   Button, Stepper, Step, StepLabel, Stack, Typography,
 } from '@mui/material';
-import { useOrderUpsertMutation, useUpdateOrderMutation } from '#api/colombusLogisticsApi';
+import { useCreateOrderMutation, useUpdateOrderMutation } from '#api/colombusLogisticsApi';
 import toast from 'react-hot-toast';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
 import OriginForm from './_useOriginForm';
@@ -33,7 +33,7 @@ const LogisticsRegistrationWizard = ({
   });
 
   const [activeStep, setActiveStep] = useState(0);
-  const [orderUpsert] = useOrderUpsertMutation();
+  const [orderUpsert] = useCreateOrderMutation();
   const [updateOrder] = useUpdateOrderMutation();
 
   const storedUser = localStorage.getItem('user');
