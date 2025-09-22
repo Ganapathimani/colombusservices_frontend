@@ -27,7 +27,9 @@ export const menuItems: MenuItem[] = [
     title: 'Super Admin',
     icon: <FontAwesomeIcon icon={faCrown} size="xl" />,
     subItems: [
-      { name: 'Create Employee', link: 'create-employee' },
+      { name: 'Create Admin', link: 'create-admin' },
+      { name: 'Create Assistant', link: 'create-assistant' },
+      { name: 'Branches', link: 'branches' },
     ],
   },
   {
@@ -35,6 +37,7 @@ export const menuItems: MenuItem[] = [
     icon: <FontAwesomeIcon icon={faUserShield} size="xl" />,
     subItems: [
       { name: 'Admin', link: 'order-entries' },
+      { name: 'Market Vehicle', link: 'market-vehicles' },
       { name: 'Create User', link: 'create-user' },
     ],
   },

@@ -147,6 +147,15 @@ const OrdersTableGrid = () => {
     driverMobile: '',
     driverName: '',
     pickupTeamNotes: '',
+    documents: {
+      ewayBillUrl: '',
+      ewayBillLink: '',
+      packageListUrl: '',
+      // invoiceUrls: '',
+      lrNumber: '',
+      lrUrl: '',
+      // manifestLocation: '',
+    },
   });
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, order: OrderType) => {

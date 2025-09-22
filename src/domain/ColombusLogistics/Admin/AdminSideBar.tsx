@@ -16,19 +16,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { menuItems } from './_menuItems';
 
-const getUserRole = (): string => {
-  try {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      return 'customer';
-    }
-    const user = JSON.parse(userStr);
-    return user?.role?.toLowerCase() || 'customer';
-  } catch {
-    return 'customer';
-  }
-};
-
 interface AdminSidePanelProps {
   onSelectCategory: (category: string) => void;
   selectedCategory: string;

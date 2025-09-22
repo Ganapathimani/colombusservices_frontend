@@ -30,7 +30,7 @@ const Footer = () => {
     <Grid
       component="footer"
       sx={{
-        backgroundColor: '#1e3a1e',
+        background: 'linear-gradient(135deg, #1e3a1e 0%, #2e7d32 100%)',
         color: 'white',
         textAlign: 'center',
         fontWeight: 600,
@@ -38,6 +38,7 @@ const Footer = () => {
         mt: 'auto',
       }}
     >
+
       <Grid container spacing={2}>
         <Grid size={{ md: 4, xs: 12 }}>
           <Box display="flex" flexDirection="column" alignItems="center">
@@ -97,7 +98,6 @@ const Footer = () => {
       </Box>
       <Zoom in={isVisible}>
         <Fab
-          color="success"
           size="medium"
           onClick={scrollToTop}
           sx={{
@@ -105,16 +105,17 @@ const Footer = () => {
             bottom: 24,
             right: 24,
             zIndex: 1200,
-            bgcolor: '#2E7D32',
+            background: 'linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)',
             color: 'white',
             boxShadow: '0px 6px 12px rgba(0,0,0,0.25)',
             transition: 'all 0.3s ease',
             '&:hover': {
-              bgcolor: '#1B5E20',
+              background: 'linear-gradient(135deg, #1B5E20 0%, #145214 100%)',
               boxShadow: '0px 12px 24px rgba(0,0,0,0.35)',
             },
           }}
         >
+
           <FontAwesomeIcon
             icon={faArrowUpLong}
             size="lg"

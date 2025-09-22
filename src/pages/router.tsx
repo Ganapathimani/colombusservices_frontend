@@ -13,7 +13,11 @@ import LROrdersTable from '#domain/ColombusLogistics/Admin/LorryReceipt/LROrders
 import UpdateRateToOrder from '#domain/ColombusLogistics/Admin/admin/UpdateRateToOrder';
 import UpdateVehicleDetails from '#domain/ColombusLogistics/Admin/admin/UpdateVehicleDetails';
 import ProtectedRoute from '#components/ProtectedRoute/ProtectedRoute';
-import SuperAdminRoleCreationForm from '#domain/ColombusLogistics/Admin/SuperAdmin/SuperAdminRoleCreationForm';
+import CreateAdminForm from '#domain/ColombusLogistics/Admin/SuperAdmin/CreateAdminForm';
+import CreateAssistantForm from '#domain/ColombusLogistics/Admin/SuperAdmin/CreateAssistantForm';
+import BranchesTableGrid from '#domain/ColombusLogistics/Admin/SuperAdmin/BranchesTableGrid';
+import MarketVehicleTableGrid from '#domain/ColombusLogistics/Admin/admin/Marketvehicle';
+import Gallery from '#domain/ColombusLogistics/Gallery/Gallery';
 import Layout from './Layout/Layout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
@@ -32,6 +36,7 @@ const builderRouter = (userRole: string) => createBrowserRouter([
       { path: 'about', element: <AboutPage /> },
       { path: 'services', element: <ServicesPage /> },
       { path: 'tracking', element: <TrackingPage /> },
+      { path: 'gallery', element: <Gallery /> },
       { path: 'registration', element: <LogisticsRegistrationForm /> },
       { path: 'contact', element: <ContactPage /> },
       {
@@ -56,10 +61,13 @@ const builderRouter = (userRole: string) => createBrowserRouter([
         ),
         children: [
           { path: 'create-user', element: <AdminCreateUserForm /> },
-          { path: 'create-employee', element: <SuperAdminRoleCreationForm /> },
+          { path: 'create-admin', element: <CreateAdminForm /> },
+          { path: 'create-assistant', element: <CreateAssistantForm /> },
+          { path: 'branches', element: <BranchesTableGrid /> },
           { path: 'confirmOrder', element: <UpdateRateToOrder /> },
           { path: 'orderPickup', element: <UpdateVehicleDetails /> },
           { path: 'order-entries', element: <OrdersTableGrid /> },
+          { path: 'market-vehicles', element: <MarketVehicleTableGrid /> },
           { path: 'lorry-receipts', element: <LROrdersTable /> },
         ],
       },

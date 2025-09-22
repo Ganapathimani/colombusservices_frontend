@@ -8,7 +8,7 @@ import { useToggle } from '@react-shanties/core';
 import { useUserGetQuery } from '#api/colombusLogisticsApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faBars, faHome, faInfoCircle, faEnvelope, faTruck, faCalendarCheck,
+  faBars, faHome, faImages, faUsers, faEnvelope, faTruck, faCalendarCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import AuthForm from '#pages/Layout/Login/AuthForm';
 import logo from '#assets/logo.png';
@@ -17,7 +17,8 @@ import ProfileMenu from './ProfileMenu';
 const navItems = [
   { label: 'Home', path: '/', icon: faHome },
   { label: 'Services', path: '/services', icon: faTruck },
-  { label: 'About Us', path: '/about', icon: faInfoCircle },
+  { label: 'Gallery', path: '/gallery', icon: faImages },
+  { label: 'About Us', path: '/about', icon: faUsers },
   { label: 'Contact', path: '/contact', icon: faEnvelope },
   { label: 'Book Now', path: '/registration', icon: faCalendarCheck },
 ];

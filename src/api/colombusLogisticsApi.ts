@@ -29,6 +29,7 @@ import listBranches from './_listBranches';
 import listOrders from './_listOrders';
 import createSignup from './_createSignup';
 import userGet from './_userGet';
+import deleteBranch from './_deleteBranch';
 import updateProfile from './_updateProfile';
 import updateOrder from './_updateOrder';
 
@@ -60,6 +61,7 @@ const baseQuery = createApi({
     createUser: createUser(builder),
     createEmployee: createEmployee(builder),
     deleteOrder: deleteOrder(builder),
+    deleteBranch: deleteBranch(builder),
     createLogin: createLogin(builder),
     createOrder: createOrder(builder),
     createSignup: createSignup(builder),
@@ -103,6 +105,7 @@ export const {
   useCreateEmployeeMutation,
   useGetOrderQuery,
   useDeleteOrderMutation,
+  useDeleteBranchMutation,
   useCreateLoginMutation,
   useListBranchesQuery,
   useListOrdersQuery,
