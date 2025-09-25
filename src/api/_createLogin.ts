@@ -18,7 +18,7 @@ const createLogin = (
 ) => builder.mutation<LoginResponse, TLogin>({
   query: (request: Partial<TLogin>) => ({
     method: 'POST',
-    url: '/auth/login',
+    url: '/auth/signin',
     body: request,
   }),
   transformResponse: (it: any) => it,

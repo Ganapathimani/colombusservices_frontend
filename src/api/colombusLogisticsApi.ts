@@ -45,7 +45,7 @@ const tagTypes = [
 const baseQuery = createApi({
   reducerPath: 'logictics',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${window.envs.BFF_BASE_URL}/api/`,
+    baseUrl: `${window.envs.BFF_BASE_URL}/api/v1`,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token');
       if (token) {
