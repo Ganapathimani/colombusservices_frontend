@@ -19,19 +19,17 @@ import {
   faKey,
   faBuilding,
   faPhone,
-  faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import { useCreateLoginMutation, useCreateSignupMutation } from '#api/colombusLogisticsApi';
+import { useCreateSigninMutation, useCreateSignupMutation } from '#api/colombusLogisticsApi';
 import toast from 'react-hot-toast';
 
 export type SignUpInputs = {
   name: string;
   email: string;
   password: string;
-  companyName: string;
-  gstNumber: string;
-  location: string;
-  mobile: string;
+  companyname: string;
+  gstnumber: string;
+  phone: string;
 };
 
 type LoginInputs = {
@@ -85,7 +83,7 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [signupUpsert] = useCreateSignupMutation();
-  const [loginUpsert] = useCreateLoginMutation();
+  const [loginUpsert] = useCreateSigninMutation();
 
   const {
     register: registerLogin,
@@ -102,7 +100,7 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
   } = useForm<SignUpInputs>({ mode: 'onTouched' });
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const mobileRegex = /^[0-9]{10}$/;
+  const phoneRegex = /^[0-9]{10}$/;
   const gstRegex = /^[0-9A-Z]{15}$/;
 
   useEffect(() => {
@@ -224,17 +222,17 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
               <TextField
                 placeholder="Company Name"
                 fullWidth
-                {...registerSignUp('companyName', { required: 'Company name is required' })}
-                error={!!errorsSignUp.companyName}
-                helperText={errorsSignUp.companyName?.message}
+                {...registerSignUp('companyname', { required: 'Company name is required' })}
+                error={!!errorsSignUp.companyname}
+                helperText={errorsSignUp.companyname?.message}
                 InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faBuilding} /></InputAdornment> }}
               />
               <TextField
                 placeholder="GST Number"
                 fullWidth
-                {...registerSignUp('gstNumber', { required: 'GST Number is required', pattern: { value: gstRegex, message: 'Invalid GST Number' } })}
-                error={!!errorsSignUp.gstNumber}
-                helperText={errorsSignUp.gstNumber?.message}
+                {...registerSignUp('gstnumber', { required: 'GST Number is required', pattern: { value: gstRegex, message: 'Invalid GST Number' } })}
+                error={!!errorsSignUp.gstnumber}
+                helperText={errorsSignUp.gstnumber?.message}
                 InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faKey} /></InputAdornment> }}
               />
               <TextField
@@ -254,19 +252,11 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
                 InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faEnvelope} /></InputAdornment> }}
               />
               <TextField
-                placeholder="Location"
+                placeholder="Phone"
                 fullWidth
-                {...registerSignUp('location', { required: 'Location is required' })}
-                error={!!errorsSignUp.location}
-                helperText={errorsSignUp.location?.message}
-                InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faMapMarkerAlt} /></InputAdornment> }}
-              />
-              <TextField
-                placeholder="Mobile"
-                fullWidth
-                {...registerSignUp('mobile', { required: 'Mobile is required', pattern: { value: mobileRegex, message: 'Invalid mobile number' } })}
-                error={!!errorsSignUp.mobile}
-                helperText={errorsSignUp.mobile?.message}
+                {...registerSignUp('phone', { required: 'Phone Number is required', pattern: { value: phoneRegex, message: 'Invalid Phone number' } })}
+                error={!!errorsSignUp.phone}
+                helperText={errorsSignUp.phone?.message}
                 InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faPhone} /></InputAdornment> }}
               />
               <TextField

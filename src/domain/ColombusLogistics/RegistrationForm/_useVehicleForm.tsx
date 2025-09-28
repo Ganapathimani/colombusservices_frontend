@@ -150,57 +150,34 @@ const useVehicleForm = () => {
         />
         {errors.loadingType && <FormHelperText>{errors.loadingType.message}</FormHelperText>}
       </FormControl>
-      {
-        isAdmin && (
-          <>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <TextField
-                label="Rate"
-                type="number"
-                {...register('rate', {
-                  required: 'rate is required',
-                  setValueAs: (v) => (v === '' ? undefined : Number(v)),
-                })}
-                fullWidth
-              />
+      {isAdmin && (
+      <>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          <TextField
+            label="Rate"
+            type="number"
+            {...register('rate', {
+              setValueAs: (v) => (v === '' ? undefined : Number(v)),
+            })}
+            fullWidth
+          />
 
-              <TextField
-                label="Rate Quoted By"
-                {...register('rateQuotedBy', {
-                  setValueAs: (v) => (v === '' ? undefined : v),
-                })}
-                fullWidth
-              />
-            </Stack>
-            {/* <Typography fontSize={18}>Order For</Typography>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <TextField
-                label="Name"
-                {...register('orderForName', {
-                  required: 'Name is required',
-                  setValueAs: (v) => (v === '' ? undefined : v),
-                })}
-                fullWidth
-              />
-
-              <TextField
-                label="Contact number"
-                type="number"
-                {...register('orderForContactNumber', {
-                  setValueAs: (v) => (v === '' ? undefined : Number(v)),
-                })}
-                fullWidth
-              />
-            </Stack> */}
-            <TextField
-              label="Tell something about order (if any)"
-              {...register('notes')}
-              multiline
-              rows={3}
-            />
-          </>
-        )
-        }
+          <TextField
+            label="Rate Quoted By"
+            {...register('rateQuotedBy', {
+              setValueAs: (v) => (v === '' ? undefined : v),
+            })}
+            fullWidth
+          />
+        </Stack>
+        <TextField
+          label="Tell something about order (if any)"
+          {...register('notes')}
+          multiline
+          rows={3}
+        />
+      </>
+      )}
     </Stack>
   );
 };

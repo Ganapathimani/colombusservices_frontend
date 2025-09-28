@@ -24,7 +24,7 @@ import createBranch from './_createBranch';
 import createEmployee from './_createEmployee';
 import deleteOrder from './_deleteOrder';
 import getOrder from './_getOrder';
-import createLogin from './_createLogin';
+import createSignin from './_createSignin';
 import listBranches from './_listBranches';
 import listOrders from './_listOrders';
 import createSignup from './_createSignup';
@@ -35,7 +35,7 @@ import updateOrder from './_updateOrder';
 
 const tagTypes = [
   'Signup',
-  'Login',
+  'Signin',
   'Orders',
   'createUser',
   'Employees',
@@ -62,7 +62,7 @@ const baseQuery = createApi({
     createEmployee: createEmployee(builder),
     deleteOrder: deleteOrder(builder),
     deleteBranch: deleteBranch(builder),
-    createLogin: createLogin(builder),
+    createSignin: createSignin(builder),
     createOrder: createOrder(builder),
     createSignup: createSignup(builder),
     userGet: userGet(builder),
@@ -106,7 +106,7 @@ export const {
   useGetOrderQuery,
   useDeleteOrderMutation,
   useDeleteBranchMutation,
-  useCreateLoginMutation,
+  useCreateSigninMutation,
   useListBranchesQuery,
   useListOrdersQuery,
   useCreateOrderMutation,

@@ -2,10 +2,9 @@ export type TSignup = {
   name: string;
   email: string;
   password: string;
-  companyName: string;
-  gstNumber: string;
-  location: string;
-  mobile: string;
+  companyname: string;
+  gstnumber: string;
+  phone: string;
   role?: string,
   adminSecret?: string,
 };

@@ -13,7 +13,7 @@ type LoginResponse = {
   expiresIn: string;
 };
 
-const createLogin = (
+const createSignin = (
   builder: ColombusLogisticsBuilder,
 ) => builder.mutation<LoginResponse, TLogin>({
   query: (request: Partial<TLogin>) => ({
@@ -24,14 +24,14 @@ const createLogin = (
   transformResponse: (it: any) => it,
   invalidatesTags: (res: any) => [
     {
-      type: 'Login',
+      type: 'Signin',
       id: 'all',
     },
     {
-      type: 'Login' as ColombusLogisticsTagType,
+      type: 'Signin' as ColombusLogisticsTagType,
       id: res,
     },
   ],
 });
 
-export default createLogin;
+export default createSignin;

@@ -8,7 +8,7 @@ export type UserGetProps = {
 const userGet = (
   builder: ColombusLogisticsBuilder,
 ) => builder.query<TUser, UserGetProps>({
-  query: () => '/auth/me',
+  query: () => '/auth/users',
   transformResponse: (it: any) => it.user,
   providesTags: (res, err, req) => [
     {

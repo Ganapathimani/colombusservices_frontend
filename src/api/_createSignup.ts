@@ -18,7 +18,7 @@ const createSignup = (
 ) => builder.mutation<SignupResponse, TSignup>({
   query: (request: Partial<TSignup>) => ({
     method: 'POST',
-    url: '/auth/register',
+    url: '/auth/signup',
     body: request,
   }),
   transformResponse: (it: any) => it,
