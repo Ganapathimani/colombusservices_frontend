@@ -20,12 +20,13 @@ import {
 import { useCreateEmployeeMutation } from '#api/colombusLogisticsApi';
 import toast from 'react-hot-toast';
 
-export type AssistantFormValues = {
+export type AdminFormValues = {
   name: string;
   email: string;
   mobile?: string;
   password: string;
-  role: 'ASSISTANT';
+  role: string;
+  branch: string;
 };
 
 const CreateAssistantForm = () => {
@@ -38,7 +39,7 @@ const CreateAssistantForm = () => {
     control,
     reset,
     formState: { errors },
-  } = useForm<AssistantFormValues>({
+  } = useForm<AdminFormValues>({
     defaultValues: {
       name: '',
       email: '',
@@ -49,10 +50,19 @@ const CreateAssistantForm = () => {
   });
 
   const onSubmit = useCallback(
-    async (data: AssistantFormValues) => {
+    async (data: AdminFormValues) => {
       try {
         setIsSubmitting(true);
-        await createEmployeeMutation(data).unwrap();
+
+        const payload = {
+          name: data.name,
+          email: data.email,
+          phone: data.mobile,
+          password: data.password,
+          role: 'ASSISTANT',
+        };
+
+        await createEmployeeMutation(payload).unwrap();
         reset();
         toast.success('Assistant created successfully');
       } catch {
@@ -78,7 +88,6 @@ const CreateAssistantForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
       >
-        {/* Full Name */}
         <Controller
           name="name"
           control={control}
@@ -126,7 +135,6 @@ const CreateAssistantForm = () => {
           )}
         />
 
-        {/* Mobile */}
         <Controller
           name="mobile"
           control={control}
@@ -147,7 +155,6 @@ const CreateAssistantForm = () => {
           )}
         />
 
-        {/* Password */}
         <Controller
           name="password"
           control={control}

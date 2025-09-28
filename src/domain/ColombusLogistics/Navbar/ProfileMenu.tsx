@@ -23,11 +23,11 @@ const ProfileMenu = ({ user, onLogout }: ProfileMenuProps) => {
 
   const storedUser = localStorage.getItem('user');
   let isAdmin = false;
-
   if (storedUser) {
     try {
       const userRole = JSON.parse(storedUser);
-      isAdmin = userRole?.role === 'ADMIN';
+      const role = userRole?.value?.role?.toUpperCase() ?? '';
+      isAdmin = role !== 'CUSTOMER';
     } catch (err) {
       throw new Error(err as string);
     }

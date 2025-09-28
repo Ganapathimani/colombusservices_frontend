@@ -55,8 +55,8 @@ const builderRouter = (userRole: string) => createBrowserRouter([
         element: (
           <ProtectedRoute
             element={<Admin />}
-            allowedRoles={['admin', 'assistant', 'pickup', 'lr', 'delivery']}
-            userRole={userRole}
+            allowedRoles={['ADMIN', 'ASSISTANT', 'PICKUP', 'LR', 'DELIVERY', 'SUPER_ADMIN']}
+            userRole={userRole?.toUpperCase().trim() ?? ''}
           />
         ),
         children: [

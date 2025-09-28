@@ -6,7 +6,7 @@ const createBranch = (
 ) => builder.mutation<string, TBranch>({
   query: (request: Partial<TBranch>) => ({
     method: 'POST',
-    url: '/branch',
+    url: '/superadmin/branches',
     body: request,
   }),
   transformResponse: (it: any) => it,

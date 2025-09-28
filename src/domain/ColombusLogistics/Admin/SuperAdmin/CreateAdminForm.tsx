@@ -30,8 +30,8 @@ export type AdminFormValues = {
   email: string;
   mobile?: string;
   password: string;
-  role: 'ADMIN';
-  branch: string;
+  role: string;
+  branchId?: string;
 };
 
 const CreateAdminForm = () => {
@@ -52,7 +52,7 @@ const CreateAdminForm = () => {
       mobile: '',
       password: '',
       role: 'ADMIN',
-      branch: '',
+      branchId: '',
     },
   });
 
@@ -60,7 +60,17 @@ const CreateAdminForm = () => {
     async (data: AdminFormValues) => {
       try {
         setIsSubmitting(true);
-        await createEmployeeMutation(data).unwrap();
+
+        const payload = {
+          name: data.name,
+          email: data.email,
+          phone: data.mobile,
+          password: data.password,
+          role: 'ADMIN',
+          branchId: data.branchId,
+        };
+
+        await createEmployeeMutation(payload).unwrap();
         reset();
         toast.success('Admin created successfully');
       } catch {
@@ -190,9 +200,8 @@ const CreateAdminForm = () => {
           )}
         />
 
-        {/* Branch Selection */}
         <Controller
-          name="branch"
+          name="branchId"
           control={control}
           rules={{ required: 'Branch is required' }}
           render={({ field }) => (
@@ -201,8 +210,8 @@ const CreateAdminForm = () => {
               select
               label="Assign Branch"
               variant="standard"
-              error={!!errors.branch}
-              helperText={errors.branch?.message}
+              error={!!errors.branchId}
+              helperText={errors.branchId?.message}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">

@@ -9,12 +9,12 @@ const getUserRole = (): string => {
   try {
     const userStr = localStorage.getItem('user');
     if (!userStr) {
-      return 'customer';
+      return 'CUSTOMER';
     }
     const user = JSON.parse(userStr);
-    return user?.role?.toLowerCase() || 'customer';
+    return user?.value?.role?.toUpperCase() ?? 'CUSTOMER';
   } catch {
-    return 'customer';
+    return 'CUSTOMER';
   }
 };
 
@@ -28,8 +28,8 @@ const useUserRole = () => {
   useEffect(() => {
     window.addEventListener('storage', refreshRole);
     const originalSetItem = localStorage.setItem;
-    localStorage.setItem = function (key, value) {
-      originalSetItem.apply(this, [key, value]);
+    localStorage.setItem = (key: string, value: string) => {
+      originalSetItem.apply(localStorage, [key, value]);
       if (key === 'user') {
         refreshRole();
       }

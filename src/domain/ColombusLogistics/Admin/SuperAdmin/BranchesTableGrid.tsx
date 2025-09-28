@@ -42,10 +42,11 @@ const BranchesTableGrid = () => {
   const [menuBranch, setMenuBranch] = useState<TBranch | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [branchToDelete, setBranchToDelete] = useState<TBranch | null>(null);
-
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [newBranchName, setNewBranchName] = useState('');
-  const [newBranchLocation, setNewBranchLocation] = useState('');
+
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr)?.value : null;
+  const adminId = user?.id;
 
   const [createBranch] = useCreateBranchMutation();
   const [deleteBranch, { isLoading: deleting }] = useDeleteBranchMutation();
@@ -74,38 +75,43 @@ const BranchesTableGrid = () => {
     setDeleteDialogOpen(true);
     handleMenuClose();
   };
+
   const handleDeleteConfirm = async () => {
     if (!branchToDelete) {
       return;
     }
     try {
       await deleteBranch(branchToDelete.id!).unwrap();
-      toast.success('Branch deleted successfully');
       refetch();
     } catch {
-      toast.error('Failed to delete branch');
+      throw new Error('Failed to delete branch');
     } finally {
       setDeleteDialogOpen(false);
       setBranchToDelete(null);
     }
   };
 
-  const handleCreateBranch = useCallback(async () => {
-    if (!newBranchName.trim()) {
-      toast.error('Branch name is required');
-      return;
-    }
-    try {
-      await createBranch({ name: newBranchName, location: newBranchLocation }).unwrap();
-      toast.success('Branch created successfully');
-      setNewBranchName('');
-      setNewBranchLocation('');
-      setCreateDialogOpen(false);
-      refetch();
-    } catch {
-      toast.error('Failed to create branch');
-    }
-  }, [newBranchName, newBranchLocation, createBranch, refetch]);
+  const handleCreateBranch = useCallback(
+    async (branch: { name: string; location: string }) => {
+      if (!branch.name.trim()) {
+        toast.error('Branch name is required');
+        return;
+      }
+      if (!adminId) {
+        toast.error('Admin ID missing. Cannot create branch.');
+        return;
+      }
+
+      try {
+        await createBranch({ name: branch.name, location: branch.location, adminId }).unwrap();
+        setCreateDialogOpen(false);
+        refetch();
+      } catch {
+        throw new Error('Failed to create branch');
+      }
+    },
+    [createBranch, refetch, adminId],
+  );
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: 'Branch Name', flex: 1 },
@@ -134,13 +140,7 @@ const BranchesTableGrid = () => {
 
   return (
     <Box sx={{ backgroundColor: '#f8fafc', minHeight: '100vh', p: 3 }}>
-      <Stack
-        direction="row"
-        spacing={2}
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
-      >
+      <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="center" mb={3}>
         <Box>
           <Typography variant="h6" sx={{ color: 'green', fontWeight: 600 }}>
             Branches
@@ -152,11 +152,7 @@ const BranchesTableGrid = () => {
 
         <Button
           variant="contained"
-          sx={{
-            bgcolor: '#328436',
-            borderRadius: '8px',
-            px: 3,
-          }}
+          sx={{ bgcolor: '#328436', borderRadius: '8px', px: 3 }}
           startIcon={<FontAwesomeIcon icon={faPlus} style={{ fontSize: '15px' }} />}
           onClick={() => setCreateDialogOpen(true)}
         >
@@ -183,6 +179,7 @@ const BranchesTableGrid = () => {
         onClose={() => setCreateDialogOpen(false)}
         onCreate={handleCreateBranch}
       />
+
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>Delete Branch</DialogTitle>
         <DialogContent>

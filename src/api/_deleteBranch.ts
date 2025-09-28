@@ -4,7 +4,7 @@ const deleteBranch = (
   builder: ColombusLogisticsBuilder,
 ) => builder.mutation<{ message: string }, string>({
   query: (branchId: string) => ({
-    url: `/branches/${branchId}`,
+    url: `/superadmin/branches/${branchId}`,
     method: 'DELETE',
   }),
   transformResponse: (res: any) => res,

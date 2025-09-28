@@ -1,12 +1,12 @@
-import type { UserFormValues } from '#domain/ColombusLogistics/Admin/SuperAdmin/SuperAdminRoleCreationForm';
+import type { AdminFormValues } from '#domain/ColombusLogistics/Admin/SuperAdmin/CreateAdminForm';
 import type { ColombusLogisticsBuilder, ColombusLogisticsTagType } from './colombusLogisticsApi';
 
 const createEmployee = (
   builder: ColombusLogisticsBuilder,
-) => builder.mutation<string, UserFormValues>({
-  query: (request: Partial<UserFormValues>) => ({
+) => builder.mutation<string, AdminFormValues>({
+  query: (request: Partial<AdminFormValues>) => ({
     method: 'POST',
-    url: '/admin/createEmployee',
+    url: '/superadmin/users',
     body: request,
   }),
   transformResponse: (it: any) => it,

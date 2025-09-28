@@ -4,7 +4,7 @@ import type { ColombusLogisticsBuilder, ColombusLogisticsTagType } from './colom
 const listBranches = (
   builder: ColombusLogisticsBuilder,
 ) => builder.query<TBranch[], void>({
-  query: () => '/branches',
+  query: () => '/superadmin/branches',
   transformResponse: (it: any) => it.branches,
   providesTags: () => [
     {

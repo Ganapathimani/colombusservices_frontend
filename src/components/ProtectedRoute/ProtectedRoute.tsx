@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button } from '@mui/material';
 
@@ -18,8 +17,9 @@ const ProtectedRoute = ({
   if (!userRole) {
     return <Navigate to="/" replace />;
   }
+  const normalizedRole = userRole?.toUpperCase().trim() ?? '';
 
-  if (!allowedRoles.includes(userRole)) {
+  if (!allowedRoles.includes(normalizedRole)) {
     return (
       <Box
         sx={{
