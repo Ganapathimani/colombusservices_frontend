@@ -13,18 +13,12 @@ import { useTheme } from '@mui/material/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBox,
-  faRulerHorizontal,
-  faRulerVertical,
-  faExpandArrowsAlt,
   faCube,
 } from '@fortawesome/free-solid-svg-icons';
 
 interface SummaryProps {
   totals: {
     packages: number;
-    length: number;
-    width: number;
-    height: number;
     cubicFeet: number;
   };
 }
@@ -35,9 +29,6 @@ const CargoSummary = ({ totals }: SummaryProps) => {
 
   const items = [
     { label: 'Total Packages', value: totals.packages, icon: faBox },
-    { label: 'Total Length', value: totals.length, icon: faRulerHorizontal },
-    { label: 'Total Width', value: totals.width, icon: faExpandArrowsAlt },
-    { label: 'Total Height', value: totals.height, icon: faRulerVertical },
     {
       label: 'Total Cubic Feet',
       value: totals.cubicFeet.toFixed(2),

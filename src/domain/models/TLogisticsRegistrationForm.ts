@@ -5,13 +5,13 @@ export type TDimension = {
   height: number,
   cubicFeet: number,
   unit?: 'cm',
+  materialType: string;
 };
 
 export type TCargoDetail = {
   package: number,
   netWeight: number,
   crossWeight: number,
-  materialType: string,
   photo: File | null,
   hasDimensions: boolean,
   dimensions: TDimension[],
@@ -27,25 +27,33 @@ export type TDocumentUpload = {
   manifestLocation?: 'Chennai Airport' | 'Chennai Seaport' | 'Thoothukudi' | 'Bangalore' | 'Tirupur';
 };
 
+export type TDestination = {
+  companyName: string;
+  emailId?: string;
+  contactNumber: string;
+  address: string;
+  location: string;
+  pincode: string;
+};
+
+export type TOrigin = {
+  companyName: string;
+  emailId?: string;
+  contactNumber: string;
+  address: string;
+  location: string;
+  pincode: string;
+  pickupDate?: Date | null;
+};
+
 export type TLogisticsRegistrationForm = {
   id?: string,
   customerCompanyName: string,
   customerName: string,
   customerEmail: string,
   customerMobile: string,
-  originCompanyName: string,
-  originEmailId?: string,
-  originContactNumber: string,
-  originAddress: string,
-  originLocation: string,
-  originPincode: string,
-  pickupDate?: Date | null,
-  destinationCompanyName: string,
-  destinationEmailId?: string,
-  destinationContactNumber: string,
-  destinationAddress: string,
-  destinationLocation: string,
-  destinationPincode: string,
+  origins: TOrigin[],
+  destinations: TDestination[];
   cargoDetails: TCargoDetail[],
   vehicleType: string,
   vehicleModel: string,

@@ -22,13 +22,13 @@ const CustomerDetailsForm = () => {
       try {
         const parsed = JSON.parse(stored).value;
         if (parsed) {
+          setValue('customerCompanyName', parsed.companyName || '');
           setValue('customerName', parsed.name || '');
           setValue('customerEmail', parsed.email || '');
-          setValue('customerMobile', parsed.mobile || '');
-          setValue('customerCompanyName', parsed.companyName || '');
+          setValue('customerMobile', parsed.phone || '');
         }
       } catch {
-        console.warn('Failed to parse stored user');
+        throw new Error('Failed to parse stored user data');
       }
     }
   }, [setValue]);

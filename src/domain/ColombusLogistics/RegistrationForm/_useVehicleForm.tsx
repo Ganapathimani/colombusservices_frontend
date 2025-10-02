@@ -63,7 +63,6 @@ const useVehicleForm = () => {
         <Controller
           name="vehicleType"
           control={control}
-          rules={{ required: 'Vehicle Type is required' }}
           render={({ field }) => (
             <TextField
               select
@@ -92,7 +91,6 @@ const useVehicleForm = () => {
         <Controller
           name="vehicleModel"
           control={control}
-          rules={{ required: 'Vehicle Model is required' }}
           render={({ field }) => (
             <TextField
               select

@@ -48,6 +48,8 @@ type StoredUser = {
   email: string;
   role: string;
   token: string;
+  companyName: string;
+  phone: string;
 };
 
 const STORAGE_KEY = 'user';
@@ -125,7 +127,13 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
         }
 
         const user: StoredUser = {
-          id: userData.id, name: userData.name, email: userData.email, role: userData.role, token,
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role,
+          token,
+          phone: userData.phone,
+          companyName: userData.companyname,
         };
         setWithExpiry(STORAGE_KEY, user, DAY_MS);
         resetLogin();
@@ -153,7 +161,13 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
         }
 
         const user: StoredUser = {
-          id: userData.id, name: userData.name, email: userData.email, role: userData.role, token,
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role,
+          token,
+          phone: userData.phone,
+          companyName: userData.companyname,
         };
         setWithExpiry(STORAGE_KEY, user, DAY_MS);
         resetSignUp();

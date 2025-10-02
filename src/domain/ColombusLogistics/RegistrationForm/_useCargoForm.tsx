@@ -63,6 +63,7 @@ const CargoForm = () => {
           width: 0,
           height: 0,
           unit: 'cm',
+          materialType: '',
           cubicFeet: 0,
         });
       }
@@ -74,20 +75,17 @@ const CargoForm = () => {
   const totals = dimensions.reduce(
     (acc: any, dim: any) => {
       acc.packages += Number(dim.handlingUnit || 0);
-      acc.length += Number(dim.length || 0);
-      acc.width += Number(dim.width || 0);
-      acc.height += Number(dim.height || 0);
       acc.cubicFeet += Number(dim.cubicFeet || 0);
       return acc;
     },
     {
-      packages: 0, length: 0, width: 0, height: 0, cubicFeet: 0,
+      packages: 0, cubicFeet: 0,
     },
   );
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h6">Package Details</Typography>
+      <Typography variant="body1">Total Packages</Typography>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
@@ -127,7 +125,6 @@ const CargoForm = () => {
         />
       </Stack>
 
-      {/* Upload Photo */}
       <Dropzone
         accept={{ 'image/*': [] }}
         onDrop={(acceptedFiles) => setValue('cargoDetails.0.photo', acceptedFiles[0])}
@@ -166,15 +163,6 @@ const CargoForm = () => {
       </Dropzone>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-        <TextField
-          label="Material Type"
-          {...register('cargoDetails.0.materialType', {
-            required: 'Material type is required',
-          })}
-          error={!!cargoDetailsErrors?.[0]?.materialType}
-          helperText={cargoDetailsErrors?.[0]?.materialType?.message}
-          fullWidth
-        />
         <Controller
           name="cargoDetails.0.hasDimensions"
           control={control}
@@ -217,6 +205,7 @@ const CargoForm = () => {
               height: 0,
               unit: 'cm',
               cubicFeet: 0,
+              materialType: '',
             })}
             sx={{
               alignSelf: 'flex-start',
