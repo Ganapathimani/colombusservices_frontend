@@ -21,17 +21,20 @@ import withLoading from './withLoading';
 import createUser from './_createUser';
 import createOrder from './_createOrder';
 import createBranch from './_createBranch';
+import createEnquiry from './_createEnquiry';
 import createEmployee from './_createEmployee';
 import deleteOrder from './_deleteOrder';
 import getOrder from './_getOrder';
 import createSignin from './_createSignin';
 import listBranches from './_listBranches';
 import listOrders from './_listOrders';
+import listEnquiry from './_listEnquiry';
 import createSignup from './_createSignup';
 import userGet from './_userGet';
 import deleteBranch from './_deleteBranch';
 import updateProfile from './_updateProfile';
 import updateOrder from './_updateOrder';
+import updateEnquiry from './_updateEnquiry';
 
 const tagTypes = [
   'Signup',
@@ -40,6 +43,7 @@ const tagTypes = [
   'createUser',
   'Employees',
   'Branches',
+  'Enquiries',
 ] as const;
 
 const baseQuery = createApi({
@@ -59,6 +63,7 @@ const baseQuery = createApi({
   endpoints: (builder) => ({
     createBranch: createBranch(builder),
     createUser: createUser(builder),
+    createEnquiry: createEnquiry(builder),
     createEmployee: createEmployee(builder),
     deleteOrder: deleteOrder(builder),
     deleteBranch: deleteBranch(builder),
@@ -67,10 +72,12 @@ const baseQuery = createApi({
     createSignup: createSignup(builder),
     userGet: userGet(builder),
     listBranches: listBranches(builder),
+    listEnquiry: listEnquiry(builder),
     listOrders: listOrders(builder),
     updateProfile: updateProfile(builder),
     getOrder: getOrder(builder),
     updateOrder: updateOrder(builder),
+    updateEnquiry: updateEnquiry(builder),
   }),
 
 });
@@ -103,15 +110,18 @@ export const {
   useCreateBranchMutation,
   useCreateUserMutation,
   useCreateEmployeeMutation,
+  useCreateEnquiryMutation,
   useGetOrderQuery,
   useDeleteOrderMutation,
   useDeleteBranchMutation,
   useCreateSigninMutation,
   useListBranchesQuery,
   useListOrdersQuery,
+  useListEnquiryQuery,
   useCreateOrderMutation,
   useCreateSignupMutation,
   useUserGetQuery,
   useUpdateProfileMutation,
   useUpdateOrderMutation,
+  useUpdateEnquiryMutation,
 } = colombusLogisticsApi;

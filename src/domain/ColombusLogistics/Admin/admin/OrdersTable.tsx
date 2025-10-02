@@ -26,7 +26,7 @@ import {
   useGetOrderQuery,
 } from '#api/colombusLogisticsApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV, faFilter, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faFilter } from '@fortawesome/free-solid-svg-icons';
 import LogisticsRegistrationWizard from '#domain/ColombusLogistics/RegistrationForm/LogisticsRegistrationForm';
 import type {
   TLogisticsRegistrationForm,
@@ -238,21 +238,6 @@ const OrdersTableGrid = () => {
             <MenuItem value="Completed">Confirmed</MenuItem>
           </Select>
         </FormControl>
-        <Button
-          variant="contained"
-          sx={{
-            bgcolor: '#328436',
-            borderRadius: '8px',
-            px: 3,
-          }}
-          startIcon={<FontAwesomeIcon icon={faPlus} style={{ fontSize: '15px' }} />}
-          onClick={() => {
-            setSelectedOrder(null);
-            setDrawerOpen(true);
-          }}
-        >
-          Create Order
-        </Button>
       </Stack>
 
       <DataGrid

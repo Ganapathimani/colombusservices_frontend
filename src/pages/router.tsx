@@ -7,7 +7,6 @@ import Profile from '#domain/ColombusLogistics/DashboardLayout/Profile';
 import RateRequest from '#domain/ColombusLogistics/DashboardLayout/RateRequest';
 import PickupConfirmation from '#domain/ColombusLogistics/DashboardLayout/PickupConfirmation';
 import Tracking from '#domain/ColombusLogistics/DashboardLayout/Tracking';
-import AdminCreateUserForm from '#domain/ColombusLogistics/Admin/admin/CreateUserForm';
 import OrdersTableGrid from '#domain/ColombusLogistics/Admin/admin/OrdersTable';
 import LROrdersTable from '#domain/ColombusLogistics/Admin/LorryReceipt/LROrdersTable';
 import UpdateRateToOrder from '#domain/ColombusLogistics/Admin/admin/UpdateRateToOrder';
@@ -18,6 +17,7 @@ import CreateAssistantForm from '#domain/ColombusLogistics/Admin/SuperAdmin/Crea
 import BranchesTableGrid from '#domain/ColombusLogistics/Admin/SuperAdmin/BranchesTableGrid';
 import MarketVehicleTableGrid from '#domain/ColombusLogistics/Admin/admin/Marketvehicle';
 import Gallery from '#domain/ColombusLogistics/Gallery/Gallery';
+import HelpCenterPage from '#domain/ColombusLogistics/Admin/HelpCenter/HelpCenterPage';
 import Layout from './Layout/Layout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
@@ -60,7 +60,6 @@ const builderRouter = (userRole: string) => createBrowserRouter([
           />
         ),
         children: [
-          { path: 'create-user', element: <AdminCreateUserForm /> },
           { path: 'create-admin', element: <CreateAdminForm /> },
           { path: 'create-assistant', element: <CreateAssistantForm /> },
           { path: 'branches', element: <BranchesTableGrid /> },
@@ -69,6 +68,7 @@ const builderRouter = (userRole: string) => createBrowserRouter([
           { path: 'order-entries', element: <OrdersTableGrid /> },
           { path: 'market-vehicles', element: <MarketVehicleTableGrid /> },
           { path: 'lorry-receipts', element: <LROrdersTable /> },
+          { path: 'helpCenter', element: <HelpCenterPage /> },
         ],
       },
     ],

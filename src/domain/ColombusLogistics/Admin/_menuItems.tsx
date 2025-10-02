@@ -33,18 +33,17 @@ export const menuItems: MenuItem[] = [
     ],
   },
   {
+    title: 'Assistant Team',
+    icon: <FontAwesomeIcon icon={faUsers} size="xl" />,
+    subItems: [{ name: 'Assistant Orders', link: 'confirmOrder' }],
+  },
+  {
     title: 'Admin',
     icon: <FontAwesomeIcon icon={faUserShield} size="xl" />,
     subItems: [
       { name: 'Admin', link: 'order-entries' },
       { name: 'Market Vehicle', link: 'market-vehicles' },
-      { name: 'Create User', link: 'create-user' },
     ],
-  },
-  {
-    title: 'Assistant Team',
-    icon: <FontAwesomeIcon icon={faUsers} size="xl" />,
-    subItems: [{ name: 'Assistant Orders', link: 'confirmOrder' }],
   },
   {
     title: 'Pickup Team',

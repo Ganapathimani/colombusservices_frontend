@@ -34,7 +34,7 @@ const roleAccess: Record<string, string[]> = {
     'Admin',
     'Help Center',
   ],
-  superadmin: [
+  super_admin: [
     'Super Admin',
     'Admin',
     'Assistant Team',
@@ -45,13 +45,25 @@ const roleAccess: Record<string, string[]> = {
   ],
 };
 
+const getUserRole = (): string => {
+  try {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+      return 'CUSTOMER';
+    }
+    const user = JSON.parse(userStr);
+    return user?.value?.role?.toLowerCase() ?? 'CUSTOMER';
+  } catch {
+    return 'CUSTOMER';
+  }
+};
+
 const AdminSidePanel = ({ onSelectCategory, selectedCategory }: AdminSidePanelProps) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [openSection, setOpenSection] = useState<string | null>(null);
 
-  // const userRole = getUserRole();
-  const userRole = 'superadmin';
+  const userRole = getUserRole();
   const allowedTabs = roleAccess[userRole] || [];
 
   const filteredMenu = menuItems.filter((item) => allowedTabs.includes(item.title));

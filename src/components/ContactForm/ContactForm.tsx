@@ -2,31 +2,45 @@ import React, { useCallback, useState } from 'react';
 import {
   Stack,
   TextField,
-  MenuItem,
   Button,
   Typography,
   Paper,
+  Alert,
 } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import type { TEnquiry } from '#domain/models/TEnquiry';
 
 type ContactFormProps = {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: TEnquiry) => Promise<void> | void;
+  isSubmitting?: boolean;
 };
 
-const ContactForm = ({ onSubmit }: ContactFormProps) => {
+const MAX_FILE_SIZE = 1024 * 1024;
+
+const ContactForm = ({ onSubmit, isSubmitting }: ContactFormProps) => {
   const [company, setCompany] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [pickupId, setPickupId] = useState('');
-  const [role, setRole] = useState('');
   const [message, setMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const user = localStorage.getItem('user');
+  const role = user ? JSON.parse(user) : 'guest';
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFile(acceptedFiles[0]);
+    const f = acceptedFiles[0];
+    if (f && f.size > MAX_FILE_SIZE) {
+      setError('File size must be less than 1 MB');
+      setFile(null);
+      return;
+    }
+    setError(null);
+    setFile(f);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -35,33 +49,70 @@ const ContactForm = ({ onSubmit }: ContactFormProps) => {
     multiple: false,
   });
 
-  const handleSubmit = () => {
+  const fileToBase64 = (f: File): Promise<string> => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(f);
+
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject(new Error('Failed to convert file to base64'));
+      }
+    };
+
+    reader.onerror = () => {
+      reject(new Error('File reading has failed'));
+    };
+  });
+
+  const handleSubmit = async () => {
+    if (file && file.size > MAX_FILE_SIZE) {
+      setError('File size must be less than 1 MB');
+      return;
+    }
+
+    let base64File: string | null = null;
     if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        const jsonData = {
-          company,
-          name,
-          email,
-          phone,
-          pickupId,
-          role,
-          message,
-          file: reader.result,
-        };
-        onSubmit(jsonData);
-      };
-    } else {
-      const jsonData = {
-        company, name, email, phone, pickupId, role, message, file: null,
-      };
-      onSubmit(jsonData);
+      try {
+        base64File = await fileToBase64(file);
+      } catch {
+        setError('Failed to process the file');
+        return;
+      }
+    }
+
+    const enquiry: TEnquiry = {
+      company,
+      name,
+      email,
+      phone,
+      pickupId,
+      message,
+      file: base64File,
+      role: role.value?.role ?? 'guest',
+      status: 'pending',
+    };
+
+    try {
+      await onSubmit(enquiry);
+
+      setCompany('');
+      setName('');
+      setEmail('');
+      setPhone('');
+      setPickupId('');
+      setMessage('');
+      setFile(null);
+      setError(null);
+    } catch (err) {
+      setError('Submission failed, please try again.');
     }
   };
 
   return (
     <Stack spacing={3}>
+      {error && <Alert severity="error">{error}</Alert>}
       <TextField
         fullWidth
         label="Company Name"
@@ -94,12 +145,14 @@ const ContactForm = ({ onSubmit }: ContactFormProps) => {
         value={pickupId}
         onChange={(e) => setPickupId(e.target.value)}
       />
-      <TextField select fullWidth label="Which best describes you?" value={role} onChange={(e) => setRole(e.target.value)}>
-        <MenuItem value="customer">Customer</MenuItem>
-        <MenuItem value="partner">Partner</MenuItem>
-        <MenuItem value="investor">Investor</MenuItem>
-      </TextField>
-      <TextField fullWidth label="Message" multiline rows={4} value={message} onChange={(e) => setMessage(e.target.value)} />
+      <TextField
+        fullWidth
+        label="Message"
+        multiline
+        rows={4}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
 
       <Paper
         {...getRootProps()}
@@ -121,6 +174,11 @@ const ContactForm = ({ onSubmit }: ContactFormProps) => {
         {file && (
           <Stack mt={2} spacing={1}>
             <Typography variant="body2">{file.name}</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {(file.size / 1024).toFixed(2)}
+              {' '}
+              KB
+            </Typography>
           </Stack>
         )}
       </Paper>
@@ -129,6 +187,7 @@ const ContactForm = ({ onSubmit }: ContactFormProps) => {
         <Button
           variant="contained"
           size="large"
+          disabled={isSubmitting}
           sx={{
             bgcolor: '#14532D',
             '&:hover': { bgcolor: '#15803d' },
