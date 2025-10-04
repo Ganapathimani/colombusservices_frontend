@@ -4,24 +4,26 @@ import {
   TableRow, TableCell, TableBody, TableContainer, Chip, Box,
   Button, MenuItem, Select, FormControl, InputLabel,
   LinearProgress, Stack,
-  Dialog,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faPlus, faFilter, faTruck,
+  faPlus, faTruck,
   faCheckCircle, faTimesCircle, faClock, faMapMarkerAlt,
   faEdit,
 } from '@fortawesome/free-solid-svg-icons';
-import { map } from 'lodash/fp';
 import { useListOrdersQuery } from '#api/colombusLogisticsApi';
+import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
 import { useNavigate } from 'react-router-dom';
-import UpdateRateModal from '#pages/Layout/Orders/UpdateRateModal';
 import { useToggle } from '@react-shanties/core';
+import OrderSidePanel from '#components/OrderSidePanel/OrderSidePanel';
 
 const UpdateRateToOrder = () => {
   const [filter, setFilter] = useState('ALL');
-  const [isEditOrderModalOpen, ,editOrderModalOpen] = useToggle(false);
-  const [currentEditOrder, setCurrentEditOrder] = useState({});
+  const [isEditOrderModalOpen, , editOrderModalOpen] = useToggle(false);
+  const [
+    currentEditOrder, setCurrentEditOrder,
+  ] = useState<TLogisticsRegistrationForm | undefined>(undefined);
+
   const { data, isLoading } = useListOrdersQuery();
   const navigate = useNavigate();
 
@@ -42,20 +44,27 @@ const UpdateRateToOrder = () => {
     }
   }
 
+  // Mapped requests for table only
   const mappedRequests = useMemo(
-    () => map((o: any) => ({
-      id: o?.id ?? '—',
-      date: o?.pickupDate ?? null,
-      orderNumber: o?.orderNumber ?? '—',
-      origin: o?.originCompanyName ?? '—',
-      destination: o?.destinationCompanyName ?? '—',
-      vehicle: o?.vehicleType ?? '—',
-      rate: o?.rate ?? 0,
-      priority: o?.ftlType ?? 'Normal',
-      notes: o?.notes ?? '',
-      vehicleModel: o?.vehicleModel ?? '—',
-      status: (o?.status ?? 'PENDING').toUpperCase(),
-    }))(orders),
+    () => orders.map((o: TLogisticsRegistrationForm) => {
+      const pickup = o?.pickups?.[0] ?? {};
+      const delivery = o?.deliveries?.[0] ?? {};
+      const vehicle = o?.vehicles?.[0] ?? {};
+
+      return {
+        id: o?.id ?? '—',
+        date: pickup?.pickupDate ?? null,
+        origin: pickup?.companyName ?? '—',
+        destination: delivery?.companyName ?? '—',
+        vehicle: vehicle?.vehicleType ?? '—',
+        vehicleModel: vehicle?.model ?? '—',
+        rate: o?.rate ?? 0,
+        priority: vehicle?.ftlType ?? 'Normal',
+        notes: o?.notes ?? '',
+        status: (o?.status ?? 'PENDING').toUpperCase(),
+        fullData: o,
+      };
+    }),
     [orders],
   );
 
@@ -120,67 +129,72 @@ const UpdateRateToOrder = () => {
   };
 
   const handleEditOrderModal = (item: any) => {
-    editOrderModalOpen.setOn();
-    setCurrentEditOrder(item);
+    if (item.fullData) {
+      setCurrentEditOrder(item.fullData); // <-- pass full object for side panel
+      editOrderModalOpen.setOn();
+    }
   };
 
   return (
     <Box sx={{ backgroundColor: '#f8fafc', minHeight: '100vh', p: 3 }}>
-      <Box sx={{ mb: 3 }}>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 700,
-            background: 'linear-gradient(135deg, #43a047 0%, #2e7d32 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          Assistant Team
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Discuss the order details with manager and confirm the order
-        </Typography>
-      </Box>
       <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        spacing={2}
-        justifyContent="space-between"
+        direction="row"
         alignItems="center"
+        justifyContent="space-between"
+        spacing={2}
         mb={3}
       >
-        <FormControl size="small" sx={{ minWidth: 200 }}>
-          <InputLabel>Status Filter</InputLabel>
-          <Select
-            value={filter}
-            label="Status Filter"
-            onChange={(e) => setFilter(e.target.value)}
-            startAdornment={<FontAwesomeIcon icon={faFilter} style={{ marginRight: 8, color: '#64748b' }} />}
+        <Box>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #43a047 0%, #2e7d32 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
           >
-            <MenuItem value="ALL">All Status</MenuItem>
-            <MenuItem value="PENDING">Pending</MenuItem>
-            <MenuItem value="CONFIRMED">Confirmed</MenuItem>
-          </Select>
-        </FormControl>
+            Assistant Team
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Discuss the order details with manager and confirm the order
+          </Typography>
+        </Box>
 
-        <Button
-          variant="contained"
-          size="small"
-          onClick={handleNewRequest}
-          startIcon={<FontAwesomeIcon icon={faPlus} />}
-          sx={{
-            borderRadius: 3,
-            px: 2,
-            py: 1.5,
-            background: 'linear-gradient(135deg, #43a047 0%, #2e7d32 100%)',
-            '&:hover': {
-              background: 'linear-gradient(135deg, #388e3c 0%, #1b5e20 100%)',
-              boxShadow: '0 8px 20px rgba(56, 142, 60, 0.3)',
-            },
-          }}
-        >
-          New Rate Request
-        </Button>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel>Status Filter</InputLabel>
+            <Select
+              value={filter}
+              label="Status Filter"
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <MenuItem value="ALL">All Status</MenuItem>
+              <MenuItem value="PENDING">Pending</MenuItem>
+              <MenuItem value="CONFIRMED">Confirmed</MenuItem>
+            </Select>
+          </FormControl>
+
+          <Button
+            variant="contained"
+            size="small"
+            onClick={handleNewRequest}
+            startIcon={<FontAwesomeIcon icon={faPlus} />}
+            sx={{
+              borderRadius: 3,
+              px: 2,
+              py: 1.5,
+              textTransform: 'none',
+              background: 'linear-gradient(135deg, #43a047 0%, #2e7d32 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #388e3c 0%, #1b5e20 100%)',
+                boxShadow: '0 8px 20px rgba(56, 142, 60, 0.3)',
+              },
+            }}
+          >
+            New Rate Request
+          </Button>
+        </Stack>
       </Stack>
 
       {isLoading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
@@ -188,10 +202,8 @@ const UpdateRateToOrder = () => {
       <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e2e8f0' }}>
         <CardHeader
           title={(
-            <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a202c' }}>
-              Rate Requests (
-              {filteredRequests.length}
-              )
+            <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a202c', fontSize: '16px' }}>
+              Rate Requests
             </Typography>
           )}
           sx={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
@@ -207,24 +219,16 @@ const UpdateRateToOrder = () => {
                   <TableCell sx={{ fontWeight: 700 }}>Vehicle Model</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Priority</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                  {
-                    userRole !== 'CUSTOMER'
-                    && <TableCell sx={{ fontWeight: 700 }}>Action</TableCell>
-                  }
+                  {userRole !== 'CUSTOMER' && <TableCell sx={{ fontWeight: 700 }}>Action</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filteredRequests.map((req) => (
                   <TableRow
                     key={req.id}
-                    sx={{
-                      '&:hover': { backgroundColor: '#f9fafb' },
-                      borderBottom: '1px solid #f1f5f9',
-                    }}
+                    sx={{ '&:hover': { backgroundColor: '#f9fafb' }, borderBottom: '1px solid #f1f5f9' }}
                   >
-                    <TableCell>
-                      {req.date ? new Date(req.date).toLocaleDateString('en-GB') : '—'}
-                    </TableCell>
+                    <TableCell>{req.date ? new Date(req.date).toLocaleDateString('en-GB') : '—'}</TableCell>
                     <TableCell>
                       <Box>
                         <Box display="flex" alignItems="center" gap={1} mb={0.5}>
@@ -241,32 +245,19 @@ const UpdateRateToOrder = () => {
                     <TableCell>{req.vehicleModel}</TableCell>
                     <TableCell>
                       <Box display="flex" alignItems="center" gap={1}>
-                        <Box
-                          sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            backgroundColor: getPriorityColor(req.priority),
-                          }}
+                        <Box sx={{
+                          width: 8, height: 8, borderRadius: '50%', backgroundColor: getPriorityColor(req.priority),
+                        }}
                         />
-                        <Typography
-                          variant="body2"
-                          sx={{ color: getPriorityColor(req.priority), textTransform: 'lowercase', fontSize: '17px' }}
-                        >
-                          {req.priority}
-                        </Typography>
+                        <Typography variant="body2" sx={{ color: getPriorityColor(req.priority), textTransform: 'lowercase', fontSize: '17px' }}>{req.priority}</Typography>
                       </Box>
                     </TableCell>
                     <TableCell>{getStatusChip(req.status)}</TableCell>
-                    {
-                    userRole !== 'CUSTOMER'
-                    && (
-                    <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => handleEditOrderModal(req)}>
-                      <FontAwesomeIcon icon={faEdit} style={{ fontSize: 14 }} />
-                      <Typography>Add rate</Typography>
-                    </TableCell>
-                    )
-                  }
+                    {userRole !== 'CUSTOMER' && (
+                      <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => handleEditOrderModal(req)}>
+                        <FontAwesomeIcon icon={faEdit} style={{ fontSize: 14 }} />
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
@@ -277,17 +268,22 @@ const UpdateRateToOrder = () => {
             <Box sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
               <Typography variant="h6" sx={{ mb: 1 }}>No requests found</Typography>
               <Typography variant="body2">
-                {filter === 'ALL'
-                  ? 'No rate requests available'
-                  : `No ${filter.toLowerCase()} requests`}
+                {filter === 'ALL' ? 'No rate requests available' : `No ${filter.toLowerCase()} requests`}
               </Typography>
             </Box>
           )}
         </CardContent>
       </Card>
-      <Dialog open={isEditOrderModalOpen} onClose={editOrderModalOpen.setOff} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' } }}>
-        <UpdateRateModal currentEditOrder={currentEditOrder} onClose={editOrderModalOpen.setOff} />
-      </Dialog>
+
+      <OrderSidePanel
+        open={isEditOrderModalOpen}
+        onClose={() => editOrderModalOpen.setOff()}
+        defaultValues={currentEditOrder}
+        onSubmitSuccess={(updatedData) => {
+          console.log('Order saved/updated', updatedData);
+          editOrderModalOpen.setOff();
+        }}
+      />
     </Box>
   );
 };
