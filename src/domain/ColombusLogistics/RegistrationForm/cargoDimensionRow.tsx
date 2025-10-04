@@ -14,12 +14,12 @@ import type {
   UseFormSetValue,
   UseFormWatch,
 } from 'react-hook-form';
-import type { TDimension } from '#domain/models/TLogisticsRegistrationForm';
+import type { TMaterial } from '#domain/models/TLogisticsRegistrationForm';
 
 interface CargoDimensionRowProps {
   index: number;
   remove: (index: number) => void;
-  dimensionErrors?: (Merge<FieldError, Partial<TDimension>> | undefined)[];
+  dimensionErrors?: (Merge<FieldError, Partial<TMaterial>> | undefined)[];
   register: UseFormRegister<any>;
   setValue: UseFormSetValue<any>;
   watch: UseFormWatch<any>;
@@ -45,11 +45,11 @@ const CargoDimensionRow = ({
   setValue,
   watch,
 }: CargoDimensionRowProps) => {
-  const length = watch(`cargoDetails.0.dimensions.${index}.length`);
-  const width = watch(`cargoDetails.0.dimensions.${index}.width`);
-  const height = watch(`cargoDetails.0.dimensions.${index}.height`);
-  const unit = watch(`cargoDetails.0.dimensions.${index}.unit`);
-  const units = Number(watch(`cargoDetails.0.dimensions.${index}.handlingUnit`)) || 1;
+  const length = watch(`packages.0.materials.${index}.length`);
+  const width = watch(`packages.0.materials.${index}.width`);
+  const height = watch(`packages.0.materials.${index}.height`);
+  const unit = watch(`packages.0.materials.${index}.unit`);
+  const units = Number(watch(`packages.0.materials.${index}.handlingUnit`)) || 1;
 
   useEffect(() => {
     if (length && width && height) {
@@ -59,7 +59,7 @@ const CargoDimensionRow = ({
 
       const cubicFeet = lengthFt * widthFt * heightFt * units;
       setValue(
-        `cargoDetails.0.dimensions.${index}.cubicFeet`,
+        `packages.0.materials.${index}.cubicFeet`,
         Number(cubicFeet.toFixed(3)),
       );
     }
@@ -78,46 +78,55 @@ const CargoDimensionRow = ({
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
           label="Handling Unit"
-          {...register(`cargoDetails.0.dimensions.${index}.handlingUnit`)}
+          type="number"
+          {...register(`packages.0.materials.${index}.handlingUnit`, {
+            valueAsNumber: true,
+          })}
           fullWidth
         />
 
         <TextField
           label="Length"
           type="number"
-          {...register(`cargoDetails.0.dimensions.${index}.length`)}
+          {...register(`packages.0.materials.${index}.length`, {
+            valueAsNumber: true,
+          })}
           fullWidth
         />
         <TextField
           label="Width"
           type="number"
-          {...register(`cargoDetails.0.dimensions.${index}.width`)}
+          {...register(`packages.0.materials.${index}.width`, {
+            valueAsNumber: true,
+          })}
           fullWidth
         />
         <TextField
           label="Height"
           type="number"
-          {...register(`cargoDetails.0.dimensions.${index}.height`)}
+          {...register(`packages.0.materials.${index}.height`, {
+            valueAsNumber: true,
+          })}
           fullWidth
         />
 
         <TextField
           select
           label="Unit"
-          defaultValue="cm"
-          {...register(`cargoDetails.0.dimensions.${index}.unit`)}
+          defaultValue="CM"
+          {...register(`packages.0.materials.${index}.unit`)}
           fullWidth
         >
-          <MenuItem value="cm">cm</MenuItem>
-          <MenuItem value="inch">inch</MenuItem>
-          <MenuItem value="mm">mm</MenuItem>
+          <MenuItem value="CM">cm</MenuItem>
+          <MenuItem value="INCH">inch</MenuItem>
+          <MenuItem value="MM">mm</MenuItem>
         </TextField>
       </Stack>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
         <TextField
           label="Material Type"
-          {...register(`cargoDetails.0.dimensions.${index}.materialType`, {
+          {...register(`packages.0.materials.${index}.materialType`, {
             required: 'Material type is required',
           })}
           fullWidth
@@ -126,8 +135,11 @@ const CargoDimensionRow = ({
         <TextField
           label="Cubic Feet"
           type="number"
-          {...register(`cargoDetails.0.dimensions.${index}.cubicFeet`)}
+          {...register(`packages.0.materials.${index}.cubicFeet`, {
+            valueAsNumber: true,
+          })}
           InputProps={{ readOnly: true }}
+          InputLabelProps={{ shrink: true }}
           fullWidth
         />
 

@@ -6,6 +6,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUser, faEnvelope, faPhone, faMapMarkerAlt, faCity, faTrashAlt, faAdd,
+  faContactBook,
 } from '@fortawesome/free-solid-svg-icons';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
 
@@ -16,18 +17,19 @@ const DestinationForm = () => {
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'destinations',
+    name: 'deliveries',
   });
 
   useEffect(() => {
     if (!fields.length) {
       append({
         companyName: '',
-        emailId: '',
-        contactNumber: '',
+        contactPerson: '',
+        email: '',
+        mobile: '',
         address: '',
         location: '',
-        pincode: '',
+        pinCode: '',
       });
     }
   }, [append, fields.length]);
@@ -45,22 +47,34 @@ const DestinationForm = () => {
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
               label="Company Name"
-              {...register(`destinations.${index}.companyName` as const, { required: 'Company Name is required' })}
-              error={!!errors.destinations?.[index]?.companyName}
-              helperText={errors.destinations?.[index]?.companyName?.message}
+              {...register(`deliveries.${index}.companyName` as const, { required: 'Company Name is required' })}
+              error={!!errors.deliveries?.[index]?.companyName}
+              helperText={errors.deliveries?.[index]?.companyName?.message}
               InputProps={{
                 startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faUser} /></InputAdornment>,
               }}
               fullWidth
             />
+          </Stack>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
-              label="Email ID"
+              label="Contact Person"
+              {...register(`deliveries.${index}.contactPerson` as const, { required: 'Contact Person is required' })}
+              error={!!errors.deliveries?.[index]?.contactPerson}
+              helperText={errors.deliveries?.[index]?.contactPerson?.message}
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faContactBook} /></InputAdornment>,
+              }}
+              fullWidth
+            />
+            <TextField
+              label="Email Id"
               type="email"
-              {...register(`destinations.${index}.emailId` as const, {
+              {...register(`deliveries.${index}.email` as const, {
                 pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email address' },
               })}
-              error={!!errors.destinations?.[index]?.emailId}
-              helperText={errors.destinations?.[index]?.emailId?.message}
+              error={!!errors.deliveries?.[index]?.email}
+              helperText={errors.deliveries?.[index]?.email?.message}
               InputProps={{
                 startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faEnvelope} /></InputAdornment>,
               }}
@@ -71,12 +85,12 @@ const DestinationForm = () => {
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
               label="Contact Number"
-              {...register(`destinations.${index}.contactNumber` as const, {
-                required: 'Contact number is required',
-                pattern: { value: /^[0-9]{10,15}$/, message: 'Invalid contact number' },
+              {...register(`deliveries.${index}.mobile` as const, {
+                required: 'Mobile number is required',
+                pattern: { value: /^[0-9]{10,15}$/, message: 'Invalid mobile number' },
               })}
-              error={!!errors.destinations?.[index]?.contactNumber}
-              helperText={errors.destinations?.[index]?.contactNumber?.message}
+              error={!!errors.deliveries?.[index]?.mobile}
+              helperText={errors.deliveries?.[index]?.mobile?.message}
               InputProps={{
                 startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faPhone} /></InputAdornment>,
               }}
@@ -84,12 +98,12 @@ const DestinationForm = () => {
             />
             <TextField
               label="Pin Code"
-              {...register(`destinations.${index}.pincode` as const, {
+              {...register(`deliveries.${index}.pinCode` as const, {
                 required: 'Pin Code is required',
                 pattern: { value: /^[0-9]{5,10}$/, message: 'Invalid Pin Code' },
               })}
-              error={!!errors.destinations?.[index]?.pincode}
-              helperText={errors.destinations?.[index]?.pincode?.message}
+              error={!!errors.deliveries?.[index]?.pinCode}
+              helperText={errors.deliveries?.[index]?.pinCode?.message}
               InputProps={{
                 startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faMapMarkerAlt} /></InputAdornment>,
               }}
@@ -99,9 +113,9 @@ const DestinationForm = () => {
 
           <TextField
             label="Address"
-            {...register(`destinations.${index}.address` as const, { required: 'Address is required' })}
-            error={!!errors.destinations?.[index]?.address}
-            helperText={errors.destinations?.[index]?.address?.message}
+            {...register(`deliveries.${index}.address` as const, { required: 'Address is required' })}
+            error={!!errors.deliveries?.[index]?.address}
+            helperText={errors.deliveries?.[index]?.address?.message}
             multiline
             rows={3}
             InputProps={{
@@ -112,9 +126,9 @@ const DestinationForm = () => {
 
           <TextField
             label="Location"
-            {...register(`destinations.${index}.location` as const, { required: 'Location is required' })}
-            error={!!errors.destinations?.[index]?.location}
-            helperText={errors.destinations?.[index]?.location?.message}
+            {...register(`deliveries.${index}.location` as const, { required: 'Location is required' })}
+            error={!!errors.deliveries?.[index]?.location}
+            helperText={errors.deliveries?.[index]?.location?.message}
             InputProps={{
               startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faCity} /></InputAdornment>,
             }}
@@ -135,11 +149,12 @@ const DestinationForm = () => {
         startIcon={<FontAwesomeIcon icon={faAdd} />}
         onClick={() => append({
           companyName: '',
-          emailId: '',
-          contactNumber: '',
+          email: '',
+          contactPerson: '',
+          mobile: '',
           address: '',
           location: '',
-          pincode: '',
+          pinCode: '',
         })}
         sx={{ alignSelf: 'flex-end', backgroundColor: 'green', '&:hover': { backgroundColor: 'darkgreen' } }}
       >

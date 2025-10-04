@@ -11,7 +11,7 @@ import {
   faCheckCircle, faTimesCircle, faClock, faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { map } from 'lodash/fp';
-import { useListOrdersQuery } from '#api/colombusLogisticsApi';
+import { useListOrdersQuery, useUpdateOrderMutation, useDeleteOrderMutation } from '#api/colombusLogisticsApi';
 import { useNavigate } from 'react-router-dom';
 import ActionsColumn from './_actionsColoumn';
 
@@ -22,31 +22,40 @@ const RateRequests = () => {
 
   const orders = useMemo(() => (Array.isArray(data) ? data : []), [data]);
 
+  const [deleteOrder] = useDeleteOrderMutation();
+  const [updateOrder] = useUpdateOrderMutation();
+
   const handleNewRequest = useCallback(() => {
     navigate('/registration');
   }, [navigate]);
 
   const mappedRequests = useMemo(
-    () => map((o: any) => ({
-      id: o?.id ?? '—',
-      date: o?.pickupDate ?? null,
-      orderNumber: o?.orderNumber ?? '—',
-      origin: o?.originCompanyName ?? '—',
-      destination: o?.destinationCompanyName ?? '—',
-      vehicle: o?.vehicleType ?? '—',
-      rate: o?.rate ?? 0,
-      priority: o?.ftlType ?? 'Normal',
-      notes: o?.notes ?? '',
-      vehicleModel: o?.vehicleModel ?? '—',
-      status: (o?.status ?? 'PENDING').toUpperCase(),
-    }))(orders),
+    () => map((o: any) => {
+      const pickup = o?.pickups?.[0] ?? {};
+      const delivery = o?.deliveries?.[0] ?? {};
+      const vehicle = o?.vehicles?.[0] ?? {};
+
+      return {
+        id: o?.id ?? '—',
+        date: pickup?.pickupDate ?? null,
+        orderNumber: o?.orderNumber ?? '—',
+        origin: pickup?.companyName ?? '—',
+        destination: delivery?.companyName ?? '—',
+        vehicle: vehicle?.vehicleType ?? '—',
+        vehicleModel: vehicle?.model ?? '—',
+        rate: o?.rate ?? 0,
+        priority: vehicle?.ftlType ?? 'Normal',
+        notes: o?.notes ?? '',
+        status: (o?.status ?? 'PENDING').toUpperCase(),
+      };
+    })(orders),
     [orders],
   );
 
   const filteredRequests = useMemo(
     () => mappedRequests.filter(
-      (req) => req.rate === '0'
-        && (filter === 'ALL' ? true : req.status === filter),
+      (req) => req.rate === 0
+      && (filter === 'ALL' ? true : req.status === filter),
     ),
     [mappedRequests, filter],
   );
@@ -82,6 +91,23 @@ const RateRequests = () => {
         return '#4caf50';
       default:
         return '#9e9e9e';
+    }
+  };
+
+  const handleDelete = async (orderId: string) => {
+    try {
+      await deleteOrder(orderId).unwrap();
+    } catch (err) {
+      console.error('Delete failed:', err);
+    }
+  };
+
+  const handleEdit = async (updatedData: any) => {
+    try {
+      const { id, ...updatedFields } = updatedData;
+      await updateOrder({ orderId: id, data: updatedFields }).unwrap();
+    } catch (err) {
+      console.error('Update failed:', err);
     }
   };
 
@@ -242,15 +268,7 @@ const RateRequests = () => {
                     </TableCell>
                     <TableCell>{getStatusChip(req.status)}</TableCell>
                     <TableCell>
-                      <ActionsColumn
-                        row={req}
-                        onDelete={(id: any) => {
-                          console.log('Delete request with id:', id);
-                        }}
-                        onEdit={(updatedData: any) => {
-                          console.log('Edited data:', updatedData);
-                        }}
-                      />
+                      <ActionsColumn row={req} onDelete={handleDelete} onEdit={handleEdit} />
                     </TableCell>
 
                   </TableRow>

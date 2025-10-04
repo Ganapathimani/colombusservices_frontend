@@ -22,10 +22,10 @@ const CustomerDetailsForm = () => {
       try {
         const parsed = JSON.parse(stored).value;
         if (parsed) {
-          setValue('customerCompanyName', parsed.companyName || '');
-          setValue('customerName', parsed.name || '');
-          setValue('customerEmail', parsed.email || '');
-          setValue('customerMobile', parsed.phone || '');
+          setValue('bookedCompanyName', parsed.companyName || '');
+          setValue('bookedCustomerName', parsed.name || '');
+          setValue('bookedEmail', parsed.email || '');
+          setValue('bookedPhoneNumber', parsed.phone || '');
         }
       } catch {
         throw new Error('Failed to parse stored user data');
@@ -37,9 +37,9 @@ const CustomerDetailsForm = () => {
     <Stack spacing={3}>
       <TextField
         label="Company Name"
-        {...register('customerCompanyName', { required: 'Company name is required' })}
-        error={!!errors.customerCompanyName}
-        helperText={errors.customerCompanyName?.message}
+        {...register('bookedCompanyName', { required: 'Company name is required' })}
+        error={!!errors.bookedCompanyName}
+        helperText={errors.bookedCompanyName?.message}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -50,9 +50,9 @@ const CustomerDetailsForm = () => {
       />
       <TextField
         label="Customer Name"
-        {...register('customerName', { required: 'Customer Name is required' })}
-        error={!!errors.customerName}
-        helperText={errors.customerName?.message}
+        {...register('bookedCustomerName', { required: 'Customer Name is required' })}
+        error={!!errors.bookedCustomerName}
+        helperText={errors.bookedCustomerName?.message}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -65,12 +65,12 @@ const CustomerDetailsForm = () => {
       <TextField
         label="Email"
         type="email"
-        {...register('customerEmail', {
+        {...register('bookedEmail', {
           required: 'Email is required',
           pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email address' },
         })}
-        error={!!errors.customerEmail}
-        helperText={errors.customerEmail?.message}
+        error={!!errors.bookedEmail}
+        helperText={errors.bookedEmail?.message}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -82,12 +82,12 @@ const CustomerDetailsForm = () => {
 
       <TextField
         label="Mobile Number"
-        {...register('customerMobile', {
+        {...register('bookedPhoneNumber', {
           required: 'Mobile is required',
           pattern: { value: /^[0-9]{10,15}$/, message: 'Invalid mobile number' },
         })}
-        error={!!errors.customerMobile}
-        helperText={errors.customerMobile?.message}
+        error={!!errors.bookedPhoneNumber}
+        helperText={errors.bookedPhoneNumber?.message}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

@@ -25,8 +25,10 @@ const useVehicleForm = () => {
 
   if (storedUser) {
     try {
-      const userRole = JSON.parse(storedUser);
-      isAdmin = userRole.role !== 'CUSTOMER';
+      const user = JSON.parse(storedUser);
+      const role = (user.value.role || '').toLowerCase();
+
+      isAdmin = role !== 'customer';
     } catch (err) {
       throw new Error(err as string);
     }
@@ -61,15 +63,15 @@ const useVehicleForm = () => {
     <Stack spacing={3}>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <Controller
-          name="vehicleType"
+          name="vehicles.0.vehicleType"
           control={control}
           render={({ field }) => (
             <TextField
               select
               label="Vehicle Type"
               {...field}
-              error={!!errors.vehicleType}
-              helperText={errors.vehicleType?.message}
+              error={!!errors?.vehicles?.[0]?.vehicleType}
+              helperText={errors?.vehicles?.[0]?.vehicleType?.message}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -89,15 +91,15 @@ const useVehicleForm = () => {
         />
 
         <Controller
-          name="vehicleModel"
+          name="vehicles.0.model"
           control={control}
           render={({ field }) => (
             <TextField
               select
               label="Vehicle Model"
               {...field}
-              error={!!errors.vehicleModel}
-              helperText={errors.vehicleModel?.message}
+              error={!!errors?.vehicles?.[0]?.model}
+              helperText={errors?.vehicles?.[0]?.model?.message}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -117,10 +119,10 @@ const useVehicleForm = () => {
         />
       </Stack>
 
-      <FormControl error={!!errors.ftlType}>
+      <FormControl error={!!errors?.vehicles?.[0]?.ftlType}>
         <FormLabel>FTL Type</FormLabel>
         <Controller
-          name="ftlType"
+          name="vehicles.0.ftlType"
           control={control}
           rules={{ required: 'Please select FTL Type' }}
           render={({ field }) => (
@@ -130,13 +132,14 @@ const useVehicleForm = () => {
             </RadioGroup>
           )}
         />
-        {errors.ftlType && <FormHelperText>{errors.ftlType.message}</FormHelperText>}
+        {errors?.vehicles?.[0]?.ftlType
+          && <FormHelperText>{errors?.vehicles?.[0]?.ftlType?.message}</FormHelperText>}
       </FormControl>
 
-      <FormControl error={!!errors.loadingType}>
+      <FormControl error={!!errors?.vehicles?.[0]?.loadingType}>
         <FormLabel>Loading Type</FormLabel>
         <Controller
-          name="loadingType"
+          name="vehicles.0.loadingType"
           control={control}
           rules={{ required: 'Please select Loading Type' }}
           render={({ field }) => (
@@ -146,7 +149,8 @@ const useVehicleForm = () => {
             </RadioGroup>
           )}
         />
-        {errors.loadingType && <FormHelperText>{errors.loadingType.message}</FormHelperText>}
+        {errors?.vehicles?.[0]?.loadingType
+          && <FormHelperText>{errors?.vehicles?.[0]?.loadingType?.message}</FormHelperText>}
       </FormControl>
       {isAdmin && (
       <>

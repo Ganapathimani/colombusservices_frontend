@@ -1,20 +1,21 @@
-export type TDimension = {
+export type TMaterial = {
   handlingUnit: number,
   length: number,
   width: number,
   height: number,
   cubicFeet: number,
-  unit?: 'cm',
+  unit?: 'CM',
   materialType: string;
 };
 
-export type TCargoDetail = {
-  package: number,
+export type TPackages = {
+  packageCount: number,
   netWeight: number,
-  crossWeight: number,
-  photo: File | null,
-  hasDimensions: boolean,
-  dimensions: TDimension[],
+  grossWeight: number,
+  totalCubicFeet?: number,
+  imageUrl: File | null,
+  materials: TMaterial[],
+  hasDimensions?: boolean,
 };
 
 export type TDocumentUpload = {
@@ -27,41 +28,51 @@ export type TDocumentUpload = {
   manifestLocation?: 'Chennai Airport' | 'Chennai Seaport' | 'Thoothukudi' | 'Bangalore' | 'Tirupur';
 };
 
-export type TDestination = {
-  companyName: string;
-  emailId?: string;
-  contactNumber: string;
-  address: string;
-  location: string;
-  pincode: string;
+export type TDeliveries = {
+  companyName: string,
+  contactPerson?: string,
+  email?: string,
+  mobile: string,
+  address: string,
+  location: string,
+  pinCode: string,
 };
 
-export type TOrigin = {
-  companyName: string;
-  emailId?: string;
-  contactNumber: string;
-  address: string;
-  location: string;
-  pincode: string;
-  pickupDate?: Date | null;
+export type TPickUp = {
+  companyName: string,
+  contactPerson?: string,
+  email?: string,
+  mobile: string,
+  address: string,
+  location: string,
+  pinCode: string,
+  pickupDate?: Date | null,
+};
+
+export type TVehicles = {
+  vehicleType: string,
+  ftlType: string,
+  loadingType?: string,
+  model?: string,
 };
 
 export type TLogisticsRegistrationForm = {
+  customerId?: string,
+  branchId?: string,
+  assistantId?: string,
+  createdById?: string,
   id?: string,
-  customerCompanyName: string,
-  customerName: string,
-  customerEmail: string,
-  customerMobile: string,
-  origins: TOrigin[],
-  destinations: TDestination[];
-  cargoDetails: TCargoDetail[],
-  vehicleType: string,
-  vehicleModel: string,
-  ftlType: 'console' | 'separate',
-  loadingType: 'stackable' | 'non-stackable',
+  bookedCompanyName: string,
+  bookedCustomerName: string,
+  bookedEmail: string,
+  bookedPhoneNumber: string,
+  pickups: TPickUp[],
+  deliveries: TDeliveries[];
+  packages: TPackages[],
+  vehicles: TVehicles[],
   rate?: number,
   rateQuotedBy?: string,
-  notes: string,
+  notes?: string,
   status: string,
   vehicleNumber: string,
   driverMobile: string,

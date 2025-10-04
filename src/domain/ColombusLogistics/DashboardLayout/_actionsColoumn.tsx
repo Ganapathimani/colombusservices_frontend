@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import {
   IconButton, Menu, MenuItem,
   Drawer,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -36,6 +42,10 @@ const ActionsColumn = ({ row, onDelete, onEdit }: ActionsColumnProps) => {
     setOpenDeleteDialog(false);
   };
 
+  const handleCancelDelete = () => {
+    setOpenDeleteDialog(false);
+  };
+
   return (
     <>
       <IconButton size="small" onClick={handleMenuOpen}>
@@ -66,6 +76,20 @@ const ActionsColumn = ({ row, onDelete, onEdit }: ActionsColumnProps) => {
           />
         </div>
       </Drawer>
+      <Dialog open={openDeleteDialog} onClose={handleCancelDelete}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this rate request?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="inherit">Cancel</Button>
+          <Button onClick={handleConfirmDelete} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

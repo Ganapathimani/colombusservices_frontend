@@ -6,7 +6,7 @@ const createOrder = (
 ) => builder.mutation<string, TLogisticsRegistrationForm>({
   query: (request: Partial<TLogisticsRegistrationForm>) => ({
     method: 'POST',
-    url: '/customer/orders',
+    url: '/orders',
     body: request,
   }),
   transformResponse: (it: any) => it,

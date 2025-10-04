@@ -12,7 +12,7 @@ import CargoForm from './_useCargoForm';
 import VehicleForm from './_useVehicleForm';
 import CustomerDetailsForm from './_useCustomerDetailsForm';
 
-const steps = ['Customer Details', 'Origin', 'Destination', 'Cargo', 'Vehicle'];
+const steps = ['Customer Details', 'PickUp', 'Delivery', 'Packages', 'Vehicle'];
 
 type LogisticsRegistrationWizardProps = {
   defaultValues?: TLogisticsRegistrationForm;
@@ -36,20 +36,6 @@ const LogisticsRegistrationWizard = ({
   const [orderUpsert] = useCreateOrderMutation();
   const [updateOrder] = useUpdateOrderMutation();
 
-  const storedUser = localStorage.getItem('user');
-  let customerName: string | null = null;
-  let customerEmail: string | null = null;
-
-  if (storedUser) {
-    try {
-      const user = JSON.parse(storedUser);
-      customerName = user?.value?.name ?? null;
-      customerEmail = user?.value?.email ?? null;
-    } catch {
-      throw new Error('Failed to get user');
-    }
-  }
-
   useEffect(() => {
     if (defaultValues) {
       methods.reset(defaultValues);
@@ -68,10 +54,11 @@ const LogisticsRegistrationWizard = ({
   const onSubmit = useCallback(
     async (formData: TLogisticsRegistrationForm) => {
       try {
-        const payload = {
+        const payload: TLogisticsRegistrationForm = {
           ...formData,
-          customer: { name: customerName, email: customerEmail },
-          cargoDetails: formData.cargoDetails.map((c) => ({ ...c })),
+          packages: formData.packages.map(({ hasDimensions, ...rest }) => ({
+            ...rest,
+          })),
         };
 
         if (defaultValues?.id) {
@@ -90,11 +77,7 @@ const LogisticsRegistrationWizard = ({
         toast.error('Failed to save order');
       }
     },
-    [
-      customerName, customerEmail,
-      defaultValues?.id, methods, onClose, updateOrder,
-      onSubmitSuccess, orderUpsert,
-    ],
+    [defaultValues?.id, methods, onClose, updateOrder, onSubmitSuccess, orderUpsert],
   );
 
   return (

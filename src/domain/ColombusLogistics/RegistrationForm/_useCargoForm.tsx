@@ -19,8 +19,8 @@ import type {
 } from 'react-hook-form';
 import type {
   TLogisticsRegistrationForm,
-  TCargoDetail,
-  TDimension,
+  TPackages,
+  TMaterial,
 } from '#domain/models/TLogisticsRegistrationForm';
 import CargoDimensionRow from './cargoDimensionRow';
 import CargoSummary from './_cargoSummary';
@@ -34,35 +34,34 @@ const CargoForm = () => {
     watch,
   } = useFormContext<TLogisticsRegistrationForm>();
 
-  const cargoDetailsErrors = errors.cargoDetails as
-    | FieldErrorsImpl<TCargoDetail>[]
+  const packageDetailsErrors = errors.packages as
+    | FieldErrorsImpl<TPackages>[]
     | undefined;
 
-  const dimensionErrors = cargoDetailsErrors?.[0]?.dimensions as
-    | (Merge<FieldError, Partial<TDimension>> | undefined)[]
+  const dimensionErrors = packageDetailsErrors?.[0]?.materials as
+    | (Merge<FieldError, Partial<TMaterial>> | undefined)[]
     | undefined;
 
-  const hasDimensions = watch('cargoDetails.0.hasDimensions', false);
-  const photo = watch('cargoDetails.0.photo');
+  const hasDimensions = watch('packages.0.hasDimensions', false);
+  const photo = watch('packages.0.imageUrl');
 
   const {
     fields, append, remove, replace,
   } = useFieldArray({
     control,
-    name: 'cargoDetails.0.dimensions',
+    name: 'packages.0.materials',
   });
 
-  const dimensions = watch('cargoDetails.0.dimensions') || [];
-  const hasDimension = watch('cargoDetails.0.hasDimensions', false);
+  const material = watch('packages.0.materials') || [];
   useEffect(() => {
-    if (hasDimension) {
+    if (hasDimensions) {
       if (fields.length === 0) {
         append({
           handlingUnit: 0,
           length: 0,
           width: 0,
           height: 0,
-          unit: 'cm',
+          unit: 'CM',
           materialType: '',
           cubicFeet: 0,
         });
@@ -70,18 +69,22 @@ const CargoForm = () => {
     } else {
       replace([]);
     }
-  }, [hasDimension, append, fields.length, replace]);
+  }, [append, fields.length, replace, hasDimensions]);
 
-  const totals = dimensions.reduce(
-    (acc: any, dim: any) => {
+  const totals = material.reduce(
+    (acc, dim) => {
       acc.packages += Number(dim.handlingUnit || 0);
       acc.cubicFeet += Number(dim.cubicFeet || 0);
       return acc;
     },
-    {
-      packages: 0, cubicFeet: 0,
-    },
+    { packages: 0, cubicFeet: 0 },
   );
+
+  useEffect(() => {
+    if (hasDimensions) {
+      setValue('packages.0.totalCubicFeet', Number(totals.cubicFeet.toFixed(3)));
+    }
+  }, [totals.cubicFeet, hasDimensions, setValue]);
 
   return (
     <Stack spacing={3}>
@@ -89,45 +92,45 @@ const CargoForm = () => {
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
-          label="Package"
+          label="Total Package Count"
           type="number"
-          {...register('cargoDetails.0.package', {
+          {...register('packages.0.packageCount', {
             required: 'Package is required',
             setValueAs: (v) => (v === '' ? undefined : Number(v)),
           })}
-          error={!!cargoDetailsErrors?.[0]?.package}
-          helperText={cargoDetailsErrors?.[0]?.package?.message}
+          error={!!packageDetailsErrors?.[0]?.packageCount}
+          helperText={packageDetailsErrors?.[0]?.packageCount?.message}
           fullWidth
         />
 
         <TextField
           label="Net Weight (kgs)"
           type="number"
-          {...register('cargoDetails.0.netWeight', {
+          {...register('packages.0.netWeight', {
             required: 'Weight is required',
             setValueAs: (v) => (v === '' ? undefined : Number(v)),
           })}
-          error={!!cargoDetailsErrors?.[0]?.netWeight}
-          helperText={cargoDetailsErrors?.[0]?.netWeight?.message}
+          error={!!packageDetailsErrors?.[0]?.netWeight}
+          helperText={packageDetailsErrors?.[0]?.netWeight?.message}
           fullWidth
         />
 
         <TextField
-          label="Cross Weight (kgs)"
+          label="Gross Weight (kgs)"
           type="number"
-          {...register('cargoDetails.0.crossWeight', {
+          {...register('packages.0.grossWeight', {
             required: 'Weight is required',
             setValueAs: (v) => (v === '' ? undefined : Number(v)),
           })}
-          error={!!cargoDetailsErrors?.[0]?.crossWeight}
-          helperText={cargoDetailsErrors?.[0]?.crossWeight?.message}
+          error={!!packageDetailsErrors?.[0]?.grossWeight}
+          helperText={packageDetailsErrors?.[0]?.grossWeight?.message}
           fullWidth
         />
       </Stack>
 
       <Dropzone
         accept={{ 'image/*': [] }}
-        onDrop={(acceptedFiles) => setValue('cargoDetails.0.photo', acceptedFiles[0])}
+        onDrop={(acceptedFiles) => setValue('packages.0.imageUrl', acceptedFiles[0])}
       >
         {({ getRootProps, getInputProps, isDragActive }) => (
           <Paper
@@ -164,7 +167,7 @@ const CargoForm = () => {
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <Controller
-          name="cargoDetails.0.hasDimensions"
+          name="packages.0.hasDimensions"
           control={control}
           render={({ field }) => (
             <FormControlLabel

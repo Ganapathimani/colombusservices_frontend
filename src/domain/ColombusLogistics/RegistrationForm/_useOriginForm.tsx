@@ -8,6 +8,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUser, faEnvelope, faPhone, faMapMarkerAlt, faCity, faCalendarAlt, faTrashAlt, faAdd,
+  faContactBook,
 } from '@fortawesome/free-solid-svg-icons';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
 
@@ -18,18 +19,19 @@ const OriginForm = () => {
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'origins',
+    name: 'pickups',
   });
 
   useEffect(() => {
     if (fields.length === 0) {
       append({
         companyName: '',
-        emailId: '',
-        contactNumber: '',
+        contactPerson: '',
+        email: '',
+        mobile: '',
         address: '',
         location: '',
-        pincode: '',
+        pinCode: '',
         pickupDate: null,
       });
     }
@@ -50,96 +52,107 @@ const OriginForm = () => {
               <TextField
                 label="Company Name"
                 fullWidth
-                {...register(`origins.${index}.companyName`, { required: 'Company Name is required' })}
-                error={!!errors.origins?.[index]?.companyName}
-                helperText={errors.origins?.[index]?.companyName?.message}
+                {...register(`pickups.${index}.companyName`, { required: 'Company Name is required' })}
+                error={!!errors.pickups?.[index]?.companyName}
+                helperText={errors.pickups?.[index]?.companyName?.message}
                 InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faUser} /></InputAdornment> }}
               />
               <TextField
                 label="Email ID"
                 fullWidth
                 type="email"
-                {...register(`origins.${index}.emailId`, {
+                {...register(`pickups.${index}.email`, {
                   pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email address' },
                 })}
-                error={!!errors.origins?.[index]?.emailId}
-                helperText={errors.origins?.[index]?.emailId?.message}
+                error={!!errors.pickups?.[index]?.email}
+                helperText={errors.pickups?.[index]?.email?.message}
                 InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faEnvelope} /></InputAdornment> }}
               />
             </Stack>
 
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <TextField
+                label="Contact Person"
+                fullWidth
+                {...register(`pickups.${index}.contactPerson`, {
+                  required: 'Contact person is required',
+                })}
+                error={!!errors.pickups?.[index]?.contactPerson}
+                helperText={errors.pickups?.[index]?.contactPerson?.message}
+                InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faContactBook} /></InputAdornment> }}
+              />
+              <TextField
                 label="Contact Number"
                 fullWidth
-                {...register(`origins.${index}.contactNumber`, {
+                {...register(`pickups.${index}.mobile`, {
                   required: 'Contact number is required',
                   pattern: { value: /^[0-9]{10,15}$/, message: 'Invalid contact number' },
                 })}
-                error={!!errors.origins?.[index]?.contactNumber}
-                helperText={errors.origins?.[index]?.contactNumber?.message}
+                error={!!errors.pickups?.[index]?.mobile}
+                helperText={errors.pickups?.[index]?.mobile?.message}
                 InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faPhone} /></InputAdornment> }}
-              />
-              <TextField
-                label="Address"
-                fullWidth
-                multiline
-                rows={2}
-                {...register(`origins.${index}.address`, { required: 'Address is required' })}
-                error={!!errors.origins?.[index]?.address}
-                helperText={errors.origins?.[index]?.address?.message}
-                InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faMapMarkerAlt} /></InputAdornment> }}
               />
             </Stack>
 
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <TextField
+                label="Address"
+                fullWidth
+                multiline
+                rows={2}
+                {...register(`pickups.${index}.address`, { required: 'Address is required' })}
+                error={!!errors.pickups?.[index]?.address}
+                helperText={errors.pickups?.[index]?.address?.message}
+                InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faMapMarkerAlt} /></InputAdornment> }}
+              />
+              <TextField
                 label="Location"
                 fullWidth
-                {...register(`origins.${index}.location`, { required: 'Location is required' })}
-                error={!!errors.origins?.[index]?.location}
-                helperText={errors.origins?.[index]?.location?.message}
+                {...register(`pickups.${index}.location`, { required: 'Location is required' })}
+                error={!!errors.pickups?.[index]?.location}
+                helperText={errors.pickups?.[index]?.location?.message}
                 InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faCity} /></InputAdornment> }}
               />
+            </Stack>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+
               <TextField
                 label="Pin Code"
                 fullWidth
-                {...register(`origins.${index}.pincode`, {
+                {...register(`pickups.${index}.pinCode`, {
                   required: 'Pin Code is required',
                   pattern: { value: /^[0-9]{5,10}$/, message: 'Invalid Pin Code' },
                 })}
-                error={!!errors.origins?.[index]?.pincode}
-                helperText={errors.origins?.[index]?.pincode?.message}
+                error={!!errors.pickups?.[index]?.pinCode}
+                helperText={errors.pickups?.[index]?.pinCode?.message}
                 InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faMapMarkerAlt} /></InputAdornment> }}
               />
-            </Stack>
-
-            <Controller
-              name={`origins.${index}.pickupDate`}
-              control={control}
-              render={({ field: controllerField }) => (
-                <DatePicker
-                  {...controllerField}
-                  label="Pickup Date"
-                  disablePast
-                  onChange={(date) => controllerField.onChange(date)}
-                  value={controllerField.value}
-                  slotProps={{
-                    textField: {
-                      fullWidth: true,
-                      InputProps: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <FontAwesomeIcon icon={faCalendarAlt} />
-                          </InputAdornment>
-                        ),
+              <Controller
+                name={`pickups.${index}.pickupDate`}
+                control={control}
+                render={({ field: controllerField }) => (
+                  <DatePicker
+                    {...controllerField}
+                    label="Pickup Date"
+                    disablePast
+                    onChange={(date) => controllerField.onChange(date)}
+                    value={controllerField.value}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        InputProps: {
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <FontAwesomeIcon icon={faCalendarAlt} />
+                            </InputAdornment>
+                          ),
+                        },
                       },
-                    },
-                  }}
-                />
-              )}
-            />
-
+                    }}
+                  />
+                )}
+              />
+            </Stack>
             <Stack direction="row" justifyContent="flex-end">
               <IconButton color="error" onClick={() => remove(index)}>
                 <FontAwesomeIcon icon={faTrashAlt} />
@@ -153,11 +166,12 @@ const OriginForm = () => {
           startIcon={<FontAwesomeIcon icon={faAdd} />}
           onClick={() => append({
             companyName: '',
-            emailId: '',
-            contactNumber: '',
+            email: '',
+            contactPerson: '',
+            mobile: '',
             address: '',
             location: '',
-            pincode: '',
+            pinCode: '',
             pickupDate: null,
           })}
           sx={{ alignSelf: 'flex-end', backgroundColor: 'green', '&:hover': { backgroundColor: 'darkgreen' } }}

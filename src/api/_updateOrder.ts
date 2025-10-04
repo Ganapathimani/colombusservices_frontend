@@ -8,7 +8,7 @@ TLogisticsRegistrationForm,
 { orderId: string; data: Partial<TLogisticsRegistrationForm> }
 >({
   query: ({ orderId, data }) => ({
-    url: `/orders/updateOrder/${orderId}`,
+    url: `/orders/${orderId}`,
     method: 'PUT',
     body: data,
   }),
