@@ -14,7 +14,7 @@ import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegist
 
 const OriginForm = () => {
   const {
-    control, register, formState: { errors },
+    control, register, formState: { errors }, getValues,
   } = useFormContext<TLogisticsRegistrationForm>();
 
   const { fields, append, remove } = useFieldArray({
@@ -23,19 +23,25 @@ const OriginForm = () => {
   });
 
   useEffect(() => {
+    const defaultValues = getValues();
     if (fields.length === 0) {
-      append({
-        companyName: '',
-        contactPerson: '',
-        email: '',
-        mobile: '',
-        address: '',
-        location: '',
-        pinCode: '',
-        pickupDate: null,
-      });
+      if (defaultValues?.pickups?.length) {
+        console.log(defaultValues.pickups);
+        defaultValues.pickups.forEach((p) => append(p));
+      } else {
+        append({
+          companyName: '',
+          contactPerson: '',
+          email: '',
+          mobile: '',
+          address: '',
+          location: '',
+          pinCode: '',
+          pickupDate: null,
+        });
+      }
     }
-  }, [fields.length, append]);
+  }, [fields.length, append, getValues]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -135,7 +141,18 @@ const OriginForm = () => {
                     {...controllerField}
                     label="Pickup Date"
                     disablePast
-                    onChange={(date) => controllerField.onChange(date)}
+                    onChange={(date) => {
+                      if (date) {
+                        const normalizedDate = new Date(
+                          date.getFullYear(),
+                          date.getMonth(),
+                          date.getDate(),
+                        );
+                        controllerField.onChange(normalizedDate);
+                      } else {
+                        controllerField.onChange(null);
+                      }
+                    }}
                     value={controllerField.value}
                     slotProps={{
                       textField: {

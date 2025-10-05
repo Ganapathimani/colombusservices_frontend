@@ -11,15 +11,14 @@ import {
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import LogisticsRegistrationWizard from '../RegistrationForm/LogisticsRegistrationForm';
+import OrderSidePanel from '#components/OrderSidePanel/OrderSidePanel';
 
 type ActionsColumnProps = {
   row: any;
   onDelete: (id: string) => void;
-  onEdit: (updatedData: any) => void;
 };
 
-const ActionsColumn = ({ row, onDelete, onEdit }: ActionsColumnProps) => {
+const ActionsColumn = ({ row, onDelete }: ActionsColumnProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -65,14 +64,10 @@ const ActionsColumn = ({ row, onDelete, onEdit }: ActionsColumnProps) => {
 
       <Drawer anchor="right" open={openDrawer} onClose={() => setOpenDrawer(false)}>
         <div style={{ width: 600, padding: 24 }}>
-          <LogisticsRegistrationWizard
-            defaultValues={row}
-            title="Edit Rate Request"
+          <OrderSidePanel
+            open={openDrawer}
             onClose={() => setOpenDrawer(false)}
-            onSubmitSuccess={(updatedData) => {
-              onEdit(updatedData);
-              setOpenDrawer(false);
-            }}
+            defaultValues={row}
           />
         </div>
       </Drawer>

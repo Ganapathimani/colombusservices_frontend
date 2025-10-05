@@ -13,25 +13,34 @@ const CustomerDetailsForm = () => {
   const {
     register,
     setValue,
+    getValues,
     formState: { errors },
   } = useFormContext<TLogisticsRegistrationForm>();
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored).value;
-        if (parsed) {
-          setValue('bookedCompanyName', parsed.companyName || '');
-          setValue('bookedCustomerName', parsed.name || '');
-          setValue('bookedEmail', parsed.email || '');
-          setValue('bookedPhoneNumber', parsed.phone || '');
+    const currentValues = getValues();
+    if (
+      !currentValues.bookedCompanyName
+      && !currentValues.bookedCustomerName
+      && !currentValues.bookedEmail
+      && !currentValues.bookedPhoneNumber
+    ) {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored).value;
+          if (parsed) {
+            setValue('bookedCompanyName', parsed.companyName || '');
+            setValue('bookedCustomerName', parsed.name || '');
+            setValue('bookedEmail', parsed.email || '');
+            setValue('bookedPhoneNumber', parsed.phone || '');
+          }
+        } catch {
+          throw new Error('Failed to parse stored user data');
         }
-      } catch {
-        throw new Error('Failed to parse stored user data');
       }
     }
-  }, [setValue]);
+  }, [getValues, setValue]);
 
   return (
     <Stack spacing={3}>
@@ -61,7 +70,6 @@ const CustomerDetailsForm = () => {
           ),
         }}
       />
-
       <TextField
         label="Email"
         type="email"
@@ -79,7 +87,6 @@ const CustomerDetailsForm = () => {
           ),
         }}
       />
-
       <TextField
         label="Mobile Number"
         {...register('bookedPhoneNumber', {

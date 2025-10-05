@@ -4,12 +4,12 @@ import LogisticsRegistrationForm from '#domain/ColombusLogistics/RegistrationFor
 import DashboardLayout from '#domain/ColombusLogistics/DashboardLayout/DashboardLayout';
 import Support from '#domain/ColombusLogistics/DashboardLayout/Support';
 import Profile from '#domain/ColombusLogistics/DashboardLayout/Profile';
-import RateRequest from '#domain/ColombusLogistics/DashboardLayout/RateRequest';
+import RateRequest from '#domain/ColombusLogistics/DashboardLayout/RateRequest/RateRequest';
 import PickupConfirmation from '#domain/ColombusLogistics/DashboardLayout/PickupConfirmation';
 import Tracking from '#domain/ColombusLogistics/DashboardLayout/Tracking';
 import OrdersTableGrid from '#domain/ColombusLogistics/Admin/admin/OrdersTable';
 import LROrdersTable from '#domain/ColombusLogistics/Admin/LorryReceipt/LROrdersTable';
-import UpdateRateToOrder from '#domain/ColombusLogistics/Admin/admin/UpdateRateToOrder';
+import UpdateRateToOrder from '#domain/ColombusLogistics/Admin/admin/RateRequest';
 import UpdateVehicleDetails from '#domain/ColombusLogistics/Admin/admin/UpdateVehicleDetails';
 import ProtectedRoute from '#components/ProtectedRoute/ProtectedRoute';
 import CreateAdminForm from '#domain/ColombusLogistics/Admin/SuperAdmin/CreateAdminForm';

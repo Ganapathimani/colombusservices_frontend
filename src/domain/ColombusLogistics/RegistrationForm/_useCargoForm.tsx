@@ -53,23 +53,39 @@ const CargoForm = () => {
   });
 
   const material = watch('packages.0.materials') || [];
+
   useEffect(() => {
-    if (hasDimensions) {
-      if (fields.length === 0) {
-        append({
-          handlingUnit: 0,
-          length: 0,
-          width: 0,
-          height: 0,
-          unit: 'CM',
-          materialType: '',
-          cubicFeet: 0,
-        });
-      }
-    } else {
-      replace([]);
+    const packages = watch('packages') || [];
+    const package0 = packages[0];
+
+    if (!package0) {
+      return;
     }
-  }, [append, fields.length, replace, hasDimensions]);
+    if (package0.materials && package0.materials.length > 0) {
+      setValue('packages.0.hasDimensions', true);
+      if (fields.length === 0) {
+        replace(package0.materials.map((mat) => ({
+          handlingUnit: mat.handlingUnit,
+          length: mat.length,
+          width: mat.width,
+          height: mat.height,
+          unit: mat.unit,
+          materialType: mat.materialType,
+          cubicFeet: mat.cubicFeet,
+        })));
+      }
+    } else if (hasDimensions && fields.length === 0) {
+      append({
+        handlingUnit: 0,
+        length: 0,
+        width: 0,
+        height: 0,
+        unit: 'CM',
+        materialType: '',
+        cubicFeet: 0,
+      });
+    }
+  }, [append, fields.length, replace, hasDimensions, setValue, watch]);
 
   const totals = material.reduce(
     (acc, dim) => {
@@ -206,7 +222,7 @@ const CargoForm = () => {
               length: 0,
               width: 0,
               height: 0,
-              unit: 'cm',
+              unit: 'CM',
               cubicFeet: 0,
               materialType: '',
             })}

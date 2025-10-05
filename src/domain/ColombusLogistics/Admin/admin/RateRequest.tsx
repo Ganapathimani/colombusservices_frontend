@@ -1,9 +1,8 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
-  Card, CardContent, CardHeader, Typography, Table, TableHead,
-  TableRow, TableCell, TableBody, TableContainer, Chip, Box,
+  Card, CardContent, CardHeader, Typography, Box,
   Button, MenuItem, Select, FormControl, InputLabel,
-  LinearProgress, Stack,
+  LinearProgress, Stack, Chip,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -15,13 +14,16 @@ import { useListOrdersQuery } from '#api/colombusLogisticsApi';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
 import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@react-shanties/core';
+import type { GridColDef } from '@mui/x-data-grid';
 import OrderSidePanel from '#components/OrderSidePanel/OrderSidePanel';
+import DataGridTable from '#components/DataGrid/DataGrid';
 
-const UpdateRateToOrder = () => {
+const RateRequest = () => {
   const [filter, setFilter] = useState('ALL');
   const [isEditOrderModalOpen, , editOrderModalOpen] = useToggle(false);
   const [
-    currentEditOrder, setCurrentEditOrder,
+    currentEditOrder,
+    setCurrentEditOrder,
   ] = useState<TLogisticsRegistrationForm | undefined>(undefined);
 
   const { data, isLoading } = useListOrdersQuery();
@@ -44,7 +46,6 @@ const UpdateRateToOrder = () => {
     }
   }
 
-  // Mapped requests for table only
   const mappedRequests = useMemo(
     () => orders.map((o: TLogisticsRegistrationForm) => {
       const pickup = o?.pickups?.[0] ?? {};
@@ -96,44 +97,124 @@ const UpdateRateToOrder = () => {
     return configs[status] || configs.PENDING;
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority?.toUpperCase()) {
-      case 'HIGH':
-        return '#ff1744';
-      case 'MEDIUM':
-        return '#ff9800';
-      case 'LOW':
-        return '#4caf50';
-      default:
-        return '#9e9e9e';
-    }
-  };
-
-  const getStatusChip = (status: string) => {
+  const getStatusChip = useCallback((status: string) => {
     const config = getStatusConfig(status);
     return (
-      <Chip
-        icon={config.icon}
-        label={status}
+      <Box
         sx={{
+          display: 'inline-flex',
+          alignItems: 'center',
           fontWeight: 600,
-          backgroundColor: config.bgColor,
+          bgcolor: config.bgColor,
           color: config.textColor,
-          textTransform: 'lowercase',
+          px: 1.5,
+          py: 0.5,
+          borderRadius: 1,
           border: `1px solid ${config.textColor}20`,
-          '& .MuiChip-icon': { color: config.textColor },
+          textTransform: 'lowercase',
         }}
-        size="small"
-      />
+      >
+        {config.icon}
+        <Typography sx={{ ml: 0.5, fontSize: 12 }}>{status.toLowerCase()}</Typography>
+      </Box>
     );
-  };
+  }, []);
 
-  const handleEditOrderModal = (item: any) => {
+  const handleEditOrderModal = useCallback((item: any) => {
     if (item.fullData) {
-      setCurrentEditOrder(item.fullData); // <-- pass full object for side panel
+      setCurrentEditOrder(item.fullData);
       editOrderModalOpen.setOn();
     }
-  };
+  }, [editOrderModalOpen]);
+
+  const columns: GridColDef[] = useMemo(() => {
+    const priorityColorMap: Record<string, 'error' | 'warning' | 'success'> = {
+      HIGH: 'error',
+      MEDIUM: 'warning',
+      NORMAL: 'success',
+    };
+    const baseColumns: GridColDef[] = [
+      {
+        field: 'date',
+        headerName: 'Date',
+        flex: 1,
+      },
+      {
+        field: 'pickup',
+        headerName: 'PickUp',
+        flex: 1,
+        renderCell: (params) => (
+          <Box
+            height="100%"
+            display="flex"
+            alignItems="center"
+            gap={1}
+          >
+            <FontAwesomeIcon icon={faMapMarkerAlt} style={{ fontSize: 14, color: '#10b981' }} />
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              {params.row.origin}
+            </Typography>
+          </Box>
+        ),
+      },
+      {
+        field: 'delivery',
+        headerName: 'Delivery',
+        flex: 1,
+        renderCell: (params) => (
+          <Box
+            height="100%"
+            display="flex"
+            alignItems="center"
+            gap={1}
+          >
+            <FontAwesomeIcon icon={faTruck} style={{ fontSize: 14, color: '#6b7280' }} />
+            <Typography variant="body2" color="text.secondary">
+              {params.row.destination}
+            </Typography>
+          </Box>
+        ),
+      },
+      { field: 'vehicle', headerName: 'Vehicle', flex: 1 },
+      { field: 'vehicleModel', headerName: 'Vehicle Model', flex: 1 },
+      {
+        field: 'priority',
+        headerName: 'Priority',
+        flex: 1,
+        renderCell: (params) => (
+          <Chip
+            label={params.value.toUpperCase()}
+            color={priorityColorMap[params.value] || 'default'}
+            size="small"
+            sx={{
+              fontWeight: 500, textTransform: 'lowercase', px: 1.5, py: 2.2, fontSize: '15px',
+            }}
+          />
+        ),
+      },
+      {
+        field: 'status',
+        headerName: 'Status',
+        flex: 1,
+        renderCell: (params) => getStatusChip(params.value),
+      },
+    ];
+
+    if (userRole !== 'CUSTOMER') {
+      baseColumns.push({
+        field: 'action',
+        headerName: 'Action',
+        flex: 1,
+        renderCell: (params) => (
+          <Box sx={{ cursor: 'pointer' }} onClick={() => handleEditOrderModal(params.row)}>
+            <FontAwesomeIcon icon={faEdit} style={{ fontSize: 14 }} />
+          </Box>
+        ),
+      });
+    }
+
+    return baseColumns;
+  }, [getStatusChip, handleEditOrderModal, userRole]);
 
   return (
     <Box sx={{ backgroundColor: '#f8fafc', minHeight: '100vh', p: 3 }}>
@@ -208,61 +289,14 @@ const UpdateRateToOrder = () => {
           )}
           sx={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
         />
-        <CardContent sx={{ p: 0 }}>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ backgroundColor: '#f1f5f9' }}>
-                  <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Route</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Vehicle</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Vehicle Model</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Priority</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                  {userRole !== 'CUSTOMER' && <TableCell sx={{ fontWeight: 700 }}>Action</TableCell>}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredRequests.map((req) => (
-                  <TableRow
-                    key={req.id}
-                    sx={{ '&:hover': { backgroundColor: '#f9fafb' }, borderBottom: '1px solid #f1f5f9' }}
-                  >
-                    <TableCell>{req.date ? new Date(req.date).toLocaleDateString('en-GB') : '—'}</TableCell>
-                    <TableCell>
-                      <Box>
-                        <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-                          <FontAwesomeIcon icon={faMapMarkerAlt} style={{ fontSize: 14, color: '#10b981' }} />
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>{req.origin}</Typography>
-                        </Box>
-                        <Box display="flex" alignItems="center" gap={1}>
-                          <FontAwesomeIcon icon={faTruck} style={{ fontSize: 14, color: '#6b7280' }} />
-                          <Typography variant="body2" color="text.secondary">{req.destination}</Typography>
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell>{req.vehicle}</TableCell>
-                    <TableCell>{req.vehicleModel}</TableCell>
-                    <TableCell>
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <Box sx={{
-                          width: 8, height: 8, borderRadius: '50%', backgroundColor: getPriorityColor(req.priority),
-                        }}
-                        />
-                        <Typography variant="body2" sx={{ color: getPriorityColor(req.priority), textTransform: 'lowercase', fontSize: '17px' }}>{req.priority}</Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell>{getStatusChip(req.status)}</TableCell>
-                    {userRole !== 'CUSTOMER' && (
-                      <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => handleEditOrderModal(req)}>
-                        <FontAwesomeIcon icon={faEdit} style={{ fontSize: 14 }} />
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+        <CardContent sx={{ p: 2 }}>
+          <DataGridTable
+            rows={filteredRequests}
+            columns={columns}
+            loading={isLoading}
+            autoHeight
+            hideFooter
+          />
 
           {filteredRequests.length === 0 && !isLoading && (
             <Box sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
@@ -279,13 +313,9 @@ const UpdateRateToOrder = () => {
         open={isEditOrderModalOpen}
         onClose={() => editOrderModalOpen.setOff()}
         defaultValues={currentEditOrder}
-        onSubmitSuccess={(updatedData) => {
-          console.log('Order saved/updated', updatedData);
-          editOrderModalOpen.setOff();
-        }}
       />
     </Box>
   );
 };
 
-export default UpdateRateToOrder;
+export default RateRequest;
