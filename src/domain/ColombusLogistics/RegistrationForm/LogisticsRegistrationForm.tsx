@@ -42,13 +42,6 @@ const LogisticsRegistrationWizard = ({
     }
   }, [defaultValues, methods]);
 
-  const handleNext = useCallback(async () => {
-    const isValid = await methods.trigger();
-    if (isValid) {
-      setActiveStep((prev) => prev + 1);
-    }
-  }, [methods]);
-
   const handleBack = useCallback(() => setActiveStep((prev) => prev - 1), []);
 
   const onSubmit = useCallback(
@@ -80,6 +73,13 @@ const LogisticsRegistrationWizard = ({
     [defaultValues?.id, methods, onClose, updateOrder, onSubmitSuccess, orderUpsert],
   );
 
+  const handleNext = useCallback(async () => {
+    const isValid = await methods.trigger();
+    if (isValid) {
+      setActiveStep((prev) => prev + 1);
+    }
+  }, [methods]);
+
   return (
     <FormProvider {...methods}>
       <Stack spacing={4} maxWidth={900} margin="auto" p={4}>
@@ -97,66 +97,64 @@ const LogisticsRegistrationWizard = ({
           {steps.map((label) => <Step key={label}><StepLabel>{label}</StepLabel></Step>)}
         </Stepper>
 
-        {activeStep < steps.length - 1 ? (
-          <form>
-            {activeStep === 0 && <CustomerDetailsForm />}
-            {activeStep === 1 && <OriginForm />}
-            {activeStep === 2 && <DestinationForm />}
-            {activeStep === 3 && <CargoForm />}
-            {activeStep === 4 && <VehicleForm />}
-          </form>
-        ) : (
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <VehicleForm />
-          </form>
-        )}
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
+          {activeStep === 0 && <CustomerDetailsForm />}
+          {activeStep === 1 && <OriginForm />}
+          {activeStep === 2 && <DestinationForm />}
+          {activeStep === 3 && <CargoForm />}
+          {activeStep === 4 && <VehicleForm />}
 
-        <Stack direction="row" justifyContent="space-between" mt={4}>
-          {activeStep > 0 ? (
-            <Button
-              type="button"
-              onClick={handleBack}
-              variant="outlined"
-              sx={{
-                borderColor: '#43A047', color: '#43A047', '&:hover': { backgroundColor: '#A5D6A7' }, borderRadius: 2, px: 3,
-              }}
-            >
-              Back
-            </Button>
-          ) : <div />}
+          <Stack direction="row" justifyContent="space-between" mt={4}>
+            {activeStep > 0 ? (
+              <Button
+                type="button"
+                onClick={handleBack}
+                variant="outlined"
+                sx={{
+                  borderColor: '#43A047',
+                  color: '#43A047',
+                  '&:hover': { backgroundColor: '#A5D6A7' },
+                  borderRadius: 2,
+                  px: 3,
+                }}
+              >
+                Back
+              </Button>
+            ) : <div />}
 
-          {activeStep < steps.length - 1 ? (
-            <Button
-              type="button"
-              onClick={handleNext}
-              variant="contained"
-              sx={{
-                backgroundColor: '#43A047',
-                color: '#fff',
-                '&:hover': { backgroundColor: '#2E7D32' },
-                borderRadius: 2,
-                px: 3,
-              }}
-            >
-              Next
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{
-                backgroundColor: '#43A047',
-                color: '#fff',
-                '&:hover': { backgroundColor: '#2E7D32' },
-                borderRadius: 2,
-                px: 3,
-              }}
-            >
-              {defaultValues ? 'Update Order' : 'Create Order'}
-            </Button>
-          )}
+            {activeStep < steps.length - 1 ? (
+              <Button
+                type="button"
+                onClick={handleNext}
+                variant="contained"
+                sx={{
+                  backgroundColor: '#43A047',
+                  color: '#fff',
+                  '&:hover': { backgroundColor: '#2E7D32' },
+                  borderRadius: 2,
+                  px: 3,
+                }}
+              >
+                Next
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  backgroundColor: '#43A047',
+                  color: '#fff',
+                  '&:hover': { backgroundColor: '#2E7D32' },
+                  borderRadius: 2,
+                  px: 3,
+                }}
+              >
+                Create Order
+              </Button>
+            )}
 
-        </Stack>
+          </Stack>
+        </form>
       </Stack>
     </FormProvider>
   );

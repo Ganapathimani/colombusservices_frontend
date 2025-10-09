@@ -151,7 +151,16 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
     async (data) => {
       try {
         setErrorMessage(null);
-        const response = await signupUpsert(data).unwrap();
+
+        const cleanData: SignUpInputs = Object.keys(data).reduce((acc, key) => {
+          const value = data[key as keyof SignUpInputs];
+          if (value !== '') {
+            (acc as any)[key] = value;
+          }
+          return acc;
+        }, {} as Partial<SignUpInputs>) as SignUpInputs;
+
+        const response = await signupUpsert(cleanData).unwrap();
         const userData = response?.user;
         const token = response?.token;
         localStorage.setItem('token', token);
@@ -169,6 +178,7 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
           phone: userData.phone,
           companyName: userData.companyname,
         };
+
         setWithExpiry(STORAGE_KEY, user, DAY_MS);
         resetSignUp();
         onSuccess(user);
@@ -244,10 +254,18 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
               <TextField
                 placeholder="GST Number"
                 fullWidth
-                {...registerSignUp('gstnumber', { required: 'GST Number is required', pattern: { value: gstRegex, message: 'Invalid GST Number' } })}
+                {...registerSignUp('gstnumber', {
+                  pattern: { value: gstRegex, message: 'Invalid GST Number' },
+                })}
                 error={!!errorsSignUp.gstnumber}
                 helperText={errorsSignUp.gstnumber?.message}
-                InputProps={{ startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faKey} /></InputAdornment> }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FontAwesomeIcon icon={faKey} />
+                    </InputAdornment>
+                  ),
+                }}
               />
               <TextField
                 placeholder="Name"
@@ -277,12 +295,29 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
                 placeholder="Password"
                 type={showPassword ? 'text' : 'password'}
                 fullWidth
-                {...registerSignUp('password', { required: 'Password is required', minLength: { value: 6, message: 'Minimum 6 characters' } })}
+                {...registerSignUp('password', {
+                  required: 'Password is required',
+                  pattern: {
+                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message:
+        'Password must be at least 8 characters and include uppercase, lowercase, number, and special character',
+                  },
+                })}
                 error={!!errorsSignUp.password}
                 helperText={errorsSignUp.password?.message}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start"><FontAwesomeIcon icon={faKey} /></InputAdornment>,
-                  endAdornment: <InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end"><FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} /></IconButton></InputAdornment>,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FontAwesomeIcon icon={faKey} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                 }}
               />
               <Button type="submit" fullWidth variant="contained" sx={{ bgcolor: '#22c55e', '&:hover': { bgcolor: '#16a34a' }, textTransform: 'none' }} disabled={isSubmittingSignUp}>Sign Up</Button>

@@ -71,7 +71,7 @@ const Footer = () => {
           </Typography>
           <Box>
             <Typography mb={1}>NO. 141/C, Colombus Building,</Typography>
-            <Typography mb={1}>Iswarya Garden, Ammanpalayam</Typography>
+            <Typography mb={1}>Iswarya Garden, Ammapalayam</Typography>
             <Typography mb={1}>Tirupur - 641652</Typography>
             <Typography mb={1}>
               {' '}

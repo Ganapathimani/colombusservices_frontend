@@ -17,7 +17,7 @@ import {
   faEyeSlash,
   faSave,
 } from '@fortawesome/free-solid-svg-icons';
-import { useUpdateProfileMutation, useUserGetQuery } from '#api/colombusLogisticsApi';
+import { useUpdateProfileMutation, useGetUserQuery } from '#api/colombusLogisticsApi';
 
 interface ProfileFormData {
   name: string;
@@ -44,11 +44,11 @@ const Profile = () => {
   const [updateProfile] = useUpdateProfileMutation();
   const userData = localStorage.getItem('user');
   const users = JSON.parse(userData!);
-  const { email } = users;
+  const { email, id } = users;
 
-  const { data: user } = useUserGetQuery(
-    { id: email! },
-    { skip: !email },
+  const { data: user } = useGetUserQuery(
+    { id: id! },
+    { skip: !id },
   );
 
   const {

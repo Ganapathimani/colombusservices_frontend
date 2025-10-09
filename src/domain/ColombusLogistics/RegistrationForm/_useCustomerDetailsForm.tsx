@@ -7,8 +7,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
 
-const STORAGE_KEY = 'user';
-
 const CustomerDetailsForm = () => {
   const {
     register,
@@ -25,12 +23,12 @@ const CustomerDetailsForm = () => {
       && !currentValues.bookedEmail
       && !currentValues.bookedPhoneNumber
     ) {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem('user');
       if (stored) {
         try {
-          const parsed = JSON.parse(stored).value;
+          const parsed = JSON.parse(stored);
           if (parsed) {
-            setValue('bookedCompanyName', parsed.companyName || '');
+            setValue('bookedCompanyName', parsed.companyname || '');
             setValue('bookedCustomerName', parsed.name || '');
             setValue('bookedEmail', parsed.email || '');
             setValue('bookedPhoneNumber', parsed.phone || '');

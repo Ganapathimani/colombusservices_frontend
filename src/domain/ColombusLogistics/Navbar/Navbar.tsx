@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@react-shanties/core';
-import { useUserGetQuery } from '#api/colombusLogisticsApi';
+import { useGetUserQuery } from '#api/colombusLogisticsApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBars, faHome, faImages, faUsers, faEnvelope, faTruck, faCalendarCheck,
@@ -38,26 +38,14 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const storedUser = localStorage.getItem('user');
-  let token: string | null = null;
-  let email: string | null = null;
+  const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+  const userId = parsedUser?.id || null;
 
-  if (storedUser) {
-    try {
-      const user = JSON.parse(storedUser);
-      token = user?.value?.token ?? null;
-      email = user?.value?.email ?? null;
-    } catch (err) {
-      throw new Error(err as string);
-    }
-  }
-  const [currentUser, setCurrentUser] = useState<any>(() => {
-    const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
-  });
+  const [currentUser, setCurrentUser] = useState(parsedUser);
 
-  const { data: fetchedUser } = useUserGetQuery({ id: email! }, {
-    skip: !token,
-  });
+  const { data: fetchedUser } = useGetUserQuery(
+    { id: userId! },
+  );
 
   useEffect(() => {
     if (fetchedUser) {
@@ -66,22 +54,30 @@ const Navbar = () => {
     }
   }, [fetchedUser]);
 
-  const handleLoginSuccess = useCallback((userData: any) => {
-    setCurrentUser(userData);
-    const path = roleRoutes[userData.role] || '/';
-    navigate(path);
-    AuthFormActions.setOff();
-  }, [AuthFormActions, navigate]);
+  const handleLoginSuccess = useCallback(
+    (userData: any) => {
+      setCurrentUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      const path = roleRoutes[userData.role] || '/';
+      navigate(path);
+      AuthFormActions.setOff();
+    },
+    [AuthFormActions, navigate],
+  );
 
   const handleLogout = useCallback(() => {
-    localStorage.clear();
+    localStorage.removeItem('user');
     setCurrentUser(null);
-  }, []);
+    navigate('/');
+  }, [navigate]);
 
-  const goToPath = useCallback((path?: string) => {
-    navigate(path ?? '/');
-    sideBarActions.setOff();
-  }, [navigate, sideBarActions]);
+  const goToPath = useCallback(
+    (path?: string) => {
+      navigate(path || '/');
+      sideBarActions.setOff();
+    },
+    [navigate, sideBarActions],
+  );
 
   return (
     <>
@@ -90,16 +86,21 @@ const Navbar = () => {
         sx={{
           p: 1,
           top: 0,
-          backgroundColor: '#ffffff',
+          backgroundColor: '#fff',
           color: '#000',
           boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
           zIndex: 1100,
           borderBottom: '2px solid #bbb',
         }}
       >
-        <Toolbar sx={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center', minHeight: '80px', px: { xs: 2, sm: 4, md: 6 },
-        }}
+        <Toolbar
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            minHeight: '80px',
+            px: { xs: 2, sm: 4, md: 6 },
+          }}
         >
           <Stack
             direction="row"
@@ -112,18 +113,22 @@ const Navbar = () => {
               component="img"
               src={logo}
               alt="Columbus Logistics Logo"
-              sx={{
-                height: { xs: 32, sm: 48 },
-                width: 'auto',
-                objectFit: 'contain',
-                transition: 'transform 0.2s ease-in-out',
-              }}
+              sx={{ height: { xs: 32, sm: 48 }, width: 'auto', objectFit: 'contain' }}
             />
           </Stack>
 
-          <Stack direction="row" spacing={4} alignItems="center" sx={{ display: { xs: 'none', md: 'flex' } }}>
+          <Stack
+            direction="row"
+            spacing={4}
+            alignItems="center"
+            sx={{ display: { xs: 'none', md: 'flex' } }}
+          >
             {navItems.map((item) => (
-              <Box key={item.label} sx={{ cursor: 'pointer', py: 2, px: 1 }} onClick={() => goToPath(item.path)}>
+              <Box
+                key={item.label}
+                sx={{ cursor: 'pointer', py: 2, px: 1 }}
+                onClick={() => goToPath(item.path)}
+              >
                 <Typography
                   variant="body1"
                   sx={{
@@ -153,7 +158,7 @@ const Navbar = () => {
           </Stack>
 
           <Stack direction="row" spacing={1} alignItems="center">
-            {currentUser ? (
+            {currentUser && currentUser.name ? (
               <ProfileMenu user={currentUser} onLogout={handleLogout} />
             ) : (
               <Button
@@ -161,7 +166,7 @@ const Navbar = () => {
                 onClick={AuthFormActions.setOn}
                 sx={{
                   backgroundColor: '#166534',
-                  color: '#ffffff',
+                  color: '#fff',
                   textTransform: 'none',
                   fontWeight: 600,
                   fontSize: '0.95rem',
@@ -182,13 +187,24 @@ const Navbar = () => {
         </Toolbar>
       </AppBar>
 
-      <Drawer anchor="right" open={sidebarOpen} onClose={sideBarActions.setOff} PaperProps={{ sx: { width: 280, backgroundColor: '#f9f9f9' } }}>
+      <Drawer
+        anchor="right"
+        open={sidebarOpen}
+        onClose={sideBarActions.setOff}
+        PaperProps={{ sx: { width: 280, backgroundColor: '#f9f9f9' } }}
+      >
         <Box sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, color: '#1a472a', mb: 1 }}>Colombus Logistics</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: '#1a472a', mb: 1 }}>
+            Columbus Logistics
+          </Typography>
           <Divider sx={{ mb: 1 }} />
           <List>
             {navItems.map((item) => (
-              <ListItemButton key={item.label} onClick={() => goToPath(item.path)} sx={{ borderRadius: 1, mb: 1, '&:hover': { backgroundColor: '#e6f4ea' } }}>
+              <ListItemButton
+                key={item.label}
+                onClick={() => goToPath(item.path)}
+                sx={{ borderRadius: 1, mb: 1, '&:hover': { backgroundColor: '#e6f4ea' } }}
+              >
                 <ListItemIcon>
                   <FontAwesomeIcon icon={item.icon} style={{ width: 20, height: 20, color: '#166534' }} />
                 </ListItemIcon>
@@ -199,7 +215,13 @@ const Navbar = () => {
         </Box>
       </Drawer>
 
-      <Dialog open={isAuthFormOpen} onClose={AuthFormActions.setOff} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' } }}>
+      <Dialog
+        open={isAuthFormOpen}
+        onClose={AuthFormActions.setOff}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' } }}
+      >
         <AuthForm onSuccess={handleLoginSuccess} onClose={AuthFormActions.setOff} />
       </Dialog>
     </>

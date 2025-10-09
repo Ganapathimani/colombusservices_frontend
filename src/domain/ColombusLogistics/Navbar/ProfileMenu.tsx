@@ -21,17 +21,7 @@ const ProfileMenu = ({ user, onLogout }: ProfileMenuProps) => {
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
-  const storedUser = localStorage.getItem('user');
-  let isAdmin = false;
-  if (storedUser) {
-    try {
-      const userRole = JSON.parse(storedUser);
-      const role = userRole?.value?.role?.toUpperCase() ?? '';
-      isAdmin = role !== 'CUSTOMER';
-    } catch (err) {
-      throw new Error(err as string);
-    }
-  }
+  const isAdmin = user.role !== 'CUSTOMER';
 
   const handleSignOut = useCallback(() => {
     onLogout();
@@ -53,7 +43,7 @@ const ProfileMenu = ({ user, onLogout }: ProfileMenuProps) => {
     <>
       <Stack justifyContent="flex-end" alignItems="center">
         <IconButton onClick={handleMenuOpen}>
-          <CBLTAvatar size={45} name={user.name || 'Guest'} />
+          <CBLTAvatar size={45} name={user.name} />
         </IconButton>
       </Stack>
 
@@ -82,9 +72,11 @@ const ProfileMenu = ({ user, onLogout }: ProfileMenuProps) => {
         </Box>
         <Divider />
 
-        <MenuItem onClick={handleViewProfile}>
-          <Typography variant="body2" fontSize={{ xs: 14, sm: 16 }}>Profile</Typography>
-        </MenuItem>
+        {!isAdmin && (
+          <MenuItem onClick={handleViewProfile}>
+            <Typography variant="body2" fontSize={{ xs: 14, sm: 16 }}>Profile</Typography>
+          </MenuItem>
+        )}
 
         {isAdmin && (
           <MenuItem onClick={handleGoToAdmin}>

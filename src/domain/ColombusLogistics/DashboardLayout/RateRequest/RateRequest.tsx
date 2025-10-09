@@ -34,12 +34,14 @@ const RateRequests = () => {
       const pickup = o?.pickups?.[0] ?? {};
       const delivery = o?.deliveries?.[0] ?? {};
       const vehicle = o?.vehicles?.[0] ?? {};
+      const packages = o?.packages?.[0] ?? {};
 
       return {
         id: o?.id ?? '—',
         date: pickup?.pickupDate
           ? new Date(pickup.pickupDate).toLocaleDateString('en-GB')
           : '—',
+        packageCount: packages?.packageCount,
         route: `${pickup?.companyName ?? '—'} → ${delivery?.companyName ?? '—'}`,
         vehicle: vehicle?.vehicleType ?? '—',
         vehicleModel: vehicle?.model ?? '—',
@@ -86,29 +88,30 @@ const RateRequests = () => {
 
     return [
       {
-        field: 'date', headerName: 'Date', flex: 1, minWidth: 120,
+        field: 'date', headerName: 'Date', flex: 1,
       },
       {
-        field: 'route', headerName: 'Route', flex: 1.5, minWidth: 180,
+        field: 'route', headerName: 'Route', flex: 2,
       },
       {
-        field: 'vehicle', headerName: 'Vehicle', flex: 1, minWidth: 130,
+        field: 'packageCount', headerName: 'Total Packages', flex: 1,
       },
       {
-        field: 'vehicleModel', headerName: 'Model', flex: 1, minWidth: 130,
+        field: 'vehicle', headerName: 'Vehicle', flex: 1,
+      },
+      {
+        field: 'vehicleModel', headerName: 'Model', flex: 1,
       },
       {
         field: 'rate',
         headerName: 'Amount',
         flex: 1,
-        minWidth: 100,
         renderCell: (params: any) => `₹${params.row.rate.toLocaleString()}`,
       },
       {
         field: 'priority',
         headerName: 'Priority',
         flex: 1,
-        minWidth: 120,
         renderCell: (params: any) => (
           <Chip
             label={params.value.toUpperCase()}
@@ -124,7 +127,6 @@ const RateRequests = () => {
         field: 'status',
         headerName: 'Status',
         flex: 1,
-        minWidth: 120,
         renderCell: (params: any) => (
           <Chip
             label={params.value.toUpperCase()}
@@ -140,7 +142,6 @@ const RateRequests = () => {
         field: 'actions',
         headerName: 'Actions',
         flex: 1,
-        minWidth: 130,
         sortable: false,
         renderCell: (params: any) => (
           <ActionsColumn

@@ -129,16 +129,28 @@ const Gallery = () => {
 
   const categories = [
     {
-      label: 'All', value: 'all', icon: faBox, color: '#6b7280',
+      label: 'All',
+      value: 'all',
+      icon: faBox,
+      color: '#4b5563',
     },
     {
-      label: 'Vehicles', value: 'vehicles', icon: faTruck, color: '#3b82f6',
+      label: 'Vehicles',
+      value: 'vehicles',
+      icon: faTruck,
+      color: '#16a34a',
     },
     {
-      label: 'Warehouses', value: 'warehouse', icon: faWarehouse, color: '#f97316',
+      label: 'Warehouses',
+      value: 'warehouse',
+      icon: faWarehouse,
+      color: '#15803d',
     },
     {
-      label: 'Operations', value: 'operations', icon: faPlane, color: '#22c55e',
+      label: 'Operations',
+      value: 'operations',
+      icon: faPlane,
+      color: '#22c55e',
     },
   ];
 

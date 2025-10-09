@@ -30,7 +30,7 @@ import listBranches from './_listBranches';
 import listOrders from './_listOrders';
 import listEnquiry from './_listEnquiry';
 import createSignup from './_createSignup';
-import userGet from './_userGet';
+import getUser from './_userGet';
 import deleteBranch from './_deleteBranch';
 import updateProfile from './_updateProfile';
 import updateOrder from './_updateOrder';
@@ -70,7 +70,7 @@ const baseQuery = createApi({
     createSignin: createSignin(builder),
     createOrder: createOrder(builder),
     createSignup: createSignup(builder),
-    userGet: userGet(builder),
+    getUser: getUser(builder),
     listBranches: listBranches(builder),
     listEnquiry: listEnquiry(builder),
     listOrders: listOrders(builder),
@@ -120,7 +120,7 @@ export const {
   useListEnquiryQuery,
   useCreateOrderMutation,
   useCreateSignupMutation,
-  useUserGetQuery,
+  useGetUserQuery,
   useUpdateProfileMutation,
   useUpdateOrderMutation,
   useUpdateEnquiryMutation,

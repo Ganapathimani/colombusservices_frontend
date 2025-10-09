@@ -7,6 +7,7 @@ import {
   Paper,
   Alert,
 } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
 import { useDropzone } from 'react-dropzone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
@@ -19,18 +20,36 @@ type ContactFormProps = {
 
 const MAX_FILE_SIZE = 1024 * 1024;
 
+type ContactInputs = {
+  company: string;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  file?: string | null;
+};
+
 const ContactForm = ({ onSubmit, isSubmitting }: ContactFormProps) => {
-  const [company, setCompany] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [pickupId, setPickupId] = useState('');
-  const [message, setMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const user = localStorage.getItem('user');
   const role = user ? JSON.parse(user) : 'guest';
+
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<ContactInputs>({
+    defaultValues: {
+      company: '',
+      name: '',
+      email: '',
+      phone: '',
+      message: '',
+    },
+  });
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const f = acceptedFiles[0];
@@ -52,21 +71,13 @@ const ContactForm = ({ onSubmit, isSubmitting }: ContactFormProps) => {
   const fileToBase64 = (f: File): Promise<string> => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(f);
-
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        resolve(reader.result);
-      } else {
-        reject(new Error('Failed to convert file to base64'));
-      }
-    };
-
-    reader.onerror = () => {
-      reject(new Error('File reading has failed'));
-    };
+    reader.onload = () => (typeof reader.result === 'string'
+      ? resolve(reader.result)
+      : reject(new Error('Failed to convert file to base64')));
+    reader.onerror = () => reject(new Error('File reading has failed'));
   });
 
-  const handleSubmit = async () => {
+  const handleFormSubmit = async (data: ContactInputs) => {
     if (file && file.size > MAX_FILE_SIZE) {
       setError('File size must be less than 1 MB');
       return;
@@ -83,12 +94,7 @@ const ContactForm = ({ onSubmit, isSubmitting }: ContactFormProps) => {
     }
 
     const enquiry: TEnquiry = {
-      company,
-      name,
-      email,
-      phone,
-      pickupId,
-      message,
+      ...data,
       file: base64File,
       role: role.value?.role ?? 'guest',
       status: 'pending',
@@ -96,16 +102,10 @@ const ContactForm = ({ onSubmit, isSubmitting }: ContactFormProps) => {
 
     try {
       await onSubmit(enquiry);
-
-      setCompany('');
-      setName('');
-      setEmail('');
-      setPhone('');
-      setPickupId('');
-      setMessage('');
+      reset();
       setFile(null);
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Submission failed, please try again.');
     }
   };
@@ -113,45 +113,96 @@ const ContactForm = ({ onSubmit, isSubmitting }: ContactFormProps) => {
   return (
     <Stack spacing={3}>
       {error && <Alert severity="error">{error}</Alert>}
-      <TextField
-        fullWidth
-        label="Company Name"
-        value={company}
-        onChange={(e) => setCompany(e.target.value)}
+
+      <Controller
+        name="company"
+        control={control}
+        rules={{ required: 'Company name is required' }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            fullWidth
+            label="Company Name"
+            error={!!errors.company}
+            helperText={errors.company?.message}
+          />
+        )}
       />
-      <TextField
-        fullWidth
-        label="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+
+      <Controller
+        name="name"
+        control={control}
+        rules={{ required: 'Name is required' }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            fullWidth
+            label="Name"
+            error={!!errors.name}
+            helperText={errors.name?.message}
+          />
+        )}
       />
-      <TextField
-        fullWidth
-        label="Email Address"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+
+      <Controller
+        name="email"
+        control={control}
+        rules={{
+          required: 'Email is required',
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: 'Please enter a valid email address',
+          },
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            fullWidth
+            label="Email Address"
+            type="email"
+            error={!!errors.email}
+            helperText={errors.email?.message}
+          />
+        )}
       />
-      <TextField
-        fullWidth
-        label="Phone Number"
-        type="tel"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
+
+      <Controller
+        name="phone"
+        control={control}
+        rules={{
+          required: 'Phone number is required',
+          pattern: {
+            value: /^[0-9]{10}$/,
+            message: 'Please enter a valid 10-digit phone number',
+          },
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            fullWidth
+            label="Phone Number"
+            type="tel"
+            error={!!errors.phone}
+            helperText={errors.phone?.message}
+          />
+        )}
       />
-      <TextField
-        fullWidth
-        label="Pickup ID"
-        value={pickupId}
-        onChange={(e) => setPickupId(e.target.value)}
-      />
-      <TextField
-        fullWidth
-        label="Message"
-        multiline
-        rows={4}
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
+
+      <Controller
+        name="message"
+        control={control}
+        rules={{ required: 'Message is required' }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            fullWidth
+            label="Message"
+            multiline
+            rows={4}
+            error={!!errors.message}
+            helperText={errors.message?.message}
+          />
+        )}
       />
 
       <Paper
@@ -198,7 +249,7 @@ const ContactForm = ({ onSubmit, isSubmitting }: ContactFormProps) => {
             py: 1.2,
             boxShadow: '0px 4px 14px rgba(20,83,45,0.3)',
           }}
-          onClick={handleSubmit}
+          onClick={handleSubmit(handleFormSubmit)}
         >
           Submit
         </Button>

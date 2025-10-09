@@ -3,7 +3,7 @@ export type TSignup = {
   email: string;
   password: string;
   companyname: string;
-  gstnumber: string;
+  gstnumber?: string;
   phone: string;
   role?: string,
   adminSecret?: string,

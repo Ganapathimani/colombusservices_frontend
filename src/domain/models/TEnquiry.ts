@@ -6,7 +6,6 @@ export type TEnquiry = {
   message: string,
   name: string,
   phone: string,
-  pickupId?: string,
   role: string,
   status?: string,
 };

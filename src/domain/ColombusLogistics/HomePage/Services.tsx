@@ -6,8 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTruckFast,
   faWarehouse,
-  faShip,
-  faPlane,
 } from '@fortawesome/free-solid-svg-icons';
 import { chunk, map } from 'lodash/fp';
 
@@ -29,18 +27,6 @@ const services: Service[] = [
     title: 'Warehousing',
     description:
       'Our secure warehouses are strategically located for quick access to major transportation routes. With advanced inventory tracking, climate control, and 24/7 surveillance, your goods are always protected and easily accessible.',
-  },
-  {
-    icon: faShip,
-    title: 'Sea Freight',
-    description:
-      'We offer cost-effective sea freight solutions for large, heavy, and bulk shipments. From port-to-port or door-to-door delivery, our team manages customs clearance, documentation, and cargo safety throughout the journey.',
-  },
-  {
-    icon: faPlane,
-    title: 'Air Freight',
-    description:
-      'For time-critical deliveries, our air freight service ensures rapid transportation worldwide. We handle the entire process—from cargo pickup to customs clearance—ensuring your shipment reaches its destination without delays.',
   },
 ];
 

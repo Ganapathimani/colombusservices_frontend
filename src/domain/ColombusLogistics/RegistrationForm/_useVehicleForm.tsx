@@ -11,7 +11,6 @@ import {
   Radio,
   FormHelperText,
   MenuItem,
-  // Typography,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTruck, faCarSide } from '@fortawesome/free-solid-svg-icons';
@@ -26,7 +25,7 @@ const useVehicleForm = () => {
   if (storedUser) {
     try {
       const user = JSON.parse(storedUser);
-      const role = (user.value.role || '').toLowerCase();
+      const role = (user.role || '').toLowerCase();
 
       isAdmin = role !== 'customer';
     } catch (err) {
@@ -127,7 +126,7 @@ const useVehicleForm = () => {
           rules={{ required: 'Please select FTL Type' }}
           render={({ field }) => (
             <RadioGroup row {...field}>
-              <FormControlLabel value="CONSOLIDATE" control={<Radio />} label="Console" />
+              <FormControlLabel value="CONSOLE" control={<Radio />} label="Console" />
               <FormControlLabel value="SEPARATE" control={<Radio />} label="Separate" />
             </RadioGroup>
           )}

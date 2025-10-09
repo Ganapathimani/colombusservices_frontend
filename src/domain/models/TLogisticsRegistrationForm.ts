@@ -32,10 +32,10 @@ export type TDeliveries = {
   companyName: string,
   contactPerson?: string,
   email?: string,
-  mobile: string,
+  mobile?: string,
   address: string,
   location: string,
-  pinCode: string,
+  pinCode?: string,
 };
 
 export type TPickUp = {

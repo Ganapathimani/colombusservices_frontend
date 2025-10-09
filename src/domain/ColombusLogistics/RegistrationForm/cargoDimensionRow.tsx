@@ -25,14 +25,13 @@ interface CargoDimensionRowProps {
   watch: UseFormWatch<any>;
 }
 
-const convertToFeet = (value: number, unit: string): number => {
-  switch (unit) {
-    case 'inch':
-      return value / 12;
-    case 'cm':
-      return value * 0.0328084;
-    case 'mm':
-      return value * 0.00328084;
+const convertToCm = (value: number, unit: string): number => {
+  switch (unit.toUpperCase()) {
+    case 'INCH':
+      return value * 2.54;
+    case 'MM':
+      return value / 10;
+    case 'CM':
     default:
       return value;
   }
@@ -53,18 +52,20 @@ const CargoDimensionRow = ({
 
   useEffect(() => {
     if (length && width && height) {
-      const lengthFt = convertToFeet(Number(length), unit);
-      const widthFt = convertToFeet(Number(width), unit);
-      const heightFt = convertToFeet(Number(height), unit);
+      const lengthCm = convertToCm(Number(length), unit);
+      const widthCm = convertToCm(Number(width), unit);
+      const heightCm = convertToCm(Number(height), unit);
 
-      const cubicFeet = lengthFt * widthFt * heightFt * units;
+      const cbm = (lengthCm * widthCm * heightCm * units) / 1_000_000;
+
+      const cubicFeet = cbm * 35.3147;
+
       setValue(
         `packages.0.materials.${index}.cubicFeet`,
         Number(cubicFeet.toFixed(3)),
       );
     }
   }, [length, width, height, unit, index, setValue, units]);
-
   return (
     <Stack
       spacing={2}
