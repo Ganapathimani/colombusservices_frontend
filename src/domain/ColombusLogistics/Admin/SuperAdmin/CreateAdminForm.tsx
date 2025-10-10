@@ -73,8 +73,8 @@ const CreateAdminForm = () => {
         await createEmployeeMutation(payload).unwrap();
         reset();
         toast.success('Admin created successfully');
-      } catch {
-        toast.error('Failed to create admin');
+      } catch (err) {
+        toast.error(err as string);
       } finally {
         setIsSubmitting(false);
       }

@@ -45,7 +45,7 @@ const BranchesTableGrid = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const userStr = localStorage.getItem('user');
-  const user = userStr ? JSON.parse(userStr)?.value : null;
+  const user = userStr ? JSON.parse(userStr) : null;
   const adminId = user?.id;
 
   const [createBranch] = useCreateBranchMutation();

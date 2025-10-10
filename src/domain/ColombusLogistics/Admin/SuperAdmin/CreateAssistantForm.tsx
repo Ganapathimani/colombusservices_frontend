@@ -65,8 +65,8 @@ const CreateAssistantForm = () => {
         await createEmployeeMutation(payload).unwrap();
         reset();
         toast.success('Assistant created successfully');
-      } catch {
-        toast.error('Failed to create assistant');
+      } catch (err) {
+        toast.error(err as string);
       } finally {
         setIsSubmitting(false);
       }

@@ -18,7 +18,8 @@ import BranchesTableGrid from '#domain/ColombusLogistics/Admin/SuperAdmin/Branch
 import MarketVehicleTableGrid from '#domain/ColombusLogistics/Admin/admin/Marketvehicle';
 import Gallery from '#domain/ColombusLogistics/Gallery/Gallery';
 import HelpCenterPage from '#domain/ColombusLogistics/Admin/HelpCenter/HelpCenterPage';
-import Layout from './Layout/Layout';
+import PublicLayout from './Layout/PublicLayout';
+import ToolLayout from './Layout/TollLayout';
 import HomePage from './Layout/HomePage/HomePage';
 import AboutPage from './Layout/HomePage/AboutPage';
 import TrackingPage from './Layout/HomePage/TrackingPage';
@@ -29,7 +30,7 @@ import Admin from './Layout/Admin/Admin';
 const builderRouter = (userRole: string) => createBrowserRouter([
   {
     path: '/',
-    element: <Layout />,
+    element: userRole === 'CUSTOMER' ? <PublicLayout /> : <ToolLayout />,
     errorElement: <ErrorBoundary />,
     children: [
       { index: true, element: <HomePage /> },

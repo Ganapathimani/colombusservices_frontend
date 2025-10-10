@@ -12,7 +12,7 @@ const getUserRole = (): string => {
       return 'CUSTOMER';
     }
     const user = JSON.parse(userStr);
-    return user?.value?.role?.toUpperCase() ?? 'CUSTOMER';
+    return user?.role?.toUpperCase() ?? 'CUSTOMER';
   } catch {
     return 'CUSTOMER';
   }

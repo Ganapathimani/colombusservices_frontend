@@ -1,14 +1,34 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import {
-  AppBar, Toolbar, Typography, Button, Stack, Box, Dialog, Drawer,
-  List, ListItemButton, ListItemIcon, ListItemText, Divider, IconButton,
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Stack,
+  Box,
+  Dialog,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  IconButton,
+  useMediaQuery,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@react-shanties/core';
 import { useGetUserQuery } from '#api/colombusLogisticsApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faBars, faHome, faImages, faUsers, faEnvelope, faTruck, faCalendarCheck,
+  faBars,
+  faHome,
+  faImages,
+  faUsers,
+  faEnvelope,
+  faTruck,
+  faCalendarCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import AuthForm from '#pages/Layout/Login/AuthForm';
 import logo from '#assets/logo.png';
@@ -25,6 +45,7 @@ const navItems = [
 
 const roleRoutes: Record<string, string> = {
   CUSTOMER: '/',
+  SUPER_ADMIN: '/admin',
   ASSISTANT: '/admin',
   ADMIN: '/admin',
   PICKUP: '/admin',
@@ -36,6 +57,8 @@ const Navbar = () => {
   const [isAuthFormOpen, , AuthFormActions] = useToggle(false);
   const [sidebarOpen, , sideBarActions] = useToggle(false);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const storedUser = localStorage.getItem('user');
   const parsedUser = storedUser ? JSON.parse(storedUser) : null;
@@ -43,9 +66,7 @@ const Navbar = () => {
 
   const [currentUser, setCurrentUser] = useState(parsedUser);
 
-  const { data: fetchedUser } = useGetUserQuery(
-    { id: userId! },
-  );
+  const { data: fetchedUser } = useGetUserQuery({ id: userId! });
 
   useEffect(() => {
     if (fetchedUser) {
@@ -82,24 +103,29 @@ const Navbar = () => {
   return (
     <>
       <AppBar
-        position="sticky"
+        position="fixed"
         sx={{
-          p: 1,
           top: 0,
-          backgroundColor: '#fff',
+          left: 0,
+          right: 0,
+          width: '100%',
+          backgroundColor: '#ffffff',
           color: '#000',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-          zIndex: 1100,
-          borderBottom: '2px solid #bbb',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+          borderBottom: '2px solid #e5e7eb',
+          zIndex: 1300,
         }}
       >
         <Toolbar
+          disableGutters
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            minHeight: '80px',
-            px: { xs: 2, sm: 4, md: 6 },
+            minHeight: { xs: 64, sm: 72, md: 80 },
+            px: { xs: 2, sm: 3, md: 6 },
+            width: '100%',
+            margin: '0 auto',
           }}
         >
           <Stack
@@ -112,52 +138,54 @@ const Navbar = () => {
             <Box
               component="img"
               src={logo}
-              alt="Columbus Logistics Logo"
-              sx={{ height: { xs: 32, sm: 48 }, width: 'auto', objectFit: 'contain' }}
+              alt="Columbus Logistics"
+              sx={{
+                height: { xs: 32, sm: 40, md: 48 },
+                width: 'auto',
+                objectFit: 'contain',
+              }}
             />
+            <Typography
+              variant="h6"
+              sx={{
+                display: { xs: 'none', sm: 'block' },
+                fontWeight: 700,
+                color: '#166534',
+                fontSize: { sm: '1.1rem', md: '1.25rem' },
+              }}
+            >
+              Columbus Logistics
+            </Typography>
           </Stack>
 
-          <Stack
-            direction="row"
-            spacing={4}
-            alignItems="center"
-            sx={{ display: { xs: 'none', md: 'flex' } }}
-          >
-            {navItems.map((item) => (
-              <Box
-                key={item.label}
-                sx={{ cursor: 'pointer', py: 2, px: 1 }}
-                onClick={() => goToPath(item.path)}
-              >
+          {!isMobile && (
+            <Stack
+              direction="row"
+              spacing={3}
+              alignItems="center"
+              sx={{ ml: 4 }}
+            >
+              {navItems.map((item) => (
                 <Typography
+                  key={item.label}
+                  onClick={() => goToPath(item.path)}
                   variant="body1"
                   sx={{
-                    fontSize: '1rem',
                     fontWeight: 600,
-                    color: '#2d3748',
-                    position: 'relative',
+                    color: '#1a202c',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    transition: 'color 0.3s ease',
                     '&:hover': { color: '#166534' },
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      width: '0%',
-                      height: '2px',
-                      bottom: '-8px',
-                      left: '50%',
-                      backgroundColor: '#166534',
-                      transition: 'all 0.3s ease',
-                      transform: 'translateX(-50%)',
-                    },
-                    '&:hover::after': { width: '100%' },
                   }}
                 >
                   {item.label}
                 </Typography>
-              </Box>
-            ))}
-          </Stack>
+              ))}
+            </Stack>
+          )}
 
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={1.5} alignItems="center">
             {currentUser && currentUser.name ? (
               <ProfileMenu user={currentUser} onLogout={handleLogout} />
             ) : (
@@ -169,9 +197,9 @@ const Navbar = () => {
                   color: '#fff',
                   textTransform: 'none',
                   fontWeight: 600,
-                  fontSize: '0.95rem',
-                  px: 4,
-                  py: 1.5,
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
+                  px: { xs: 2.5, sm: 4 },
+                  py: { xs: 1, sm: 1.25 },
                   borderRadius: '8px',
                   '&:hover': { backgroundColor: '#14532d' },
                 }}
@@ -179,39 +207,90 @@ const Navbar = () => {
                 Login
               </Button>
             )}
-
-            <IconButton sx={{ display: { md: 'none' } }} onClick={sideBarActions.setOn}>
-              <FontAwesomeIcon icon={faBars} />
-            </IconButton>
+            {isMobile && (
+              <IconButton
+                onClick={sideBarActions.setOn}
+                sx={{
+                  color: '#166534',
+                }}
+              >
+                <FontAwesomeIcon icon={faBars} size="lg" />
+              </IconButton>
+            )}
           </Stack>
         </Toolbar>
       </AppBar>
+
+      <Toolbar sx={{ minHeight: { xs: 64, sm: 72, md: 80 } }} />
 
       <Drawer
         anchor="right"
         open={sidebarOpen}
         onClose={sideBarActions.setOff}
-        PaperProps={{ sx: { width: 280, backgroundColor: '#f9f9f9' } }}
+        PaperProps={{
+          sx: {
+            width: { xs: '85%', sm: 320 },
+            backgroundColor: '#f9f9f9',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          },
+        }}
       >
         <Box sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, color: '#1a472a', mb: 1 }}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 700, color: '#166534', mb: 2 }}
+          >
             Columbus Logistics
           </Typography>
-          <Divider sx={{ mb: 1 }} />
+          <Divider sx={{ mb: 2 }} />
           <List>
             {navItems.map((item) => (
               <ListItemButton
                 key={item.label}
                 onClick={() => goToPath(item.path)}
-                sx={{ borderRadius: 1, mb: 1, '&:hover': { backgroundColor: '#e6f4ea' } }}
+                sx={{
+                  borderRadius: 1.5,
+                  mb: 0.5,
+                  '&:hover': { backgroundColor: '#e6f4ea' },
+                }}
               >
-                <ListItemIcon>
-                  <FontAwesomeIcon icon={item.icon} style={{ width: 20, height: 20, color: '#166534' }} />
+                <ListItemIcon sx={{ minWidth: 36 }}>
+                  <FontAwesomeIcon
+                    icon={item.icon}
+                    style={{ width: 18, height: 18, color: '#166534' }}
+                  />
                 </ListItemIcon>
-                <ListItemText primary={item.label} />
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{
+                    fontWeight: 600,
+                    fontSize: '1rem',
+                    color: '#1a202c',
+                  }}
+                />
               </ListItemButton>
             ))}
           </List>
+
+          {!currentUser && (
+            <Box sx={{ mt: 3, textAlign: 'center' }}>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={AuthFormActions.setOn}
+                sx={{
+                  backgroundColor: '#166534',
+                  color: '#fff',
+                  fontWeight: 600,
+                  py: 1.2,
+                  borderRadius: '10px',
+                  '&:hover': { backgroundColor: '#14532d' },
+                }}
+              >
+                Login
+              </Button>
+            </Box>
+          )}
         </Box>
       </Drawer>
 
@@ -220,7 +299,12 @@ const Navbar = () => {
         onClose={AuthFormActions.setOff}
         maxWidth="xs"
         fullWidth
-        PaperProps={{ sx: { borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' } }}
+        PaperProps={{
+          sx: {
+            borderRadius: '16px',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
+          },
+        }}
       >
         <AuthForm onSuccess={handleLoginSuccess} onClose={AuthFormActions.setOff} />
       </Dialog>

@@ -1,25 +1,24 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import Navbar from '#domain/ColombusLogistics/Navbar/Navbar';
-import { Outlet } from 'react-router-dom';
 import Footer from '#domain/ColombusLogistics/Footer/Footer';
+import { Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-const Layout = () => (
-  <Grid>
+const PublicLayout = () => (
+  <Grid sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
     <Navbar />
-    <Outlet />
+    <Grid component="main" sx={{ flexGrow: 1 }}>
+      <Outlet />
+    </Grid>
     <Footer />
     <Toaster
       position="top-right"
       toastOptions={{
-        style: {
-          background: 'black',
-          color: 'white',
-        },
+        style: { background: 'black', color: 'white' },
       }}
     />
   </Grid>
 );
 
-export default Layout;
+export default PublicLayout;

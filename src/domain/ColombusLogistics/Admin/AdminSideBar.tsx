@@ -36,12 +36,6 @@ const roleAccess: Record<string, string[]> = {
   ],
   super_admin: [
     'Super Admin',
-    'Admin',
-    'Assistant Team',
-    'Pickup Team',
-    'LR Team',
-    'Delivery Team',
-    'Help Center',
   ],
 };
 
@@ -52,7 +46,7 @@ const getUserRole = (): string => {
       return 'CUSTOMER';
     }
     const user = JSON.parse(userStr);
-    return user?.value?.role?.toLowerCase() ?? 'CUSTOMER';
+    return user?.role?.toLowerCase() ?? 'CUSTOMER';
   } catch {
     return 'CUSTOMER';
   }

@@ -17,6 +17,7 @@ const ProtectedRoute = ({
   if (!userRole) {
     return <Navigate to="/" replace />;
   }
+
   const normalizedRole = userRole?.toUpperCase().trim() ?? '';
 
   if (!allowedRoles.includes(normalizedRole)) {
