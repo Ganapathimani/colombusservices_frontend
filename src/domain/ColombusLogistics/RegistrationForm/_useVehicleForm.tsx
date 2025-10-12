@@ -10,11 +10,13 @@ import {
   FormControlLabel,
   Radio,
   FormHelperText,
+  CircularProgress,
   MenuItem,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTruck, faCarSide } from '@fortawesome/free-solid-svg-icons';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
+import { useListBranchesQuery } from '#api/colombusLogisticsApi';
 
 const useVehicleForm = () => {
   const { register, control, formState: { errors } } = useFormContext<TLogisticsRegistrationForm>();
@@ -32,6 +34,8 @@ const useVehicleForm = () => {
       throw new Error(err as string);
     }
   }
+
+  const { data: branches, isLoading: branchesLoading } = useListBranchesQuery();
 
   const vehicleTypes = [
     'Open Truck',
@@ -153,6 +157,36 @@ const useVehicleForm = () => {
       </FormControl>
       {isAdmin && (
       <>
+        <Controller
+          name="branchId"
+          control={control}
+          rules={{ required: 'Please select a branch' }}
+          render={({ field }) => (
+            <TextField
+              select
+              label="Select Branch"
+              {...field}
+              error={!!errors?.branchId}
+              helperText={errors?.branchId?.message}
+              fullWidth
+            >
+              {branchesLoading ? (
+                <MenuItem disabled>
+                  <CircularProgress size={20} />
+                  {' '}
+                  &nbsp;Loading branches...
+                </MenuItem>
+              ) : (
+                branches?.map((branch) => (
+                  <MenuItem key={branch.id} value={branch.id}>
+                    {branch.name}
+                  </MenuItem>
+                ))
+              )}
+            </TextField>
+          )}
+        />
+
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
           <TextField
             label="Rate"

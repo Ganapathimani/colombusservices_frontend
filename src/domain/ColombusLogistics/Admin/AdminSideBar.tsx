@@ -27,15 +27,11 @@ const roleAccess: Record<string, string[]> = {
   lr: ['LR Team', 'Help Center'],
   delivery: ['Delivery Team', 'Help Center'],
   admin: [
-    'Assistant Team',
-    'Pickup Team',
-    'LR Team',
-    'Delivery Team',
     'Admin',
-    'Help Center',
   ],
   super_admin: [
     'Super Admin',
+    'Help Center',
   ],
 };
 

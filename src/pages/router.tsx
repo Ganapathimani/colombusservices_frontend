@@ -7,9 +7,9 @@ import Profile from '#domain/ColombusLogistics/DashboardLayout/Profile';
 import RateRequest from '#domain/ColombusLogistics/DashboardLayout/RateRequest/RateRequest';
 import PickupConfirmation from '#domain/ColombusLogistics/DashboardLayout/PickupConfirmation';
 import Tracking from '#domain/ColombusLogistics/DashboardLayout/Tracking';
-import OrdersTableGrid from '#domain/ColombusLogistics/Admin/admin/OrdersTable';
+import OrdersTableGrid from '#domain/ColombusLogistics/Admin/admin/AdminOrders';
 import LROrdersTable from '#domain/ColombusLogistics/Admin/LorryReceipt/LROrdersTable';
-import UpdateRateToOrder from '#domain/ColombusLogistics/Admin/admin/RateRequest';
+import AssistantRateRequest from '#domain/ColombusLogistics/Assistant/RateRequest';
 import UpdateVehicleDetails from '#domain/ColombusLogistics/Admin/admin/UpdateVehicleDetails';
 import ProtectedRoute from '#components/ProtectedRoute/ProtectedRoute';
 import CreateAdminForm from '#domain/ColombusLogistics/Admin/SuperAdmin/CreateAdminForm';
@@ -64,7 +64,7 @@ const builderRouter = (userRole: string) => createBrowserRouter([
           { path: 'create-admin', element: <CreateAdminForm /> },
           { path: 'create-assistant', element: <CreateAssistantForm /> },
           { path: 'branches', element: <BranchesTableGrid /> },
-          { path: 'confirmOrder', element: <UpdateRateToOrder /> },
+          { path: 'assiatnt-raterequest', element: <AssistantRateRequest /> },
           { path: 'orderPickup', element: <UpdateVehicleDetails /> },
           { path: 'order-entries', element: <OrdersTableGrid /> },
           { path: 'market-vehicles', element: <MarketVehicleTableGrid /> },

@@ -10,9 +10,9 @@ import {
   faCheckCircle, faTimesCircle, faClock, faMapMarkerAlt,
   faEdit,
 } from '@fortawesome/free-solid-svg-icons';
-import { useListOrdersQuery } from '#api/colombusLogisticsApi';
+import toast from 'react-hot-toast';
+import { useListOrdersQuery, useCreateOrderMutation, useUpdateOrderMutation } from '#api/colombusLogisticsApi';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
-import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@react-shanties/core';
 import type { GridColDef } from '@mui/x-data-grid';
 import OrderSidePanel from '#components/OrderSidePanel/OrderSidePanel';
@@ -26,14 +26,16 @@ const RateRequest = () => {
     setCurrentEditOrder,
   ] = useState<TLogisticsRegistrationForm | undefined>(undefined);
 
+  const [orderUpsert] = useCreateOrderMutation();
+  const [updateOrder] = useUpdateOrderMutation();
   const { data, isLoading } = useListOrdersQuery();
-  const navigate = useNavigate();
 
   const orders = useMemo(() => (Array.isArray(data) ? data : []), [data]);
 
   const handleNewRequest = useCallback(() => {
-    navigate('/registration');
-  }, [navigate]);
+    setCurrentEditOrder(undefined);
+    editOrderModalOpen.setOn();
+  }, [editOrderModalOpen]);
 
   const storedUser = localStorage.getItem('user');
   let userRole = 'CUSTOMER';
@@ -69,12 +71,14 @@ const RateRequest = () => {
     [orders],
   );
 
-  const filteredRequests = useMemo(
-    () => mappedRequests.filter(
+  const filteredRequests = useMemo(() => {
+    if (userRole === 'ASSISTANT') {
+      return mappedRequests.filter((req) => req.status === 'PENDING');
+    }
+    return mappedRequests.filter(
       (req) => (filter === 'ALL' ? true : req.status === filter),
-    ),
-    [mappedRequests, filter],
-  );
+    );
+  }, [mappedRequests, filter, userRole]);
 
   const getStatusConfig = (status: string) => {
     const configs: any = {
@@ -96,6 +100,54 @@ const RateRequest = () => {
     };
     return configs[status] || configs.PENDING;
   };
+
+  const handleOrderSubmit = useCallback(
+    async (formData: TLogisticsRegistrationForm) => {
+      try {
+        const user = localStorage.getItem('user');
+        if (!user) {
+          throw new Error('User not found');
+        }
+        const parsedUser = JSON.parse(user);
+        const role = parsedUser?.role?.toUpperCase() || 'CUSTOMER';
+
+        const payload: any = {
+          ...formData,
+          packages: formData.packages?.map(({ hasDimensions, ...rest }) => rest) || [],
+        };
+
+        if (userRole === 'CUSTOMER') {
+          payload.customerId = parsedUser.id;
+          payload.createdById = parsedUser.id;
+          payload.assistantId = undefined;
+          payload.status = 'PENDING';
+        } else if (role === 'ASSISTANT') {
+          if (!formData.customerId) {
+            throw new Error('Customer is required');
+          }
+          payload.assistantId = parsedUser.id;
+          payload.createdById = parsedUser.id;
+          payload.status = 'REVIEW';
+        } else if (userRole === 'ADMIN' || userRole === 'BRANCH_ADMIN') {
+          payload.status = 'APPROVED';
+        }
+
+        if (formData.id) {
+          await updateOrder({ orderId: formData.id, data: payload }).unwrap();
+          toast.success('Order updated successfully');
+        } else {
+          await orderUpsert(payload).unwrap();
+          toast.success('Order created successfully');
+        }
+
+        setCurrentEditOrder(undefined);
+        editOrderModalOpen.setOff();
+      } catch (err: any) {
+        toast.error(err.message || 'Failed to save order');
+      }
+    },
+    [userRole, editOrderModalOpen, updateOrder, orderUpsert],
+  );
 
   const getStatusChip = useCallback((status: string) => {
     const config = getStatusConfig(status);
@@ -313,6 +365,7 @@ const RateRequest = () => {
         open={isEditOrderModalOpen}
         onClose={() => editOrderModalOpen.setOff()}
         defaultValues={currentEditOrder}
+        onSubmit={handleOrderSubmit}
       />
     </Box>
   );

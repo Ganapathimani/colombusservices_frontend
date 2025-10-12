@@ -35,6 +35,7 @@ import deleteBranch from './_deleteBranch';
 import updateProfile from './_updateProfile';
 import updateOrder from './_updateOrder';
 import updateEnquiry from './_updateEnquiry';
+import getSuperAdminUser from './_useUsersGetSuperAdmin';
 
 const tagTypes = [
   'Signup',
@@ -78,6 +79,7 @@ const baseQuery = createApi({
     getOrder: getOrder(builder),
     updateOrder: updateOrder(builder),
     updateEnquiry: updateEnquiry(builder),
+    getSuperAdminUser: getSuperAdminUser(builder),
   }),
 
 });
@@ -124,4 +126,5 @@ export const {
   useUpdateProfileMutation,
   useUpdateOrderMutation,
   useUpdateEnquiryMutation,
+  useGetSuperAdminUserQuery,
 } = colombusLogisticsApi;

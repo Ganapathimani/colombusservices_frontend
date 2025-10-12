@@ -14,9 +14,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useForm, FormProvider } from 'react-hook-form';
-import toast from 'react-hot-toast';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
-import { useCreateOrderMutation, useUpdateOrderMutation } from '#api/colombusLogisticsApi';
 import CustomerDetailsForm from '#domain/ColombusLogistics/RegistrationForm/_useCustomerDetailsForm';
 import OriginForm from '#domain/ColombusLogistics/RegistrationForm/_useOriginForm';
 import DestinationForm from '#domain/ColombusLogistics/RegistrationForm/_useDestinationForm';
@@ -28,6 +26,7 @@ type OrderSidePanelProps = {
   onClose: () => void;
   defaultValues?: TLogisticsRegistrationForm;
   title?: string;
+  onSubmit: (formData: TLogisticsRegistrationForm) => Promise<void>;
 };
 
 const steps = ['Customer Details', 'PickUp', 'Delivery', 'Packages', 'Vehicle'];
@@ -37,6 +36,7 @@ const OrderSidePanel = ({
   onClose,
   defaultValues,
   title,
+  onSubmit,
 }: OrderSidePanelProps) => {
   const methods = useForm<TLogisticsRegistrationForm>({
     defaultValues: defaultValues || {},
@@ -44,8 +44,6 @@ const OrderSidePanel = ({
   });
 
   const [activeStep, setActiveStep] = useState(0);
-  const [orderUpsert] = useCreateOrderMutation();
-  const [updateOrder] = useUpdateOrderMutation();
 
   useEffect(() => {
     if (defaultValues) {
@@ -62,32 +60,6 @@ const OrderSidePanel = ({
 
   const handleBack = useCallback(() => setActiveStep((prev) => prev - 1), []);
 
-  const onSubmit = useCallback(
-    async (formData: TLogisticsRegistrationForm) => {
-      try {
-        const payload: TLogisticsRegistrationForm = {
-          ...formData,
-          packages: formData.packages?.map(({ hasDimensions, ...rest }) => rest) || [],
-        };
-
-        if (defaultValues?.id) {
-          await updateOrder({ orderId: defaultValues.id, data: payload }).unwrap();
-          toast.success('Order updated successfully');
-        } else {
-          await orderUpsert(payload).unwrap();
-          toast.success('Order created successfully');
-        }
-
-        methods.reset();
-        setActiveStep(0);
-        onClose();
-      } catch (err) {
-        toast.error('Failed to save order');
-      }
-    },
-    [defaultValues?.id!, methods, onClose, updateOrder, orderUpsert],
-  );
-
   return (
     <Drawer
       anchor="right"
@@ -95,7 +67,7 @@ const OrderSidePanel = ({
       onClose={onClose}
       PaperProps={{
         sx: {
-          width: { xs: '100%', sm: 650 },
+          width: { xs: '100%', sm: 600 },
           maxWidth: '100%',
           p: 0,
           borderRadius: '12px 0 0 12px',
@@ -146,7 +118,7 @@ const OrderSidePanel = ({
             </Box>
 
             <Stack direction="row" justifyContent="space-between" mt={4}>
-              {activeStep > 0 && (
+              {activeStep > 0 ? (
                 <Button
                   type="button"
                   onClick={handleBack}
@@ -161,7 +133,7 @@ const OrderSidePanel = ({
                 >
                   Back
                 </Button>
-              )}
+              ) : <div /> }
 
               {activeStep < steps.length - 1 ? (
                 <Button
