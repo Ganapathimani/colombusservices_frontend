@@ -6,8 +6,8 @@ import {
   Box,
   Typography,
   InputAdornment,
-  MenuItem,
   IconButton,
+  MenuItem,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -15,9 +15,10 @@ import {
   faEnvelope,
   faPhone,
   faLock,
-  faBuilding,
+  faUserShield,
   faEye,
   faEyeSlash,
+  faBuilding,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   useCreateEmployeeMutation,
@@ -25,16 +26,17 @@ import {
 } from '#api/colombusLogisticsApi';
 import toast from 'react-hot-toast';
 
-export type AdminFormValues = {
+export type StaffFormValues = {
   name: string;
   email: string;
-  mobile?: string;
+  phone: string;
   password: string;
-  role: string;
+  role: string; // fixed = "STAFF"
+  staffRole: string;
   branchId?: string;
 };
 
-const CreateAdminForm = () => {
+const CreateStaffForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createEmployeeMutation] = useCreateEmployeeMutation();
@@ -45,36 +47,41 @@ const CreateAdminForm = () => {
     control,
     reset,
     formState: { errors },
-  } = useForm<AdminFormValues>({
+  } = useForm<StaffFormValues>({
     defaultValues: {
       name: '',
       email: '',
-      mobile: '',
+      phone: '',
       password: '',
-      role: 'ADMIN',
+      role: 'STAFF', // fixed
+      staffRole: '',
       branchId: '',
     },
   });
 
   const onSubmit = useCallback(
-    async (data: AdminFormValues) => {
+    async (data: StaffFormValues) => {
       try {
         setIsSubmitting(true);
 
         const payload = {
           name: data.name,
           email: data.email,
-          phone: data.mobile,
+          phone: data.phone,
           password: data.password,
-          role: 'ADMIN',
-          branchId: data.branchId,
+          role: 'STAFF', // fixed
+          staffRole: data.staffRole,
+          branchId: data.branchId || undefined,
         };
 
         await createEmployeeMutation(payload).unwrap();
         reset();
-        toast.success('Admin created successfully');
-      } catch (err) {
-        toast.error(err as string);
+        toast.success('Staff created successfully');
+      } catch (err: any) {
+        const errorMessage = err?.data?.message
+          || err?.message
+          || 'Something went wrong. Please try again.';
+        toast.error(errorMessage);
       } finally {
         setIsSubmitting(false);
       }
@@ -83,12 +90,12 @@ const CreateAdminForm = () => {
   );
 
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto', p: 4 }}>
+    <Box sx={{ maxWidth: 500, mx: 'auto', p: 4 }}>
       <Typography variant="h4" fontWeight={700} gutterBottom>
-        Create Admin
+        Create Staff
       </Typography>
       <Typography variant="body1" color="text.secondary" mb={3}>
-        Add a new admin with branch assignment
+        Add a new staff member with branch and staff role assignment.
       </Typography>
 
       <Box
@@ -96,6 +103,7 @@ const CreateAdminForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
       >
+        {/* Name */}
         <Controller
           name="name"
           control={control}
@@ -119,10 +127,17 @@ const CreateAdminForm = () => {
           )}
         />
 
+        {/* Email */}
         <Controller
           name="email"
           control={control}
-          rules={{ required: 'Email is required' }}
+          rules={{
+            required: 'Email is required',
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: 'Invalid email format',
+            },
+          }}
           render={({ field }) => (
             <TextField
               {...field}
@@ -142,14 +157,18 @@ const CreateAdminForm = () => {
           )}
         />
 
+        {/* Phone */}
         <Controller
-          name="mobile"
+          name="phone"
           control={control}
+          rules={{ required: 'Phone number is required' }}
           render={({ field }) => (
             <TextField
               {...field}
-              label="Mobile Number"
+              label="Phone Number"
               variant="standard"
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -162,6 +181,7 @@ const CreateAdminForm = () => {
           )}
         />
 
+        {/* Password */}
         <Controller
           name="password"
           control={control}
@@ -196,18 +216,45 @@ const CreateAdminForm = () => {
           )}
         />
 
+        {/* Staff Role */}
+        <Controller
+          name="staffRole"
+          control={control}
+          rules={{ required: 'Staff Role is required' }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              select
+              label="Select Staff Role"
+              variant="standard"
+              error={!!errors.staffRole}
+              helperText={errors.staffRole?.message}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FontAwesomeIcon icon={faUserShield} />
+                  </InputAdornment>
+                ),
+              }}
+              fullWidth
+            >
+              <MenuItem value="PICKUP">Pickup</MenuItem>
+              <MenuItem value="LR">LR</MenuItem>
+              <MenuItem value="DELIVERY">Delivery</MenuItem>
+            </TextField>
+          )}
+        />
+
+        {/* Branch */}
         <Controller
           name="branchId"
           control={control}
-          rules={{ required: 'Branch is required' }}
           render={({ field }) => (
             <TextField
               {...field}
               select
               label="Assign Branch"
               variant="standard"
-              error={!!errors.branchId}
-              helperText={errors.branchId?.message}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -239,11 +286,11 @@ const CreateAdminForm = () => {
             textTransform: 'none',
           }}
         >
-          {isSubmitting ? 'Creating Admin...' : 'Create Admin'}
+          {isSubmitting ? 'Creating Staff...' : 'Create Staff'}
         </Button>
       </Box>
     </Box>
   );
 };
 
-export default CreateAdminForm;
+export default CreateStaffForm;

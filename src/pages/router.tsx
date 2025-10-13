@@ -18,6 +18,7 @@ import BranchesTableGrid from '#domain/ColombusLogistics/Admin/SuperAdmin/Branch
 import MarketVehicleTableGrid from '#domain/ColombusLogistics/Admin/admin/Marketvehicle';
 import Gallery from '#domain/ColombusLogistics/Gallery/Gallery';
 import HelpCenterPage from '#domain/ColombusLogistics/Admin/HelpCenter/HelpCenterPage';
+import CreateAdminUsersForm from '#domain/ColombusLogistics/Admin/admin/CreateStaffUsers';
 import PublicLayout from './Layout/PublicLayout';
 import ToolLayout from './Layout/TollLayout';
 import HomePage from './Layout/HomePage/HomePage';
@@ -62,6 +63,7 @@ const builderRouter = (userRole: string) => createBrowserRouter([
         ),
         children: [
           { path: 'create-admin', element: <CreateAdminForm /> },
+          { path: 'create-users', element: <CreateAdminUsersForm /> },
           { path: 'create-assistant', element: <CreateAssistantForm /> },
           { path: 'branches', element: <BranchesTableGrid /> },
           { path: 'assiatnt-raterequest', element: <AssistantRateRequest /> },

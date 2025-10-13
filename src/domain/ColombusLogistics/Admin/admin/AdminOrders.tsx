@@ -121,10 +121,15 @@ const AdminOrders = () => {
   }), [branchOrders]);
 
   const filteredRows = useMemo(() => {
-    if (statusFilter === 'all') {
-      return rows;
+    let visibleRows = rows.filter((row) => row.status !== 'APPROVED');
+
+    if (statusFilter !== 'all') {
+      visibleRows = visibleRows.filter(
+        (row) => row.status.toLowerCase() === statusFilter.toLowerCase(),
+      );
     }
-    return rows.filter((row) => row.status.toLowerCase() === statusFilter.toLowerCase());
+
+    return visibleRows;
   }, [rows, statusFilter]);
 
   const handleMenuClose = () => {

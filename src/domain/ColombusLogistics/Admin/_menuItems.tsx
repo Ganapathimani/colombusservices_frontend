@@ -43,6 +43,7 @@ export const menuItems: MenuItem[] = [
     subItems: [
       { name: 'Admin', link: 'order-entries' },
       { name: 'Market Vehicle', link: 'market-vehicles' },
+      { name: 'Create Users', link: 'create-users' },
     ],
   },
   {
