@@ -81,7 +81,7 @@ export const generateLRPdf = (orderPartial?: Partial<LROrder>) => {
           width: '*',
           stack: [
             {
-              text: 'COLUMBUS FREIGHT LOGISTICS PVT LTD', style: 'title', alignment: 'center', color: '#008000',
+              text: 'COLOMBUS FREIGHT LOGISTICS PVT LTD', style: 'title', alignment: 'center', color: '#008000',
             },
             {
               text: '(XPRESS PARCEL SERVICE)', style: 'subtitle', alignment: 'center', color: '#008000',
@@ -108,7 +108,7 @@ export const generateLRPdf = (orderPartial?: Partial<LROrder>) => {
           width: '*',
           fontSize: 8,
           stack: [
-            { text: 'Head Office : No.141-C, Iswarya Garden, Columbus Building,', bold: true },
+            { text: 'Head Office : No.141-C, Iswarya Garden, Colombus Building,', bold: true },
             { text: 'Ammapalayam, Tiruppur-641 652. Tel: 73971-11865 Mobile : 94426-', margin: [0, 0, 0, 0] },
             { text: '02332 94421-19332 GSTIN: 33AADCC1547N2ZM' },
           ],
@@ -278,7 +278,7 @@ export const generateLRPdf = (orderPartial?: Partial<LROrder>) => {
           stack: [
             { text: 'GOODS RECEIVED IN GOOD CONDITION', bold: true, alignment: 'center' },
             {
-              text: 'FOR COLUMBUS FREIGHT PVT LTD.', bold: true, alignment: 'right', margin: [0, 20, 0, 0],
+              text: 'FOR COLOMBUS FREIGHT PVT LTD.', bold: true, alignment: 'right', margin: [0, 20, 0, 0],
             },
             { text: 'Receiver : Sign, Mobile Number, Stamp, Date.', alignment: 'left', margin: [0, 20, 0, 0] },
           ],

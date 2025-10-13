@@ -67,11 +67,10 @@ const ToolNavbar = () => {
               color: '#166534',
             }}
           >
-            Columbus Logistics
+            Colombus Logistics
           </Typography>
         </Box>
 
-        {/* Profile Avatar */}
         <Box>
           <IconButton onClick={handleMenu}>
             <Avatar

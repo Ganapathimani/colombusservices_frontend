@@ -220,6 +220,9 @@ const CreateAdminForm = () => {
               {branches?.map((branch: any) => (
                 <MenuItem key={branch.id} value={branch.id}>
                   {branch.name}
+                  {' '}
+                  -
+                  {branch.location}
                 </MenuItem>
               ))}
             </TextField>

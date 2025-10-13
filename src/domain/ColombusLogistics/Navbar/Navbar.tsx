@@ -87,7 +87,7 @@ const Navbar = () => {
   );
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem('user');
+    localStorage.clear();
     setCurrentUser(null);
     navigate('/');
   }, [navigate]);
@@ -138,7 +138,7 @@ const Navbar = () => {
             <Box
               component="img"
               src={logo}
-              alt="Columbus Logistics"
+              alt="Colombus Logistics"
               sx={{
                 height: { xs: 32, sm: 40, md: 48 },
                 width: 'auto',
@@ -154,7 +154,7 @@ const Navbar = () => {
                 fontSize: { sm: '1.1rem', md: '1.25rem' },
               }}
             >
-              Columbus Logistics
+              Colombus Logistics
             </Typography>
           </Stack>
 
@@ -240,7 +240,7 @@ const Navbar = () => {
             variant="h6"
             sx={{ fontWeight: 700, color: '#166534', mb: 2 }}
           >
-            Columbus Logistics
+            Colombus Logistics
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <List>
