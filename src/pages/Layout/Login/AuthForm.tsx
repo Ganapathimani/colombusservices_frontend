@@ -50,6 +50,7 @@ type StoredUser = {
   token: string;
   companyName: string;
   phone: string;
+  staffRole: string,
 };
 
 const STORAGE_KEY = 'user';
@@ -133,6 +134,7 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
           role: userData.role,
           token,
           phone: userData.phone,
+          staffRole: userData.staffRole,
           companyName: userData.companyname,
         };
         setWithExpiry(STORAGE_KEY, user, DAY_MS);
@@ -176,6 +178,7 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
           role: userData.role,
           token,
           phone: userData.phone,
+          staffRole: userData.staffRole,
           companyName: userData.companyname,
         };
 

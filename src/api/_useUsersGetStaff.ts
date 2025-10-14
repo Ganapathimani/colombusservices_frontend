@@ -5,21 +5,21 @@ export type UserGetProps = {
   id: string;
 };
 
-const getSuperAdminUser = (
+const getStaffUser = (
   builder: ColombusLogisticsBuilder,
 ) => builder.query<TAdminUser, UserGetProps>({
-  query: ({ id }) => `/superadmin/users/${id}`,
+  query: ({ id }) => `/admin/staff/${id}`,
   transformResponse: (response: any) => response.user,
   providesTags: (result, error, { id }) => [
     {
-      type: 'SuperAdmin' as ColombusLogisticsTagType,
+      type: 'Staff' as ColombusLogisticsTagType,
       id: 'all',
     },
     {
-      type: 'SuperAdmin' as ColombusLogisticsTagType,
+      type: 'Staff' as ColombusLogisticsTagType,
       id,
     },
   ],
 });
 
-export default getSuperAdminUser;
+export default getStaffUser;

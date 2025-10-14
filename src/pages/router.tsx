@@ -10,7 +10,7 @@ import Tracking from '#domain/ColombusLogistics/DashboardLayout/Tracking';
 import OrdersTableGrid from '#domain/ColombusLogistics/Admin/admin/AdminOrders';
 import LROrdersTable from '#domain/ColombusLogistics/Admin/LorryReceipt/LROrdersTable';
 import AssistantRateRequest from '#domain/ColombusLogistics/Assistant/RateRequest';
-import UpdateVehicleDetails from '#domain/ColombusLogistics/Admin/admin/UpdateVehicleDetails';
+import PickUpOrderTable from '#domain/ColombusLogistics/Admin/PickUp/PickUpOrderTable';
 import ProtectedRoute from '#components/ProtectedRoute/ProtectedRoute';
 import CreateAdminForm from '#domain/ColombusLogistics/Admin/SuperAdmin/CreateAdminForm';
 import CreateAssistantForm from '#domain/ColombusLogistics/Admin/SuperAdmin/CreateAssistantForm';
@@ -67,7 +67,7 @@ const builderRouter = (userRole: string) => createBrowserRouter([
           { path: 'create-assistant', element: <CreateAssistantForm /> },
           { path: 'branches', element: <BranchesTableGrid /> },
           { path: 'assiatnt-raterequest', element: <AssistantRateRequest /> },
-          { path: 'orderPickup', element: <UpdateVehicleDetails /> },
+          { path: 'orderPickup', element: <PickUpOrderTable /> },
           { path: 'order-entries', element: <OrdersTableGrid /> },
           { path: 'market-vehicles', element: <MarketVehicleTableGrid /> },
           { path: 'lorry-receipts', element: <LROrdersTable /> },

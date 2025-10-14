@@ -1,11 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
   CircularProgress,
   Typography,
   IconButton,
@@ -20,30 +15,24 @@ import { DataGrid } from '@mui/x-data-grid';
 import type { GridColDef, GridRenderCellParams, GridPaginationModel } from '@mui/x-data-grid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faEllipsisV, faClock, faFilter, faCheckCircle, faTimesCircle,
-  faTruck, faMapMarkerAlt,
+  faEllipsisV,
+  faTruck,
+  faClock,
+  faCheckCircle,
+  faTimesCircle,
+  faFilter,
+  faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import toast from 'react-hot-toast';
 import OrderSidePanel from '#components/OrderSidePanel/OrderSidePanel';
 import {
   useListOrdersQuery,
   useUpdateOrderMutation,
-  useDeleteOrderMutation,
-  useGetSuperAdminUserQuery,
+  useGetStaffUserQuery,
 } from '#api/colombusLogisticsApi';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
 
-type OrderType = {
-  id: string;
-  orderNumber: string;
-  originCompanyName: string;
-  originLocation: string;
-  destinationLocation: string;
-  status: string;
-  branchId: string;
-};
-
-const AdminOrders = () => {
+const PickupOrdersTable = () => {
   const storedUser = localStorage.getItem('user');
   let userId: string;
   if (storedUser) {
@@ -54,18 +43,15 @@ const AdminOrders = () => {
       throw new Error('Error parsing user data from localStorage');
     }
   }
-  const { data: userData, isLoading: userLoading } = useGetSuperAdminUserQuery({ id: userId! });
 
-  const { data: ordersData, isLoading: ordersLoading } = useListOrdersQuery();
-  const [updateOrder] = useUpdateOrderMutation();
-  const [deleteOrder, { isLoading: deleting }] = useDeleteOrderMutation();
+  const { data: userData, isLoading: userLoading } = useGetStaffUserQuery({ id: userId! });
+  const { data: lrOrdersData, isLoading: ordersLoading } = useListOrdersQuery();
+  const [updateLrOrder] = useUpdateOrderMutation();
 
   const [selectedOrder, setSelectedOrder] = useState<TLogisticsRegistrationForm | null>(null);
-  const [isEditOrderModalOpen, setIsEditOrderModalOpen] = useState(false);
+  const [isEditPanelOpen, setIsEditPanelOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [menuOrder, setMenuOrder] = useState<OrderType | null>(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [orderToDelete, setOrderToDelete] = useState<OrderType | null>(null);
+  const [menuOrder, setMenuOrder] = useState<TLogisticsRegistrationForm | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
@@ -73,11 +59,11 @@ const AdminOrders = () => {
   });
 
   const branchOrders = useMemo(() => {
-    if (!ordersData || !userData) {
+    if (!lrOrdersData || !userData) {
       return [];
     }
-    return ordersData.filter((order) => order.branchId === userData.branchId);
-  }, [ordersData, userData]);
+    return lrOrdersData.filter((order) => order.branchId === userData.branchId);
+  }, [lrOrdersData, userData]);
 
   const getStatusConfig = (status: string) => {
     const configs: any = {
@@ -111,7 +97,6 @@ const AdminOrders = () => {
       destination: delivery?.companyName ?? '—',
       vehicle: vehicle?.vehicleType ?? '—',
       vehicleModel: vehicle?.model ?? '—',
-      rate: o?.rate ?? 0,
       priority: vehicle?.ftlType ?? 'Normal',
       notes: o?.notes ?? '',
       status: (o?.status ?? 'PENDING').toUpperCase(),
@@ -126,20 +111,27 @@ const AdminOrders = () => {
     return rows.filter((row) => row.status.toLowerCase() === statusFilter.toLowerCase());
   }, [rows, statusFilter]);
 
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    order: TLogisticsRegistrationForm,
+  ) => {
+    setAnchorEl(event.currentTarget);
+    setMenuOrder(order);
+  };
   const handleMenuClose = () => {
     setAnchorEl(null);
     setMenuOrder(null);
   };
 
-  const handleEdit = (order: OrderType) => {
+  const handleEdit = (order: TLogisticsRegistrationForm) => {
     const fullOrder = branchOrders.find((o) => o.id === order.id) || null;
-    setSelectedOrder(fullOrder as TLogisticsRegistrationForm);
-    setIsEditOrderModalOpen(true);
+    setSelectedOrder(fullOrder);
+    setIsEditPanelOpen(true);
     handleMenuClose();
   };
 
   const handleSidePanelClose = () => {
-    setIsEditOrderModalOpen(false);
+    setIsEditPanelOpen(false);
     setSelectedOrder(null);
   };
 
@@ -148,33 +140,12 @@ const AdminOrders = () => {
       if (!order?.id) {
         throw new Error('Order ID missing');
       }
-      await updateOrder({ orderId: order.id, data: { status: 'APPROVED' } }).unwrap();
-      toast.success('Order status updated to APPROVED');
+      await updateLrOrder({ orderId: order.id, data: order }).unwrap();
+      toast.success('LR Order updated successfully');
       handleSidePanelClose();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update order');
+      toast.error(err.message || 'Failed to update LR Order');
     }
-  };
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, order: OrderType) => {
-    setAnchorEl(event.currentTarget);
-    setMenuOrder(order);
-  };
-
-  const handleDeleteClick = (order: OrderType) => {
-    setOrderToDelete(order);
-    setDeleteDialogOpen(true);
-    handleMenuClose();
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!orderToDelete) {
-      return;
-    }
-    await deleteOrder(orderToDelete.id).unwrap();
-    setDeleteDialogOpen(false);
-    setOrderToDelete(null);
-    toast.success('Order deleted successfully');
   };
 
   const getStatusChip = useCallback((status: string) => {
@@ -201,22 +172,16 @@ const AdminOrders = () => {
   }, []);
 
   const columns: GridColDef[] = [
+    { field: 'lrNumber', headerName: 'LR Number', flex: 1 },
     { field: 'date', headerName: 'Date', flex: 1 },
     {
       field: 'pickup',
-      headerName: 'PickUp',
+      headerName: 'Pickup',
       flex: 1,
       renderCell: (params) => (
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="flex-start"
-          height="100%"
-        >
+        <Box display="flex" alignItems="center">
           <FontAwesomeIcon icon={faMapMarkerAlt} style={{ fontSize: 14, color: '#10b981' }} />
-          <Typography variant="body2" sx={{ fontWeight: 600, ml: 1 }}>
-            {params.row.origin}
-          </Typography>
+          <Typography sx={{ ml: 1, fontWeight: 600 }}>{params.value}</Typography>
         </Box>
       ),
     },
@@ -225,21 +190,13 @@ const AdminOrders = () => {
       headerName: 'Delivery',
       flex: 1,
       renderCell: (params) => (
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="flex-start"
-          height="100%"
-        >
+        <Box display="flex" alignItems="center">
           <FontAwesomeIcon icon={faTruck} style={{ fontSize: 14, color: '#6b7280' }} />
-          <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-            {params.row.destination}
-          </Typography>
+          <Typography sx={{ ml: 1, color: 'text.secondary' }}>{params.value}</Typography>
         </Box>
       ),
     },
-    { field: 'vehicle', headerName: 'Vehicle', flex: 1 },
-    { field: 'vehicleModel', headerName: 'Vehicle Model', flex: 1 },
+    { field: 'vehicle', headerName: 'Vehicle No', flex: 1 },
     {
       field: 'status',
       headerName: 'Status',
@@ -249,10 +206,10 @@ const AdminOrders = () => {
     {
       field: 'actions',
       headerName: 'Actions',
+      width: 80,
       sortable: false,
       filterable: false,
-      width: 80,
-      renderCell: (params: GridRenderCellParams<OrderType>) => (
+      renderCell: (params: GridRenderCellParams<TLogisticsRegistrationForm>) => (
         <IconButton onClick={(e) => handleMenuOpen(e, params.row)}>
           <FontAwesomeIcon icon={faEllipsisV} />
         </IconButton>
@@ -272,14 +229,20 @@ const AdminOrders = () => {
     <Box sx={{ backgroundColor: '#f8fafc', minHeight: '100vh', p: 3 }}>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6" sx={{ color: 'green', fontWeight: 600 }}>
-          Admin
+          LR Orders
         </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1, mt: 1 }}>
-          Manage and track all logistics orders for your branch.
+        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+          Manage and track LR orders for your branch.
         </Typography>
       </Box>
 
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} justifyContent="space-between" alignItems="center" mb={3}>
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={2}
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
         <FormControl sx={{ minWidth: 200 }} size="small">
           <InputLabel id="status-filter-label">
             <FontAwesomeIcon icon={faFilter} style={{ marginRight: 6 }} />
@@ -291,9 +254,10 @@ const AdminOrders = () => {
             label="Status"
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <MenuItem value="all">All Status</MenuItem>
+            <MenuItem value="all">All</MenuItem>
             <MenuItem value="Pending">Pending</MenuItem>
             <MenuItem value="Approved">Approved</MenuItem>
+            <MenuItem value="Rejected">Rejected</MenuItem>
           </Select>
         </FormControl>
       </Stack>
@@ -310,33 +274,16 @@ const AdminOrders = () => {
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
         <MenuItem onClick={() => handleEdit(menuOrder!)}>Edit</MenuItem>
-        <MenuItem onClick={() => handleDeleteClick(menuOrder!)}>Delete</MenuItem>
       </Menu>
 
       <OrderSidePanel
-        open={isEditOrderModalOpen}
+        open={isEditPanelOpen}
         onClose={handleSidePanelClose}
         defaultValues={selectedOrder!}
         onSubmit={handleOrderSubmit}
       />
-
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogTitle>Delete Order</DialogTitle>
-        <DialogContent>
-          Are you sure you want to delete order
-          {' '}
-          <strong>{orderToDelete?.orderNumber}</strong>
-          ?
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleDeleteConfirm} color="error" disabled={deleting}>
-            {deleting ? 'Deleting...' : 'Delete'}
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };
 
-export default AdminOrders;
+export default PickupOrdersTable;

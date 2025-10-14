@@ -36,9 +36,11 @@ import updateProfile from './_updateProfile';
 import updateOrder from './_updateOrder';
 import updateEnquiry from './_updateEnquiry';
 import getSuperAdminUser from './_useUsersGetSuperAdmin';
+import getStaffUser from './_useUsersGetStaff';
 import createStaff from './_createStaff';
 
 const tagTypes = [
+  'SuperAdmin',
   'Signup',
   'Signin',
   'Orders',
@@ -83,6 +85,7 @@ const baseQuery = createApi({
     updateEnquiry: updateEnquiry(builder),
     getSuperAdminUser: getSuperAdminUser(builder),
     createStaff: createStaff(builder),
+    getStaffUser: getStaffUser(builder),
   }),
 
 });
@@ -131,4 +134,5 @@ export const {
   useUpdateOrderMutation,
   useUpdateEnquiryMutation,
   useGetSuperAdminUserQuery,
+  useGetStaffUserQuery,
 } = colombusLogisticsApi;

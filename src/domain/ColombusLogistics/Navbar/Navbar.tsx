@@ -53,6 +53,16 @@ const roleRoutes: Record<string, string> = {
   DELIVERY: '/admin',
 };
 
+const getUserRoute = (user: any) => {
+  if (!user) {
+    return '/';
+  }
+  if (user.role?.toUpperCase() === 'STAFF') {
+    return roleRoutes[user.staffRole?.toUpperCase()] || '/';
+  }
+  return roleRoutes[user.role?.toUpperCase()] || '/';
+};
+
 const Navbar = () => {
   const [isAuthFormOpen, , AuthFormActions] = useToggle(false);
   const [sidebarOpen, , sideBarActions] = useToggle(false);
@@ -79,7 +89,8 @@ const Navbar = () => {
     (userData: any) => {
       setCurrentUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
-      const path = roleRoutes[userData.role] || '/';
+
+      const path = getUserRoute(userData);
       navigate(path);
       AuthFormActions.setOff();
     },

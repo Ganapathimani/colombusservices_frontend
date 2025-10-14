@@ -17,7 +17,7 @@ const ToolNavbar = () => {
   const handleClose = () => setAnchorEl(null);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    localStorage.clear();
     handleClose();
     navigate('/');
   };

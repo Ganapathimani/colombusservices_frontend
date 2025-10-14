@@ -4,6 +4,7 @@ import type { ColombusLogisticsBuilder, ColombusLogisticsTagType } from './colom
 type LoginResponse = {
   message: string;
   user: {
+    staffRole: string;
     phone: string;
     companyname: string;
     id: string;
