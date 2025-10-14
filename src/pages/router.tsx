@@ -31,7 +31,7 @@ import Admin from './Layout/Admin/Admin';
 const builderRouter = (userRole: string) => createBrowserRouter([
   {
     path: '/',
-    element: userRole === 'CUSTOMER' ? <PublicLayout /> : <ToolLayout />,
+    element: userRole === 'customer' ? <PublicLayout /> : <ToolLayout />,
     errorElement: <ErrorBoundary />,
     children: [
       { index: true, element: <HomePage /> },
