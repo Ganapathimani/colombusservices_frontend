@@ -6,10 +6,6 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Stack,
-  Select,
-  FormControl,
-  InputLabel,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import type { GridColDef, GridRenderCellParams, GridPaginationModel } from '@mui/x-data-grid';
@@ -20,17 +16,16 @@ import {
   faClock,
   faCheckCircle,
   faTimesCircle,
-  faFilter,
   faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import toast from 'react-hot-toast';
-import OrderSidePanel from '#components/OrderSidePanel/OrderSidePanel';
 import {
   useListOrdersQuery,
   useUpdateOrderMutation,
   useGetStaffUserQuery,
 } from '#api/colombusLogisticsApi';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
+import PickupTeamSidePanel from './PickUpSidePanel';
 
 const PickupOrdersTable = () => {
   const storedUser = localStorage.getItem('user');
@@ -39,31 +34,30 @@ const PickupOrdersTable = () => {
     try {
       const user = JSON.parse(storedUser);
       userId = user.id;
-    } catch (err) {
+    } catch {
       throw new Error('Error parsing user data from localStorage');
     }
   }
 
   const { data: userData, isLoading: userLoading } = useGetStaffUserQuery({ id: userId! });
-  const { data: lrOrdersData, isLoading: ordersLoading } = useListOrdersQuery();
-  const [updateLrOrder] = useUpdateOrderMutation();
+  const { data: ordersData, isLoading: ordersLoading } = useListOrdersQuery();
+  const [updateOrder] = useUpdateOrderMutation();
 
   const [selectedOrder, setSelectedOrder] = useState<TLogisticsRegistrationForm | null>(null);
   const [isEditPanelOpen, setIsEditPanelOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuOrder, setMenuOrder] = useState<TLogisticsRegistrationForm | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
     pageSize: 10,
   });
 
   const branchOrders = useMemo(() => {
-    if (!lrOrdersData || !userData) {
+    if (!ordersData || !userData) {
       return [];
     }
-    return lrOrdersData.filter((order) => order.branchId === userData.branchId);
-  }, [lrOrdersData, userData]);
+    return ordersData.filter((order) => order.branchId === userData.branchId);
+  }, [ordersData, userData]);
 
   const getStatusConfig = (status: string) => {
     const configs: any = {
@@ -86,30 +80,27 @@ const PickupOrdersTable = () => {
     return configs[status] || configs.PENDING;
   };
 
-  const rows = useMemo(() => branchOrders.map((o: TLogisticsRegistrationForm) => {
-    const pickup = o?.pickups?.[0] ?? {};
-    const delivery = o?.deliveries?.[0] ?? {};
-    const vehicle = o?.vehicles?.[0] ?? {};
+  const rows = useMemo(
+    () => branchOrders.map((o: TLogisticsRegistrationForm) => {
+      const pickup = o?.pickups?.[0] ?? {};
+      const delivery = o?.deliveries?.[0] ?? {};
+      const vehicle = o?.vehicles?.[0] ?? {};
 
-    return {
-      date: pickup?.pickupDate ?? null,
-      origin: pickup?.companyName ?? '—',
-      destination: delivery?.companyName ?? '—',
-      vehicle: vehicle?.vehicleType ?? '—',
-      vehicleModel: vehicle?.model ?? '—',
-      priority: vehicle?.ftlType ?? 'Normal',
-      notes: o?.notes ?? '',
-      status: (o?.status ?? 'PENDING').toUpperCase(),
-      fullData: o,
-    };
-  }), [branchOrders]);
-
-  const filteredRows = useMemo(() => {
-    if (statusFilter === 'all') {
-      return rows;
-    }
-    return rows.filter((row) => row.status.toLowerCase() === statusFilter.toLowerCase());
-  }, [rows, statusFilter]);
+      return {
+        id: o.id,
+        date: pickup?.pickupDate ?? null,
+        origin: pickup?.companyName ?? '—',
+        destination: delivery?.companyName ?? '—',
+        vehicle: vehicle?.vehicleType ?? '—',
+        vehicleModel: vehicle?.model ?? '—',
+        priority: vehicle?.ftlType ?? 'Normal',
+        notes: o?.notes ?? '',
+        status: (o?.status ?? 'PENDING').toUpperCase(),
+        fullData: o,
+      };
+    }),
+    [branchOrders],
+  );
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -135,16 +126,16 @@ const PickupOrdersTable = () => {
     setSelectedOrder(null);
   };
 
-  const handleOrderSubmit = async (order: TLogisticsRegistrationForm) => {
+  const handleOrderSubmit = async (updated: Partial<TLogisticsRegistrationForm>) => {
     try {
-      if (!order?.id) {
-        throw new Error('Order ID missing');
+      if (!selectedOrder?.id) {
+        throw new Error('No order selected');
       }
-      await updateLrOrder({ orderId: order.id, data: order }).unwrap();
-      toast.success('LR Order updated successfully');
+      await updateOrder({ orderId: selectedOrder.id, data: updated }).unwrap();
+      toast.success('Pickup Order updated successfully');
       handleSidePanelClose();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update LR Order');
+      toast.error(err.message || 'Failed to update Pickup Order');
     }
   };
 
@@ -172,11 +163,10 @@ const PickupOrdersTable = () => {
   }, []);
 
   const columns: GridColDef[] = [
-    { field: 'lrNumber', headerName: 'LR Number', flex: 1 },
-    { field: 'date', headerName: 'Date', flex: 1 },
+    { field: 'date', headerName: 'Pickup Date', flex: 1 },
     {
-      field: 'pickup',
-      headerName: 'Pickup',
+      field: 'origin',
+      headerName: 'Pickup From',
       flex: 1,
       renderCell: (params) => (
         <Box display="flex" alignItems="center">
@@ -186,8 +176,8 @@ const PickupOrdersTable = () => {
       ),
     },
     {
-      field: 'delivery',
-      headerName: 'Delivery',
+      field: 'destination',
+      headerName: 'Delivery To',
       flex: 1,
       renderCell: (params) => (
         <Box display="flex" alignItems="center">
@@ -229,41 +219,15 @@ const PickupOrdersTable = () => {
     <Box sx={{ backgroundColor: '#f8fafc', minHeight: '100vh', p: 3 }}>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6" sx={{ color: 'green', fontWeight: 600 }}>
-          LR Orders
+          Pickup Orders
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-          Manage and track LR orders for your branch.
+          Manage and track pickup orders for your branch.
         </Typography>
       </Box>
 
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        spacing={2}
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
-      >
-        <FormControl sx={{ minWidth: 200 }} size="small">
-          <InputLabel id="status-filter-label">
-            <FontAwesomeIcon icon={faFilter} style={{ marginRight: 6 }} />
-            Status
-          </InputLabel>
-          <Select
-            labelId="status-filter-label"
-            value={statusFilter}
-            label="Status"
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value="Pending">Pending</MenuItem>
-            <MenuItem value="Approved">Approved</MenuItem>
-            <MenuItem value="Rejected">Rejected</MenuItem>
-          </Select>
-        </FormControl>
-      </Stack>
-
       <DataGrid
-        rows={filteredRows}
+        rows={rows}
         columns={columns}
         autoHeight
         disableRowSelectionOnClick
@@ -276,7 +240,7 @@ const PickupOrdersTable = () => {
         <MenuItem onClick={() => handleEdit(menuOrder!)}>Edit</MenuItem>
       </Menu>
 
-      <OrderSidePanel
+      <PickupTeamSidePanel
         open={isEditPanelOpen}
         onClose={handleSidePanelClose}
         defaultValues={selectedOrder!}
