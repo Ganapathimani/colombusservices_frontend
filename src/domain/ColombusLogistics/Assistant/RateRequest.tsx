@@ -122,9 +122,6 @@ const RateRequest = () => {
           payload.assistantId = undefined;
           payload.status = 'PENDING';
         } else if (role === 'ASSISTANT') {
-          if (!formData.customerId) {
-            throw new Error('Customer is required');
-          }
           payload.assistantId = parsedUser.id;
           payload.createdById = parsedUser.id;
           payload.status = 'REVIEW';
@@ -143,7 +140,7 @@ const RateRequest = () => {
         setCurrentEditOrder(undefined);
         editOrderModalOpen.setOff();
       } catch (err: any) {
-        toast.error(err.message || 'Failed to save order');
+        toast.error(err.message || 'User Not Found, Create a User ');
       }
     },
     [userRole, editOrderModalOpen, updateOrder, orderUpsert],
