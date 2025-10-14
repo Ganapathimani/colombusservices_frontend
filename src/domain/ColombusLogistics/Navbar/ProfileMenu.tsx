@@ -39,6 +39,10 @@ const ProfileMenu = ({ user, onLogout }: ProfileMenuProps) => {
     navigate('/admin');
   }, [navigate]);
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <>
       <Stack justifyContent="flex-end" alignItems="center">

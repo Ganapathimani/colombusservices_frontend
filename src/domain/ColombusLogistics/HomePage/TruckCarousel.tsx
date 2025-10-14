@@ -13,9 +13,7 @@ import 'swiper/css/effect-fade';
 import { map } from 'lodash/fp';
 
 import { useNavigate } from 'react-router-dom';
-import vehicle1 from '../../../assets/vehicle1.jpg';
-import vehicle2 from '../../../assets/vehicle2.jpg';
-import vehicle3 from '../../../assets/vehicle3.jpg';
+import vehicle1 from '#assets/vehicle4.jpg';
 
 const truckData = [
   {
@@ -34,7 +32,7 @@ const truckData = [
     cta: 'Need it delivered fast? Get a Quote Now',
   },
   {
-    image: vehicle2,
+    image: vehicle1,
     title: '24×7 Delivery',
     subtitle: 'Around the Clock, Around the Country.',
     description:
@@ -49,7 +47,7 @@ const truckData = [
     cta: 'Ship anytime, anywhere. Book a 24×7 Delivery',
   },
   {
-    image: vehicle3,
+    image: vehicle1,
     title: 'Full Truckload (FTL) Services',
     subtitle: 'Dedicated Space for Your Cargo.',
     description:
@@ -79,7 +77,7 @@ const truckData = [
     cta: 'Save more on shipping. Book a PTL Service',
   },
   {
-    image: vehicle2,
+    image: vehicle1,
     title: 'Express Cargo Service',
     subtitle: 'When Every Second Counts.',
     description:
@@ -94,7 +92,7 @@ const truckData = [
     cta: 'Need it there today? Send an Express Cargo',
   },
   {
-    image: vehicle3,
+    image: vehicle1,
     title: 'Last-Mile Delivery',
     subtitle: 'The Final Step to Your Customer.',
     description:

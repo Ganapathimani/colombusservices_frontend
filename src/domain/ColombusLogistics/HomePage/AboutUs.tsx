@@ -12,6 +12,7 @@ import {
   faBullseye,
   faEye,
 } from '@fortawesome/free-solid-svg-icons';
+import MDPic from '#assets/MDPic.jpg';
 
 const AboutUs = () => {
   const theme = useTheme();
@@ -44,7 +45,7 @@ const AboutUs = () => {
         >
           <Avatar
             alt="Mr. Selva Kumar - Managing Director"
-            src="/images/owner-selvakumar.jpg"
+            src={MDPic}
             sx={{
               width: { xs: 200, md: 240 },
               height: { xs: 200, md: 240 },

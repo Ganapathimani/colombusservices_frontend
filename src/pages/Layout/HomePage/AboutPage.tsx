@@ -4,6 +4,7 @@ import {
   CardContent, Divider, Link, Box,
 } from '@mui/material';
 import { map } from 'lodash/fp';
+import vehicle from '#assets/vehicle4.jpg';
 
 const branches = [
   {
@@ -100,7 +101,7 @@ const AboutUsPage = () => (
       </Stack>
       <Stack flex={1}>
         <img
-          src="/images/fleet.jpg"
+          src={vehicle}
           alt="Fleet"
           style={{ width: '100%', borderRadius: '16px' }}
         />

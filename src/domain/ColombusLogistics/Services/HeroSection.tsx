@@ -3,7 +3,7 @@ import {
   Box, Typography, Button, Stack, useTheme,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import vehicle1 from '../../../assets/vehicle1.jpg';
+import vehicle1 from '../../../assets/vehicle4.jpg';
 
 const HeroSection = () => {
   const theme = useTheme();

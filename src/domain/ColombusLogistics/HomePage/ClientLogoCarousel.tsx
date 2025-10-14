@@ -4,6 +4,15 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import clientLogo1 from '#assets/colombus client logos/CEVA_Logo_HR.jpg';
+import clientLogo2 from '#assets/colombus client logos/aikilogo.jpg';
+import clientLogo3 from '#assets/colombus client logos/bollorelogo.png';
+import clientLogo4 from '#assets/colombus client logos/broekmanlogo.jpg';
+import clientLogo5 from '#assets/colombus client logos/chrobinsonlogo.png';
+import clientLogo6 from '#assets/colombus client logos/flomiclogo.png';
+import clientLogo7 from '#assets/colombus client logos/kerryindevlogo.png';
+import clientLogo9 from '#assets/colombus client logos/scmlogo.png';
+import clientLogo10 from '#assets/colombus client logos/zfwindpowerlogo.jpg';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -11,12 +20,15 @@ import 'swiper/css/pagination';
 import { map } from 'lodash/fp';
 
 const clientLogos: string[] = [
-  '/logos/scm.png',
-  '/logos/sp-apparels.png',
-  '/logos/best-corp.png',
-  '/logos/eastman.png',
-  '/logos/kpr.png',
-  '/logos/jayjay.png',
+  clientLogo1,
+  clientLogo2,
+  clientLogo3,
+  clientLogo4,
+  clientLogo5,
+  clientLogo6,
+  clientLogo7,
+  clientLogo9,
+  clientLogo10,
 ];
 
 const ClientLogoCarousel = () => (
