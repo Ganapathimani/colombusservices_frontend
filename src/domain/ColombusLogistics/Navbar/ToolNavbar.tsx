@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar, Toolbar, Typography, IconButton, Box, Avatar, Menu, MenuItem,
 } from '@mui/material';
@@ -8,19 +8,32 @@ import logo from '#assets/logo.png';
 const ToolNavbar = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [currentUser, setCurrentUser] = useState<any>(() => {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  });
   const open = Boolean(anchorEl);
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem('user');
+    setCurrentUser(null); // ✅ Update state
     handleClose();
     navigate('/');
   };
+
+  useEffect(() => {
+    const handleStorage = () => {
+      const stored = localStorage.getItem('user');
+      setCurrentUser(stored ? JSON.parse(stored) : null);
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
+  const avatarLetter = currentUser?.name?.[0]?.toUpperCase() || 'U';
 
   return (
     <AppBar
@@ -41,7 +54,6 @@ const ToolNavbar = () => {
           minHeight: 64,
         }}
       >
-        {/* Logo and Company Name */}
         <Box
           display="flex"
           alignItems="center"
@@ -81,9 +93,7 @@ const ToolNavbar = () => {
                 fontSize: '1rem',
               }}
             >
-              {localStorage.getItem('user')
-                ? JSON.parse(localStorage.getItem('user') || '{}')?.name?.[0]?.toUpperCase() || 'U'
-                : 'U'}
+              {avatarLetter}
             </Avatar>
           </IconButton>
 
