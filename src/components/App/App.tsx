@@ -14,11 +14,11 @@ const getUserRole = (): string => {
     const user = JSON.parse(userStr);
 
     if (user?.role?.toUpperCase() === 'STAFF') {
-      return user?.staffRole?.toLowerCase() ?? 'staff';
+      return user?.staffRole?.toLowerCase() ?? 'STAFF';
     }
-    return user?.role?.toLowerCase() ?? 'customer';
+    return user?.role?.toLowerCase() ?? 'CUSTOMER';
   } catch {
-    return 'customer';
+    return 'CUSTOMER';
   }
 };
 
