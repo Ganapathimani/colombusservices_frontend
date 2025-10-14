@@ -106,6 +106,7 @@ const AdminOrders = () => {
     const vehicle = o?.vehicles?.[0] ?? {};
 
     return {
+      id: o.id,
       date: pickup?.pickupDate ?? null,
       origin: pickup?.companyName ?? '—',
       destination: delivery?.companyName ?? '—',
