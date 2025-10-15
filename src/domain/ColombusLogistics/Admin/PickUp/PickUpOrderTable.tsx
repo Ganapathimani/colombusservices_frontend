@@ -169,7 +169,12 @@ const PickupOrdersTable = () => {
       headerName: 'Pickup From',
       flex: 1,
       renderCell: (params) => (
-        <Box display="flex" alignItems="center">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="flex-start"
+          height="100%"
+        >
           <FontAwesomeIcon icon={faMapMarkerAlt} style={{ fontSize: 14, color: '#10b981' }} />
           <Typography sx={{ ml: 1, fontWeight: 600 }}>{params.value}</Typography>
         </Box>
@@ -180,7 +185,12 @@ const PickupOrdersTable = () => {
       headerName: 'Delivery To',
       flex: 1,
       renderCell: (params) => (
-        <Box display="flex" alignItems="center">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="flex-start"
+          height="100%"
+        >
           <FontAwesomeIcon icon={faTruck} style={{ fontSize: 14, color: '#6b7280' }} />
           <Typography sx={{ ml: 1, color: 'text.secondary' }}>{params.value}</Typography>
         </Box>

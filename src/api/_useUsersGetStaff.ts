@@ -9,7 +9,7 @@ const getStaffUser = (
   builder: ColombusLogisticsBuilder,
 ) => builder.query<TAdminUser, UserGetProps>({
   query: ({ id }) => `/admin/staff/${id}`,
-  transformResponse: (response: any) => response.user,
+  transformResponse: (response: any) => response.staff,
   providesTags: (result, error, { id }) => [
     {
       type: 'Staff' as ColombusLogisticsTagType,
