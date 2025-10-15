@@ -46,7 +46,7 @@ const LROrdersTable = () => {
       return [];
     }
     return ordersData.filter(
-      (order) => order.branchId === userData.branchId && order.status === 'IN_PROGRESS',
+      (order) => order.branchId === userData.branchId && order.status === 'REVIEW',
     );
   }, [ordersData, userData]);
 

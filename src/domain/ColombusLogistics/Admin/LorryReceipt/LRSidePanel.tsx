@@ -23,7 +23,7 @@ type Props = {
   onSubmit: (formData: TLogisticsRegistrationForm) => Promise<void>;
 };
 
-const steps = ['Pickup Details', 'Vehicle & Driver Info'];
+const steps = ['Pickup Details', 'Upload Documents'];
 
 const LRTeamSidePanel = ({
   open, onClose, defaultValues, onSubmit,
