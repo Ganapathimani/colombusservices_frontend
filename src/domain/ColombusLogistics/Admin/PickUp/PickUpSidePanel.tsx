@@ -51,6 +51,15 @@ const PickupTeamSidePanel = ({
 
   const handleBack = useCallback(() => setActiveStep((prev) => prev - 1), []);
 
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (activeStep === steps.length - 1) {
+      await methods.handleSubmit(onSubmit)(e);
+    } else {
+      await handleNext();
+    }
+  };
+
   return (
     <Drawer
       anchor="right"
@@ -68,6 +77,7 @@ const PickupTeamSidePanel = ({
         },
       }}
     >
+      {/* Header */}
       <Box
         display="flex"
         justifyContent="space-between"
@@ -86,7 +96,7 @@ const PickupTeamSidePanel = ({
       <Divider />
 
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <form onSubmit={handleFormSubmit}>
           <Box sx={{ p: 3, flexGrow: 1 }}>
             <Typography
               variant="subtitle1"
@@ -123,7 +133,7 @@ const PickupTeamSidePanel = ({
                 <Typography variant="body2">
                   <b>Status:</b>
                   {' '}
-                  {defaultValues?.status || 'PENDING'}
+                  {defaultValues?.status || 'Pending'}
                 </Typography>
 
                 {defaultValues?.pickups?.map((p) => (
@@ -217,36 +227,19 @@ const PickupTeamSidePanel = ({
                 <div />
               )}
 
-              {activeStep < steps.length - 1 ? (
-                <Button
-                  type="button"
-                  onClick={handleNext}
-                  variant="contained"
-                  sx={{
-                    backgroundColor: '#43A047',
-                    color: '#fff',
-                    '&:hover': { backgroundColor: '#2E7D32' },
-                    borderRadius: 2,
-                    px: 3,
-                  }}
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  variant="contained"
-                  sx={{
-                    backgroundColor: '#43A047',
-                    color: '#fff',
-                    '&:hover': { backgroundColor: '#2E7D32' },
-                    borderRadius: 2,
-                    px: 3,
-                  }}
-                >
-                  Submit
-                </Button>
-              )}
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  backgroundColor: '#43A047',
+                  color: '#fff',
+                  '&:hover': { backgroundColor: '#2E7D32' },
+                  borderRadius: 2,
+                  px: 3,
+                }}
+              >
+                {activeStep < steps.length - 1 ? 'Next' : 'Submit'}
+              </Button>
             </Stack>
           </Box>
         </form>

@@ -52,11 +52,19 @@ const OrderSidePanel = ({
   }, [defaultValues, methods]);
 
   const handleNext = useCallback(async () => {
-    const isValid = await methods.trigger();
+    const stepFields: Record<number, (keyof TLogisticsRegistrationForm)[]> = {
+      0: ['bookedCustomerName', 'bookedPhoneNumber', 'bookedEmail'],
+      1: ['pickups'],
+      2: ['deliveries'],
+      3: ['packages'],
+      4: ['vehicles'],
+    };
+
+    const isValid = await methods.trigger(stepFields[activeStep]);
     if (isValid) {
       setActiveStep((prev) => prev + 1);
     }
-  }, [methods]);
+  }, [activeStep, methods]);
 
   const handleBack = useCallback(() => setActiveStep((prev) => prev - 1), []);
 
@@ -77,7 +85,13 @@ const OrderSidePanel = ({
         },
       }}
     >
-      <Box display="flex" justifyContent="space-between" alignItems="center" p={3} sx={{ borderBottom: '1px solid #e0e0e0' }}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        p={3}
+        sx={{ borderBottom: '1px solid #e0e0e0' }}
+      >
         <Typography variant="h6" fontWeight={600}>
           {title || (defaultValues ? 'Edit Order' : 'Create Order')}
         </Typography>
@@ -87,6 +101,7 @@ const OrderSidePanel = ({
       </Box>
 
       <Divider />
+
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Box sx={{ p: 3, flexGrow: 1 }}>
@@ -99,7 +114,10 @@ const OrderSidePanel = ({
                   '&.Mui-active': { color: '#43A047' },
                   '&.Mui-completed': { color: '#2E7D32' },
                 },
-                '& .MuiStepLabel-label.Mui-active': { color: '#2E7D32', fontWeight: 'bold' },
+                '& .MuiStepLabel-label.Mui-active': {
+                  color: '#2E7D32',
+                  fontWeight: 'bold',
+                },
                 '& .MuiStepLabel-label.Mui-completed': { color: '#1B5E20' },
               }}
             >
@@ -109,6 +127,7 @@ const OrderSidePanel = ({
                 </Step>
               ))}
             </Stepper>
+
             <Box mt={4}>
               {activeStep === 0 && <CustomerDetailsForm />}
               {activeStep === 1 && <OriginForm />}
@@ -133,7 +152,9 @@ const OrderSidePanel = ({
                 >
                   Back
                 </Button>
-              ) : <div /> }
+              ) : (
+                <div />
+              )}
 
               {activeStep < steps.length - 1 ? (
                 <Button
@@ -162,7 +183,7 @@ const OrderSidePanel = ({
                     px: 3,
                   }}
                 >
-                  Update Order
+                  {defaultValues ? 'Update Order' : 'Submit Order'}
                 </Button>
               )}
             </Stack>
