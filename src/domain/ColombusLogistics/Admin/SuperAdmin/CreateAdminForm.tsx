@@ -222,6 +222,7 @@ const CreateAdminForm = () => {
                   {branch.name}
                   {' '}
                   -
+                  {' '}
                   {branch.location}
                 </MenuItem>
               ))}

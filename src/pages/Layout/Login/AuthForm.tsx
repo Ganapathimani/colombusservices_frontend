@@ -143,7 +143,7 @@ const AuthForm = ({ onSuccess, onClose }: AuthFormProps) => {
         toast.success(`Welcome ${user.name}!`);
         onClose();
       } catch (error: any) {
-        setErrorMessage(error?.data?.error || 'Login failed. Please try again.');
+        setErrorMessage(error?.data?.message);
       }
     },
     [loginUpsert, onClose, onSuccess, resetLogin],

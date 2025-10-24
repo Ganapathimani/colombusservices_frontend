@@ -13,7 +13,7 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import type { GridColDef, GridRenderCellParams, GridPaginationModel } from '@mui/x-data-grid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import toast from 'react-hot-toast';
 import { useListOrdersQuery, useUpdateOrderMutation, useGetStaffUserQuery } from '#api/colombusLogisticsApi';
 import type { TLogisticsRegistrationForm } from '#domain/models/TLogisticsRegistrationForm';
@@ -50,7 +50,7 @@ const LROrdersTable = () => {
     if (!ordersData || !userData) {
       return [];
     }
-    return ordersData.filter((order) => order.branchId === userData.branchId && order.status === 'REVIEW');
+    return ordersData.filter((order) => order.branchId === userData.branchId && order.status === 'APPROVED');
   }, [ordersData, userData]);
 
   const rows = useMemo(() => branchOrders.map((o: TLogisticsRegistrationForm) => {
@@ -166,12 +166,6 @@ const LROrdersTable = () => {
       field: 'origin',
       headerName: 'Pickup From',
       flex: 1,
-      renderCell: (params) => (
-        <Box display="flex" alignItems="center">
-          <FontAwesomeIcon icon={faMapMarkerAlt} style={{ fontSize: 14, color: '#10b981' }} />
-          <Typography sx={{ ml: 1, fontWeight: 600 }}>{params.value}</Typography>
-        </Box>
-      ),
     },
     { field: 'destination', headerName: 'Delivery To', flex: 1 },
     { field: 'vehicle', headerName: 'Vehicle No', flex: 1 },
