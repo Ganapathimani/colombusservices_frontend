@@ -51,15 +51,14 @@ const CargoDimensionRow = ({
   const units = Number(watch(`packages.0.materials.${index}.handlingUnit`)) || 1;
 
   useEffect(() => {
-    if (length && width && height) {
+    if (length && width && height && unit) {
       const lengthCm = convertToCm(Number(length), unit);
       const widthCm = convertToCm(Number(width), unit);
       const heightCm = convertToCm(Number(height), unit);
 
-      const cbm = (lengthCm * widthCm * heightCm * units) / 1_000_000;
+      const cbm = ((lengthCm / 100) * (widthCm / 100) * (heightCm / 100)) * units;
 
       const cubicFeet = cbm * 35.3147;
-
       setValue(
         `packages.0.materials.${index}.cubicFeet`,
         Number(cubicFeet.toFixed(3)),
@@ -134,7 +133,7 @@ const CargoDimensionRow = ({
         />
 
         <TextField
-          label="Cubic Feet"
+          label="CBM"
           type="number"
           {...register(`packages.0.materials.${index}.cubicFeet`, {
             valueAsNumber: true,

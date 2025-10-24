@@ -91,9 +91,10 @@ const CargoForm = () => {
     (acc, dim) => {
       acc.packages += Number(dim.handlingUnit || 0);
       acc.cubicFeet += Number(dim.cubicFeet || 0);
+      acc.materialTypes.add(dim.materialType);
       return acc;
     },
-    { packages: 0, cubicFeet: 0 },
+    { packages: 0, cubicFeet: 0, materialTypes: new Set<string>() },
   );
 
   useEffect(() => {
@@ -235,7 +236,14 @@ const CargoForm = () => {
           >
             Add More Items
           </Button>
-          <CargoSummary totals={totals} />
+          <CargoSummary
+            totals={{
+              packages: totals.packages,
+              cubicFeet: totals.cubicFeet,
+              materialTypes: Array.from(totals.materialTypes),
+            }}
+          />
+
         </Stack>
       )}
     </Stack>

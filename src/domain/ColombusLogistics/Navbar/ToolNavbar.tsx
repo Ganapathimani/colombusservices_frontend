@@ -2,26 +2,29 @@ import React, { useState, useEffect } from 'react';
 import {
   AppBar, Toolbar, Typography, IconButton, Box, Avatar, Menu, MenuItem,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '#assets/logo.png';
 
 const ToolNavbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = useState<any>(() => {
     const stored = localStorage.getItem('user');
     return stored ? JSON.parse(stored) : null;
   });
+
   const open = Boolean(anchorEl);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    setCurrentUser(null); // ✅ Update state
+    localStorage.clear();
+    setCurrentUser(null);
     handleClose();
     navigate('/');
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -33,7 +36,13 @@ const ToolNavbar = () => {
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
-  const avatarLetter = currentUser?.name?.[0]?.toUpperCase() || 'U';
+  useEffect(() => {
+    if (!currentUser && location.pathname.startsWith('/admin')) {
+      navigate('/');
+    }
+  }, [currentUser, location.pathname, navigate]);
+
+  const avatarLetter = currentUser?.name?.[0]?.toUpperCase();
 
   return (
     <AppBar
@@ -58,7 +67,7 @@ const ToolNavbar = () => {
           display="flex"
           alignItems="center"
           sx={{ cursor: 'pointer' }}
-          onClick={() => navigate('/admin')}
+          onClick={() => navigate(currentUser ? '/admin' : '/')}
         >
           <Box
             component="img"
@@ -83,36 +92,38 @@ const ToolNavbar = () => {
           </Typography>
         </Box>
 
-        <Box>
-          <IconButton onClick={handleMenu}>
-            <Avatar
-              sx={{
-                bgcolor: '#166534',
-                width: 36,
-                height: 36,
-                fontSize: '1rem',
+        {currentUser && (
+          <Box>
+            <IconButton onClick={handleMenu}>
+              <Avatar
+                sx={{
+                  bgcolor: '#166534',
+                  width: 36,
+                  height: 36,
+                  fontSize: '1rem',
+                }}
+              >
+                {avatarLetter}
+              </Avatar>
+            </IconButton>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
               }}
             >
-              {avatarLetter}
-            </Avatar>
-          </IconButton>
-
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          </Menu>
-        </Box>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+          </Box>
+        )}
       </Toolbar>
     </AppBar>
   );

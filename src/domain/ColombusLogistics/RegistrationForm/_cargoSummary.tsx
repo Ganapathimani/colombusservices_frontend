@@ -14,12 +14,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBox,
   faCube,
+  faBoxesStacked,
 } from '@fortawesome/free-solid-svg-icons';
 
 interface SummaryProps {
   totals: {
     packages: number;
     cubicFeet: number;
+    materialTypes: string[],
   };
 }
 
@@ -28,7 +30,16 @@ const CargoSummary = ({ totals }: SummaryProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const items = [
-    { label: 'Total Packages', value: totals.packages, icon: faBox },
+    {
+      label: 'Total Packages',
+      value: totals.packages,
+      icon: faBox,
+    },
+    {
+      label: 'Material Type',
+      value: Array.from(totals.materialTypes).join(', '),
+      icon: faBoxesStacked,
+    },
     {
       label: 'Total Cubic Feet',
       value: totals.cubicFeet.toFixed(2),
