@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   Card, CardContent, CardHeader, Typography, Box,
-  Button, MenuItem, Select, FormControl, InputLabel,
-  LinearProgress, Stack, Chip,
+  Button, Stack, LinearProgress,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -19,7 +18,6 @@ import OrderSidePanel from '#components/OrderSidePanel/OrderSidePanel';
 import DataGridTable from '#components/DataGrid/DataGrid';
 
 const RateRequest = () => {
-  const [filter, setFilter] = useState('ALL');
   const [isEditOrderModalOpen, , editOrderModalOpen] = useToggle(false);
   const [
     currentEditOrder,
@@ -71,15 +69,6 @@ const RateRequest = () => {
     [orders],
   );
 
-  const filteredRequests = useMemo(() => {
-    if (userRole === 'ASSISTANT') {
-      return mappedRequests.filter((req) => req.status === 'PENDING');
-    }
-    return mappedRequests.filter(
-      (req) => (filter === 'ALL' ? true : req.status === filter),
-    );
-  }, [mappedRequests, filter, userRole]);
-
   const getStatusConfig = (status: string) => {
     const configs: any = {
       APPROVED: {
@@ -108,6 +97,7 @@ const RateRequest = () => {
         if (!user) {
           throw new Error('User not found');
         }
+
         const parsedUser = JSON.parse(user);
         const role = parsedUser?.role?.toUpperCase() || 'CUSTOMER';
 
@@ -140,7 +130,7 @@ const RateRequest = () => {
         setCurrentEditOrder(undefined);
         editOrderModalOpen.setOff();
       } catch (err: any) {
-        toast.error(err.message || 'User Not Found, Create a User ');
+        toast.error(err.message || 'User Not Found, Create a User');
       }
     },
     [userRole, editOrderModalOpen, updateOrder, orderUpsert],
@@ -183,26 +173,15 @@ const RateRequest = () => {
       NORMAL: 'success',
     };
     const baseColumns: GridColDef[] = [
-      {
-        field: 'date',
-        headerName: 'Date',
-        flex: 1,
-      },
+      { field: 'date', headerName: 'Date', flex: 1 },
       {
         field: 'pickup',
         headerName: 'PickUp',
         flex: 1,
         renderCell: (params) => (
-          <Box
-            height="100%"
-            display="flex"
-            alignItems="center"
-            gap={1}
-          >
+          <Box height="100%" display="flex" alignItems="center" gap={1}>
             <FontAwesomeIcon icon={faMapMarkerAlt} style={{ fontSize: 14, color: '#10b981' }} />
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {params.row.origin}
-            </Typography>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>{params.row.origin}</Typography>
           </Box>
         ),
       },
@@ -211,16 +190,9 @@ const RateRequest = () => {
         headerName: 'Delivery',
         flex: 1,
         renderCell: (params) => (
-          <Box
-            height="100%"
-            display="flex"
-            alignItems="center"
-            gap={1}
-          >
+          <Box height="100%" display="flex" alignItems="center" gap={1}>
             <FontAwesomeIcon icon={faTruck} style={{ fontSize: 14, color: '#6b7280' }} />
-            <Typography variant="body2" color="text.secondary">
-              {params.row.destination}
-            </Typography>
+            <Typography variant="body2" color="text.secondary">{params.row.destination}</Typography>
           </Box>
         ),
       },
@@ -231,21 +203,19 @@ const RateRequest = () => {
         headerName: 'Priority',
         flex: 1,
         renderCell: (params) => (
-          <Chip
-            label={params.value.toUpperCase()}
-            color={priorityColorMap[params.value] || 'default'}
-            size="small"
+          <Box
             sx={{
-              fontWeight: 500, textTransform: 'lowercase', px: 1.5, py: 2.2, fontSize: '15px',
+              fontWeight: 500,
+              textTransform: 'lowercase',
+              color: priorityColorMap[params.value] || 'text.primary',
             }}
-          />
+          >
+            {params.value}
+          </Box>
         ),
       },
       {
-        field: 'status',
-        headerName: 'Status',
-        flex: 1,
-        renderCell: (params) => getStatusChip(params.value),
+        field: 'status', headerName: 'Status', flex: 1, renderCell: (params) => getStatusChip(params.value),
       },
     ];
 
@@ -267,13 +237,7 @@ const RateRequest = () => {
 
   return (
     <Box sx={{ backgroundColor: '#f8fafc', minHeight: '100vh', p: 3 }}>
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        spacing={2}
-        mb={3}
-      >
+      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} mb={3}>
         <Box>
           <Typography
             variant="h6"
@@ -291,68 +255,47 @@ const RateRequest = () => {
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={2} alignItems="center">
-          <FormControl size="small" sx={{ minWidth: 200 }}>
-            <InputLabel>Status Filter</InputLabel>
-            <Select
-              value={filter}
-              label="Status Filter"
-              onChange={(e) => setFilter(e.target.value)}
-            >
-              <MenuItem value="ALL">All Status</MenuItem>
-              <MenuItem value="PENDING">Pending</MenuItem>
-              <MenuItem value="CONFIRMED">Confirmed</MenuItem>
-            </Select>
-          </FormControl>
-
-          <Button
-            variant="contained"
-            size="small"
-            onClick={handleNewRequest}
-            startIcon={<FontAwesomeIcon icon={faPlus} />}
-            sx={{
-              borderRadius: 3,
-              px: 2,
-              py: 1.5,
-              textTransform: 'none',
-              background: 'linear-gradient(135deg, #43a047 0%, #2e7d32 100%)',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #388e3c 0%, #1b5e20 100%)',
-                boxShadow: '0 8px 20px rgba(56, 142, 60, 0.3)',
-              },
-            }}
-          >
-            New Rate Request
-          </Button>
-        </Stack>
+        <Button
+          variant="contained"
+          size="small"
+          onClick={handleNewRequest}
+          startIcon={<FontAwesomeIcon icon={faPlus} />}
+          sx={{
+            borderRadius: 3,
+            px: 2,
+            py: 1.5,
+            textTransform: 'none',
+            background: 'linear-gradient(135deg, #43a047 0%, #2e7d32 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #388e3c 0%, #1b5e20 100%)',
+              boxShadow: '0 8px 20px rgba(56, 142, 60, 0.3)',
+            },
+          }}
+        >
+          New Rate Request
+        </Button>
       </Stack>
 
-      {isLoading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
+      {isLoading && <Box sx={{ mb: 2 }}><LinearProgress /></Box>}
 
       <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #e2e8f0' }}>
         <CardHeader
-          title={(
-            <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a202c', fontSize: '16px' }}>
-              Rate Requests
-            </Typography>
-          )}
+          title={<Typography variant="h6" sx={{ fontWeight: 600, color: '#1a202c', fontSize: '16px' }}>Rate Requests</Typography>}
           sx={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}
         />
         <CardContent sx={{ p: 2 }}>
           <DataGridTable
-            rows={filteredRequests}
+            rows={mappedRequests}
             columns={columns}
             loading={isLoading}
             autoHeight
             hideFooter
           />
 
-          {filteredRequests.length === 0 && !isLoading && (
+          {mappedRequests.length === 0 && !isLoading && (
             <Box sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
               <Typography variant="h6" sx={{ mb: 1 }}>No requests found</Typography>
-              <Typography variant="body2">
-                {filter === 'ALL' ? 'No rate requests available' : `No ${filter.toLowerCase()} requests`}
-              </Typography>
+              <Typography variant="body2">No rate requests available</Typography>
             </Box>
           )}
         </CardContent>

@@ -47,7 +47,27 @@ const OrderSidePanel = ({
 
   useEffect(() => {
     if (defaultValues) {
-      methods.reset(defaultValues);
+      const formattedPickups = defaultValues.pickups?.map((p) => {
+        let pickupDate: Date | undefined;
+
+        if (p.pickupDate) {
+          if (p.pickupDate instanceof Date) {
+            pickupDate = p.pickupDate;
+          } else {
+            pickupDate = new Date(p.pickupDate);
+          }
+        }
+
+        return {
+          ...p,
+          pickupDate,
+        };
+      }) || [];
+
+      methods.reset({
+        ...defaultValues,
+        pickups: formattedPickups,
+      });
     }
   }, [defaultValues, methods]);
 
