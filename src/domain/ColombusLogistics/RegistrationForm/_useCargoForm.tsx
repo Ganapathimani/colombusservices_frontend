@@ -195,7 +195,7 @@ const CargoForm = () => {
                   sx={{ color: 'green' }}
                 />
               )}
-              label="Add Dimensions"
+              label="Add Dimention & Material Type"
             />
           )}
         />
